@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}
+    My Account - FreshCart
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1 class="fw-bold mb-4">
+        My Account
+    </h1>
+
+    <div class="row">
+
+        <!-- Account Information -->
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4 class="mb-4">
+                        Account Information
+                    </h4>
+
+                    <div class="mb-3">
+
+                        <label class="text-muted">
+                            Username
+                        </label>
+
+                        <p class="fw-bold">
+                            {{ user.username }}
+                        </p>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="text-muted">
+                            Email
+                        </label>
+
+                        <p class="fw-bold">
+                            {{ user.email|default:"Not provided" }}
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <label class="text-muted">
+                            Account Created
+                        </label>
+
+                        <p class="fw-bold">
+                            {{ user.date_joined|date:"d M Y" }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Quick Actions -->
+
+        <div class="col-lg-6 mt-4 mt-lg-0">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4 class="mb-4">
+                        Quick Actions
+                    </h4>
+
+                    <div class="d-grid gap-3">
+
+                        <a
+                            href="{% url 'order_history' %}"
+                            class="btn btn-success"
+                        >
+                            My Orders
+                        </a>
+
+                        <a
+                            href="{% url 'cart' %}"
+                            class="btn btn-outline-success"
+                        >
+                            Shopping Cart
+                        </a>
+
+                        <a
+                            href="{% url 'product_list' %}"
+                            class="btn btn-outline-success"
+                        >
+                            Continue Shopping
+                        </a>
+
+                        <a
+                            href="{% url 'logout' %}"
+                            class="btn btn-outline-danger"
+                        >
+                            Logout
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

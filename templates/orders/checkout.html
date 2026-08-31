@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Checkout - FreshCart
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1 class="fw-bold mb-4">
+        Checkout
+    </h1>
+
+    {% if error %}
+
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+
+    <div class="row">
+
+        <!-- Address -->
+
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4>
+                        Delivery Address
+                    </h4>
+
+                    <hr>
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        {{ form.as_p }}
+
+                        <button
+                            type="submit"
+                            class="btn btn-success btn-lg"
+                        >
+                            Place Order
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Order Summary -->
+
+        <div class="col-lg-5 mt-4 mt-lg-0">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4>
+                        Order Summary
+                    </h4>
+
+                    <hr>
+
+                    {% for item in items %}
+
+                        <div class="d-flex justify-content-between mb-3">
+
+                            <span>
+                                {{ item.product.name }}
+                                × {{ item.quantity }}
+                            </span>
+
+                            <span>₹{{ item.subtotal }}</span>
+
+                        </div>
+
+                    {% endfor %}
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between">
+
+                        <strong>
+                            Total
+                        </strong>
+
+                        <strong>
+                            ₹{{ total }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

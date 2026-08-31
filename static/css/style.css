@@ -1,0 +1,28 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.product-card {
+    transition: transform 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-image {
+    height: 220px;
+    object-fit: cover;
+}
+
+.hero-section {
+    padding: 80px 0;
+}
+
+.category-card {
+    transition: transform 0.2s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+}

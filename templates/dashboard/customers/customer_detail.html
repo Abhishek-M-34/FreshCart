@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Customer - {{ customer.username }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="fw-bold">
+                {{ customer.username }}
+            </h1>
+
+            <p class="text-muted">
+                Customer Details
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'admin_customer_list' %}"
+            class="btn btn-outline-secondary"
+        >
+            Back to Customers
+        </a>
+
+    </div>
+
+
+    <!-- Customer Information -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Username
+                    </p>
+
+                    <h4>
+                        {{ customer.username }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Total Orders
+                    </p>
+
+                    <h4>
+                        {{ orders|length }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Total Spent
+                    </p>
+
+                    <h4>
+                        ₹{{ total_spent }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Account Information -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <h4 class="fw-bold mb-3">
+                Account Information
+            </h4>
+
+            <p>
+                <strong>Email:</strong>
+                {{ customer.email|default:"Not provided" }}
+            </p>
+
+            <p class="mb-0">
+                <strong>Joined:</strong>
+                {{ customer.date_joined|date:"d M Y, h:i A" }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- Orders -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <h4 class="fw-bold mb-4">
+                Order History
+            </h4>
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Order</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for order in orders %}
+
+                            <tr>
+
+                                <td>
+                                    #{{ order.id }}
+                                </td>
+
+                                <td>
+                                    {{ order.created_at|date:"d M Y" }}
+                                </td>
+
+                                <td>
+                                    ₹{{ order.total_amount }}
+                                </td>
+
+                                <td>
+                                    {{ order.get_status_display }}
+                                </td>
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'admin_order_detail' order.id %}"
+                                        class="btn btn-sm btn-outline-success"
+                                    >
+                                        View
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+
+                                <td
+                                    colspan="5"
+                                    class="text-center py-4"
+                                >
+                                    This customer has no orders.
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

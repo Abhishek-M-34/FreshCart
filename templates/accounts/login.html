@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - FreshCart</title>
+</head>
+
+<body>
+
+    <h1>Login to FreshCart</h1>
+
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label>Username</label>
+        <input
+            type="text"
+            name="username"
+            required
+        >
+
+        <br><br>
+
+        <label>Password</label>
+        <input
+            type="password"
+            name="password"
+            required
+        >
+
+        <br><br>
+
+        <button type="submit">
+            Login
+        </button>
+
+    </form>
+
+    <p>
+        Don't have an account?
+        <a href="{% url 'register' %}">
+            Register
+        </a>
+    </p>
+
+</body>
+</html>

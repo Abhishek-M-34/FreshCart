@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Your Cart - FreshCart
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1 class="fw-bold mb-4">
+        Your Shopping Cart
+    </h1>
+
+    {% if items %}
+
+        <div class="row">
+
+            <!-- Cart Items -->
+
+            <div class="col-lg-8">
+
+                {% for item in items %}
+
+                    <div class="card mb-3 shadow-sm">
+
+                        <div class="card-body">
+
+                            <div class="row align-items-center">
+
+                                <div class="col-md-4">
+
+                                    <h5>
+                                        {{ item.product.name }}
+                                    </h5>
+
+                                    <p class="text-muted mb-0">
+    ₹{{ item.product.price }} × {{ item.quantity }}
+</p>
+
+<p class="fw-bold">
+    Subtotal: ₹{{ item.subtotal }}
+</p>
+
+                                </div>
+
+
+                                <div class="col-md-4">
+
+                                    <form
+                                        method="POST"
+                                        action="{% url 'update_cart' item.id %}"
+                                        class="d-flex gap-2"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <input
+                                            type="number"
+                                            name="quantity"
+                                            value="{{ item.quantity }}"
+                                            min="1"
+                                            max="{{ item.product.stock }}"
+                                            class="form-control"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-outline-success"
+                                        >
+                                            Update
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                    <form method="POST" action="{% url 'remove_from_cart' item.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                                    </form>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- Summary -->
+
+            <div class="col-lg-4">
+
+                <div class="card shadow-sm">
+
+                    <div class="card-body">
+
+                        <h4>
+                            Order Summary
+                        </h4>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+
+    <span class="text-muted">
+        Subtotal
+    </span>
+
+    <strong>
+        ₹{{ total }}
+    </strong>
+
+</div>
+
+                        <a
+                            href="{% url 'checkout' %}"
+                            class="btn btn-success w-100 mt-4"
+                        >
+                            Proceed to Checkout
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% else %}
+
+        <div class="text-center py-5">
+
+            <h3>
+                Your cart is empty
+            </h3>
+
+            <p class="text-muted">
+                Add some fresh products to get started.
+            </p>
+
+            <a
+                href="{% url 'product_list' %}"
+                class="btn btn-success"
+            >
+                Start Shopping
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

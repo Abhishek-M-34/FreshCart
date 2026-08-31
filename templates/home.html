@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}
+    FreshCart - Home
+{% endblock %}
+
+{% block content %}
+
+<section class="hero-section bg-success text-white">
+
+    <div class="container text-center">
+
+        <h1 class="display-4 fw-bold">
+            Fresh Groceries,
+            Delivered Fresh
+        </h1>
+
+        <p class="lead mt-3">
+            Shop fresh vegetables, fruits, dairy products
+            and more from FreshCart.
+        </p>
+
+        <a
+            href="{% url 'product_list' %}"
+            class="btn btn-light btn-lg mt-3"
+        >
+            Shop Now
+        </a>
+
+    </div>
+
+</section>
+
+
+<section class="container py-5">
+
+    <div class="text-center">
+
+        {% if user.is_authenticated %}
+
+            <h2>
+                Welcome back, {{ user.username }}!
+            </h2>
+
+            <p class="text-muted">
+                Ready to continue shopping?
+            </p>
+
+        {% else %}
+
+            <h2>
+                Welcome to FreshCart
+            </h2>
+
+            <p class="text-muted">
+                Create an account and start shopping.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

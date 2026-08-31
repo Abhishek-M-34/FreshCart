@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Order Successful - FreshCart
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center">
+
+        <div class="mb-4">
+
+            <h1 class="text-success fw-bold">
+                Order Placed Successfully!
+            </h1>
+
+            <p class="lead">
+                Thank you for shopping with FreshCart.
+            </p>
+
+        </div>
+
+
+        <div class="card shadow-sm mx-auto" style="max-width: 500px;">
+
+            <div class="card-body">
+
+                <h3>
+                    Order #{{ order.id }}
+                </h3>
+
+                <hr>
+
+                <p>
+                    Total:
+                    <strong>
+                        ₹{{ order.total_amount }}
+                    </strong>
+                </p>
+
+                <p>
+                    Status:
+                    {{ order.get_status_display }}
+                </p>
+
+                <a
+                    href="{% url 'order_detail' order.id %}"
+                    class="btn btn-outline-success"
+                >
+                    View Order
+                </a>
+
+                <a
+                    href="{% url 'product_list' %}"
+                    class="btn btn-success"
+                >
+                    Continue Shopping
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

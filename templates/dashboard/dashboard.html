@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Admin Dashboard - FreshCart
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="fw-bold">
+                Admin Dashboard
+            </h1>
+
+            <p class="text-muted mb-0">
+                Welcome back, {{ user.username }}
+            </p>
+        </div>
+
+        <a
+            href="{% url 'home' %}"
+            class="btn btn-outline-success"
+        >
+            View Store
+        </a>
+
+    </div>
+
+
+    <!-- Statistics -->
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Total Products
+                    </p>
+
+                    <h2 class="fw-bold">
+                        {{ total_products }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Total Orders
+                    </p>
+
+                    <h2 class="fw-bold">
+                        {{ total_orders }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Customers
+                    </p>
+
+                    <h2 class="fw-bold">
+                        {{ total_customers }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Revenue
+                    </p>
+
+                    <h2 class="fw-bold">
+                        ₹{{ total_revenue }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+<div class="row g-3 mb-5">
+
+    <div class="col-md-4">
+
+        <a
+            href="{% url 'admin_product_list' %}"
+            class="btn btn-success w-100 py-3"
+        >
+            Manage Products
+        </a>
+
+    </div>
+
+
+    <div class="col-md-4">
+
+        <a
+            href="{% url 'admin_category_list' %}"
+            class="btn btn-outline-success w-100 py-3"
+        >
+            Manage Categories
+        </a>
+
+    </div>
+
+
+    <div class="col-md-4">
+
+        <a
+            href="{% url 'admin_order_list' %}"
+            class="btn btn-outline-success w-100 py-3"
+        >
+            Manage Orders
+        </a>
+
+    </div>
+
+
+    <div class="col-md-4">
+
+        <a
+            href="{% url 'admin_customer_list' %}"
+            class="btn btn-outline-success w-100 py-3"
+        >
+            Manage Customers
+        </a>
+
+    </div>
+
+
+    <div class="col-md-4">
+
+        <a
+            href="{% url 'analytics' %}"
+            class="btn btn-outline-success w-100 py-3"
+        >
+            Sales Analytics
+        </a>
+
+    </div>
+    <div class="col-md-4">
+
+    <a
+        href="{% url 'sales_prediction' %}"
+        class="btn btn-outline-success w-100 py-3"
+    >
+        Sales Prediction
+    </a>
+
+</div>
+<div class="col-md-4">
+
+    <a
+        href="{% url 'inventory_prediction' %}"
+        class="btn btn-outline-success w-100 py-3"
+    >
+        Inventory Prediction
+    </a>
+
+</div>
+
+</div>
+
+
+
+</div>
+
+    <div class="row g-4">
+
+        <!-- Recent Orders -->
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4 class="fw-bold mb-4">
+                        Recent Orders
+                    </h4>
+
+                    {% if recent_orders %}
+
+                        <div class="table-responsive">
+
+                            <table class="table align-middle">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for order in recent_orders %}
+
+                                        <tr>
+
+                                            <td>
+                                                #{{ order.id }}
+                                            </td>
+
+                                            <td>
+                                                {{ order.user.username }}
+                                            </td>
+
+                                            <td>
+                                                ₹{{ order.total_amount }}
+                                            </td>
+
+                                            <td>
+                                                {{ order.get_status_display }}
+                                            </td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    {% else %}
+
+                        <p class="text-muted">
+                            No orders yet.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Low Stock -->
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4 class="fw-bold mb-4">
+                        Low Stock
+                    </h4>
+
+                    {% if low_stock_products %}
+
+                        {% for product in low_stock_products %}
+
+                            <div class="d-flex justify-content-between mb-3">
+
+                                <span>
+                                    {{ product.name }}
+                                </span>
+
+                                <span class="badge bg-danger">
+                                    {{ product.stock }}
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <p class="text-muted">
+                            No low-stock products.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

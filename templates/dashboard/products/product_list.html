@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Manage Products - FreshCart
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="fw-bold">
+                Products
+            </h1>
+
+            <p class="text-muted">
+                Manage FreshCart products.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'admin_product_add' %}"
+            class="btn btn-success"
+        >
+            + Add Product
+        </a>
+
+    </div>
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-success">
+
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Available</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for product in products %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        {{ product.name }}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    {{ product.category.name }}
+                                </td>
+
+                                <td>
+                                    ₹{{ product.price }}
+                                </td>
+
+                                <td>
+
+                                    {% if product.stock <= 10 %}
+
+                                        <span class="badge bg-danger">
+                                            {{ product.stock }}
+                                        </span>
+
+                                    {% else %}
+
+                                        {{ product.stock }}
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if product.is_available %}
+
+                                        <span class="badge bg-success">
+                                            Yes
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+                                            No
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'admin_product_edit' product.id %}"
+                                        class="btn btn-sm btn-outline-success"
+                                    >
+                                        Edit
+                                    </a>
+
+
+                                    <form
+                                        method="POST"
+                                        action="{% url 'admin_product_delete' product.id %}"
+                                        class="d-inline"
+                                        onsubmit="return confirm('Delete this product?');"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-outline-danger"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+
+                                <td
+                                    colspan="6"
+                                    class="text-center py-4"
+                                >
+                                    No products found.
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

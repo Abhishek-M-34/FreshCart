@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Inventory Prediction - FreshCart
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="mb-5">
+
+        <h1 class="fw-bold">
+            Inventory Prediction
+        </h1>
+
+        <p class="text-muted">
+            AI-powered stock planning based on predicted
+            product demand for the next 7 days.
+        </p>
+
+    </div>
+
+
+    {% if error %}
+
+        <div class="alert alert-warning">
+            {{ error }}
+        </div>
+
+    {% else %}
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h4 class="fw-bold mb-4">
+                    Stock Forecast
+                </h4>
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-success">
+
+                            <tr>
+
+                                <th>
+                                    Product
+                                </th>
+
+                                <th>
+                                    Current Stock
+                                </th>
+
+                                <th>
+                                    Predicted 7-Day Demand
+                                </th>
+
+                                <th>
+                                    Stock After Forecast
+                                </th>
+
+                                <th>
+                                    Recommended Reorder
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in inventory_data %}
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            {{ item.product }}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        {{ item.current_stock }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.predicted_demand }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.stock_after_forecast }}
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            {{ item.recommended_reorder }}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+
+                                        {% if item.status == "Out of Stock" %}
+
+                                            <span class="badge bg-danger">
+                                                Out of Stock
+                                            </span>
+
+                                        {% elif item.status == "Reorder Required" %}
+
+                                            <span class="badge bg-danger">
+                                                Reorder Required
+                                            </span>
+
+                                        {% elif item.status == "Low Stock" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Low Stock
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-success">
+                                                Stock Sufficient
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Sales Prediction - FreshCart
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="mb-5">
+
+        <h1 class="fw-bold">
+            Sales Prediction
+        </h1>
+
+        <p class="text-muted">
+            Machine learning based product demand forecast
+            for the next 7 days.
+        </p>
+
+    </div>
+
+
+    {% if error %}
+
+        <div class="alert alert-warning">
+            {{ error }}
+        </div>
+
+    {% else %}
+
+        <!-- Chart -->
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                {{ chart|safe }}
+
+            </div>
+
+        </div>
+
+
+        <!-- Prediction Table -->
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h4 class="fw-bold mb-4">
+                    Product Demand Forecast
+                </h4>
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover">
+
+                        <thead class="table-success">
+
+                            <tr>
+                                <th>Product</th>
+                                <th>Date</th>
+                                <th>Predicted Units</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for prediction in predictions %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ prediction.product }}
+                                    </td>
+
+                                    <td>
+                                        {{ prediction.date|date:"d M Y" }}
+                                    </td>
+
+                                    <td>
+                                        {{ prediction.predicted_quantity }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
