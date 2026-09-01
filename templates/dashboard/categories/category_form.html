@@ -6,78 +6,129 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="admin-category-form-page">
 
-    <div class="row justify-content-center">
+    <div class="container">
 
-        <div class="col-lg-6">
+        <div class="admin-form-page-header">
 
-            <div class="card shadow-sm">
+            <a
+                href="{% url 'admin_category_list' %}"
+                class="admin-form-back"
+            >
+                ← Back to Categories
+            </a>
 
-                <div class="card-body p-4">
+            <span class="section-label">
+                STORE MANAGEMENT
+            </span>
 
-                    <h1 class="fw-bold mb-4">
-                        {{ title }}
-                    </h1>
+            <h1>
+                {{ title }}
+            </h1>
 
-                    <form method="POST">
+            <p>
+                Create or update a product category.
+            </p>
 
-                        {% csrf_token %}
-
-                        {% for field in form %}
-
-                            <div class="mb-3">
-
-                                <label
-                                    for="{{ field.id_for_label }}"
-                                    class="form-label"
-                                >
-                                    {{ field.label }}
-                                </label>
-
-                                {{ field }}
-
-                                {% if field.errors %}
-
-                                    <div class="text-danger small">
-                                        {{ field.errors }}
-                                    </div>
-
-                                {% endif %}
-
-                            </div>
-
-                        {% endfor %}
+        </div>
 
 
-                        <div class="d-flex gap-2">
+        <div class="admin-form-card admin-category-form-card">
 
-                            <button
-                                type="submit"
-                                class="btn btn-success"
-                            >
-                                Save Category
-                            </button>
+            <div class="admin-form-card-header">
 
-                            <a
-                                href="{% url 'admin_category_list' %}"
-                                class="btn btn-outline-secondary"
-                            >
-                                Cancel
-                            </a>
+                <div class="admin-form-icon">
+                    🗂️
+                </div>
 
-                        </div>
+                <div>
 
-                    </form>
+                    <h2>
+                        Category Information
+                    </h2>
+
+                    <p>
+                        Enter the category details below.
+                    </p>
 
                 </div>
 
             </div>
 
+
+            <div class="admin-form-divider"></div>
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                {% if form.non_field_errors %}
+
+                    <div class="admin-form-error">
+                        {{ form.non_field_errors }}
+                    </div>
+
+                {% endif %}
+
+
+                <div class="admin-category-form-fields">
+
+                    {% for field in form %}
+
+                        <div class="admin-form-field">
+
+                            <label
+                                for="{{ field.id_for_label }}"
+                                class="admin-form-label"
+                            >
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+
+                            {% if field.errors %}
+
+                                <div class="admin-field-error">
+                                    {{ field.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="admin-form-actions">
+
+                    <a
+                        href="{% url 'admin_category_list' %}"
+                        class="admin-secondary-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="admin-primary-btn"
+                    >
+                        Save Category
+                    </button>
+
+                </div>
+
+            </form>
+
         </div>
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}

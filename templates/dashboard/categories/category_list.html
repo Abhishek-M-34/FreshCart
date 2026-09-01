@@ -6,115 +6,209 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="admin-categories-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container">
 
-        <div>
-            <h1 class="fw-bold">
-                Categories
-            </h1>
+        <!-- Header -->
 
-            <p class="text-muted">
-                Manage product categories.
-            </p>
+        <div class="admin-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    STORE MANAGEMENT
+                </span>
+
+                <h1>
+                    Categories
+                </h1>
+
+                <p>
+                    Organize and manage your product categories.
+                </p>
+
+            </div>
+
+            <div class="admin-page-header-actions">
+
+                <a
+                    href="{% url 'admin_dashboard' %}"
+                    class="admin-secondary-btn"
+                >
+                    ← Dashboard
+                </a>
+
+                <a
+                    href="{% url 'admin_category_add' %}"
+                    class="admin-primary-btn"
+                >
+                    + Add Category
+                </a>
+
+            </div>
+
         </div>
 
-        <a
-            href="{% url 'admin_category_add' %}"
-            class="btn btn-success"
-        >
-            + Add Category
-        </a>
 
-    </div>
+        <!-- Category Card -->
+
+        <div class="admin-category-card">
+
+            <div class="admin-category-card-header">
+
+                <div>
+
+                    <h2>
+                        All Categories
+                    </h2>
+
+                    <p>
+                        Manage the categories used across your store.
+                    </p>
+
+                </div>
+
+            </div>
 
 
-    <div class="card shadow-sm">
+            <div class="admin-category-table-wrapper">
 
-        <div class="card-body">
+                <table class="admin-category-table">
 
-            <table class="table table-hover">
+                    <thead>
 
-                <thead class="table-success">
+                        <tr>
 
-                    <tr>
-                        <th>ID</th>
-                        <th>Category</th>
-                        <th>Actions</th>
-                    </tr>
+                            <th>
+                                ID
+                            </th>
 
-                </thead>
+                            <th>
+                                Category
+                            </th>
 
-                <tbody>
+                            <th class="admin-category-actions-heading">
+                                Actions
+                            </th>
 
-                    {% for category in categories %}
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for category in categories %}
 
                         <tr>
 
                             <td>
-                                {{ category.id }}
+
+                                <span class="admin-category-id">
+                                    #{{ category.id }}
+                                </span>
+
                             </td>
 
+
                             <td>
-                                {{ category.name }}
+
+                                <div class="admin-category-name">
+
+                                    <div class="admin-category-icon">
+                                        🗂️
+                                    </div>
+
+                                    <strong>
+                                        {{ category.name }}
+                                    </strong>
+
+                                </div>
+
                             </td>
 
+
                             <td>
 
-                                <a
-                                    href="{% url 'admin_category_edit' category.id %}"
-                                    class="btn btn-sm btn-outline-success"
-                                >
-                                    Edit
-                                </a>
+                                <div class="admin-category-actions">
 
-
-                                <form
-                                    method="POST"
-                                    action="{% url 'admin_category_delete' category.id %}"
-                                    class="d-inline"
-                                    onsubmit="return confirm('Delete this category?');"
-                                >
-
-                                    {% csrf_token %}
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-sm btn-outline-danger"
+                                    <a
+                                        href="{% url 'admin_category_edit' category.id %}"
+                                        class="admin-edit-btn"
                                     >
-                                        Delete
-                                    </button>
+                                        Edit
+                                    </a>
 
-                                </form>
+
+                                    <form
+                                        method="POST"
+                                        action="{% url 'admin_category_delete' category.id %}"
+                                        class="admin-delete-form"
+                                        onsubmit="return confirm('Delete this category?');"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="admin-delete-btn"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                </div>
 
                             </td>
 
                         </tr>
 
-                    {% empty %}
+                        {% empty %}
 
                         <tr>
 
                             <td
                                 colspan="3"
-                                class="text-center"
+                                class="admin-category-empty"
                             >
-                                No categories found.
+
+                                <div class="admin-empty-icon">
+                                    🗂️
+                                </div>
+
+                                <strong>
+                                    No categories found
+                                </strong>
+
+                                <p>
+                                    Create your first product category to get started.
+                                </p>
+
+                                <a
+                                    href="{% url 'admin_category_add' %}"
+                                    class="admin-primary-btn"
+                                >
+                                    + Add Category
+                                </a>
+
                             </td>
 
                         </tr>
 
-                    {% endfor %}
+                        {% endfor %}
 
-                </tbody>
+                    </tbody>
 
-            </table>
+                </table>
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}
