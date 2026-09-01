@@ -6,110 +6,123 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="admin-dashboard-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container">
 
-        <div>
-            <h1 class="fw-bold">
-                Admin Dashboard
-            </h1>
+        <!-- Dashboard Header -->
 
-            <p class="text-muted mb-0">
-                Welcome back, {{ user.username }}
-            </p>
+        <div class="admin-dashboard-header">
+
+            <div>
+
+                <span class="section-label">
+                    FRESHCART ADMIN
+                </span>
+
+                <h1>
+                    Admin Dashboard
+                </h1>
+
+                <p>
+                    Welcome back, {{ user.username }}. Here's what's happening in your store.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'home' %}"
+                class="dashboard-store-btn"
+            >
+                View Store →
+            </a>
+
         </div>
 
-        <a
-            href="{% url 'home' %}"
-            class="btn btn-outline-success"
-        >
-            View Store
-        </a>
 
-    </div>
+        <!-- Statistics -->
 
+        <div class="dashboard-stat-grid">
 
-    <!-- Statistics -->
+            <div class="dashboard-stat-card">
 
-    <div class="row g-4 mb-5">
+                <div class="dashboard-stat-icon">
+                    🛒
+                </div>
 
-        <div class="col-md-6 col-lg-3">
+                <div class="dashboard-stat-content">
 
-            <div class="card shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <p class="text-muted mb-1">
+                    <span>
                         Total Products
-                    </p>
+                    </span>
 
-                    <h2 class="fw-bold">
+                    <strong>
                         {{ total_products }}
-                    </h2>
+                    </strong>
 
                 </div>
 
             </div>
 
-        </div>
 
+            <div class="dashboard-stat-card">
 
-        <div class="col-md-6 col-lg-3">
+                <div class="dashboard-stat-icon">
+                    📦
+                </div>
 
-            <div class="card shadow-sm h-100">
+                <div class="dashboard-stat-content">
 
-                <div class="card-body">
-
-                    <p class="text-muted mb-1">
+                    <span>
                         Total Orders
-                    </p>
+                    </span>
 
-                    <h2 class="fw-bold">
+                    <strong>
                         {{ total_orders }}
-                    </h2>
+                    </strong>
 
                 </div>
 
             </div>
 
-        </div>
 
+            <div class="dashboard-stat-card">
 
-        <div class="col-md-6 col-lg-3">
+                <div class="dashboard-stat-icon">
+                    👥
+                </div>
 
-            <div class="card shadow-sm h-100">
+                <div class="dashboard-stat-content">
 
-                <div class="card-body">
-
-                    <p class="text-muted mb-1">
+                    <span>
                         Customers
-                    </p>
+                    </span>
 
-                    <h2 class="fw-bold">
+                    <strong>
                         {{ total_customers }}
-                    </h2>
+                    </strong>
 
                 </div>
 
             </div>
 
-        </div>
 
+            <div class="dashboard-stat-card">
 
-        <div class="col-md-6 col-lg-3">
+                <div class="dashboard-stat-icon">
+                    ₹
+                </div>
 
-            <div class="card shadow-sm h-100">
+                <div class="dashboard-stat-content">
 
-                <div class="card-body">
-
-                    <p class="text-muted mb-1">
+                    <span>
                         Revenue
-                    </p>
+                    </span>
 
-                    <h2 class="fw-bold">
+                    <strong>
                         ₹{{ total_revenue }}
-                    </h2>
+                    </strong>
 
                 </div>
 
@@ -117,195 +130,347 @@
 
         </div>
 
-    </div>
-<div class="row g-3 mb-5">
 
-    <div class="col-md-4">
+        <!-- Management Actions -->
 
-        <a
-            href="{% url 'admin_product_list' %}"
-            class="btn btn-success w-100 py-3"
-        >
-            Manage Products
-        </a>
+        <div class="dashboard-section-heading">
 
-    </div>
+            <div>
+                <span class="section-label">
+                    STORE MANAGEMENT
+                </span>
 
+                <h2>
+                    Quick Actions
+                </h2>
+            </div>
 
-    <div class="col-md-4">
-
-        <a
-            href="{% url 'admin_category_list' %}"
-            class="btn btn-outline-success w-100 py-3"
-        >
-            Manage Categories
-        </a>
-
-    </div>
+        </div>
 
 
-    <div class="col-md-4">
+        <div class="dashboard-action-grid">
 
-        <a
-            href="{% url 'admin_order_list' %}"
-            class="btn btn-outline-success w-100 py-3"
-        >
-            Manage Orders
-        </a>
+            <a
+                href="{% url 'admin_product_list' %}"
+                class="dashboard-action-card"
+            >
 
-    </div>
+                <div class="dashboard-action-icon">
+                    🛍️
+                </div>
 
+                <div>
+                    <h3>
+                        Manage Products
+                    </h3>
 
-    <div class="col-md-4">
+                    <p>
+                        Add, edit and manage store products.
+                    </p>
+                </div>
 
-        <a
-            href="{% url 'admin_customer_list' %}"
-            class="btn btn-outline-success w-100 py-3"
-        >
-            Manage Customers
-        </a>
+                <span class="dashboard-action-arrow">
+                    →
+                </span>
 
-    </div>
-
-
-    <div class="col-md-4">
-
-        <a
-            href="{% url 'analytics' %}"
-            class="btn btn-outline-success w-100 py-3"
-        >
-            Sales Analytics
-        </a>
-
-    </div>
-    <div class="col-md-4">
-
-    <a
-        href="{% url 'sales_prediction' %}"
-        class="btn btn-outline-success w-100 py-3"
-    >
-        Sales Prediction
-    </a>
-
-</div>
-<div class="col-md-4">
-
-    <a
-        href="{% url 'inventory_prediction' %}"
-        class="btn btn-outline-success w-100 py-3"
-    >
-        Inventory Prediction
-    </a>
-
-</div>
-
-</div>
+            </a>
 
 
+            <a
+                href="{% url 'admin_category_list' %}"
+                class="dashboard-action-card"
+            >
 
-</div>
+                <div class="dashboard-action-icon">
+                    🗂️
+                </div>
 
-    <div class="row g-4">
+                <div>
+                    <h3>
+                        Manage Categories
+                    </h3>
 
-        <!-- Recent Orders -->
+                    <p>
+                        Organize products into categories.
+                    </p>
+                </div>
 
-        <div class="col-lg-8">
+                <span class="dashboard-action-arrow">
+                    →
+                </span>
 
-            <div class="card shadow-sm">
+            </a>
 
-                <div class="card-body">
 
-                    <h4 class="fw-bold mb-4">
-                        Recent Orders
-                    </h4>
+            <a
+                href="{% url 'admin_order_list' %}"
+                class="dashboard-action-card"
+            >
 
-                    {% if recent_orders %}
+                <div class="dashboard-action-icon">
+                    📋
+                </div>
 
-                        <div class="table-responsive">
+                <div>
+                    <h3>
+                        Manage Orders
+                    </h3>
 
-                            <table class="table align-middle">
+                    <p>
+                        Review and update customer orders.
+                    </p>
+                </div>
 
-                                <thead>
+                <span class="dashboard-action-arrow">
+                    →
+                </span>
 
-                                    <tr>
-                                        <th>Order</th>
-                                        <th>Customer</th>
-                                        <th>Total</th>
-                                        <th>Status</th>
-                                    </tr>
+            </a>
 
-                                </thead>
 
-                                <tbody>
+            <a
+                href="{% url 'admin_customer_list' %}"
+                class="dashboard-action-card"
+            >
 
-                                    {% for order in recent_orders %}
+                <div class="dashboard-action-icon">
+                    👤
+                </div>
 
-                                        <tr>
+                <div>
+                    <h3>
+                        Manage Customers
+                    </h3>
 
-                                            <td>
-                                                #{{ order.id }}
-                                            </td>
+                    <p>
+                        View customers and their activity.
+                    </p>
+                </div>
 
-                                            <td>
-                                                {{ order.user.username }}
-                                            </td>
+                <span class="dashboard-action-arrow">
+                    →
+                </span>
 
-                                            <td>
-                                                ₹{{ order.total_amount }}
-                                            </td>
+            </a>
 
-                                            <td>
-                                                {{ order.get_status_display }}
-                                            </td>
 
-                                        </tr>
+            <a
+                href="{% url 'analytics' %}"
+                class="dashboard-action-card dashboard-action-featured"
+            >
 
-                                    {% endfor %}
+                <div class="dashboard-action-icon">
+                    📊
+                </div>
 
-                                </tbody>
+                <div>
+                    <h3>
+                        Sales Analytics
+                    </h3>
 
-                            </table>
+                    <p>
+                        Explore sales and business performance.
+                    </p>
+                </div>
 
+                <span class="dashboard-action-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <a
+                href="{% url 'sales_prediction' %}"
+                class="dashboard-action-card dashboard-action-featured"
+            >
+
+                <div class="dashboard-action-icon">
+                    📈
+                </div>
+
+                <div>
+                    <h3>
+                        Sales Prediction
+                    </h3>
+
+                    <p>
+                        View predicted future sales.
+                    </p>
+                </div>
+
+                <span class="dashboard-action-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <a
+                href="{% url 'inventory_prediction' %}"
+                class="dashboard-action-card dashboard-action-featured"
+            >
+
+                <div class="dashboard-action-icon">
+                    📦
+                </div>
+
+                <div>
+                    <h3>
+                        Inventory Prediction
+                    </h3>
+
+                    <p>
+                        Monitor and predict inventory requirements.
+                    </p>
+                </div>
+
+                <span class="dashboard-action-arrow">
+                    →
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <!-- Dashboard Data -->
+
+        <div class="dashboard-data-grid">
+
+
+            <!-- Recent Orders -->
+
+            <div class="dashboard-data-card dashboard-orders-card">
+
+                <div class="dashboard-data-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            RECENT ACTIVITY
+                        </span>
+
+                        <h2>
+                            Recent Orders
+                        </h2>
+
+                    </div>
+
+
+                    <a
+                        href="{% url 'admin_order_list' %}"
+                        class="dashboard-small-link"
+                    >
+                        View All →
+                    </a>
+
+                </div>
+
+
+                {% if recent_orders %}
+
+                    <div class="dashboard-orders-list">
+
+                        {% for order in recent_orders %}
+
+                            <div class="dashboard-order-row">
+
+                                <div class="dashboard-order-id">
+                                    #{{ order.id }}
+                                </div>
+
+
+                                <div class="dashboard-order-customer">
+
+                                    <strong>
+                                        {{ order.user.username }}
+                                    </strong>
+
+                                    <span>
+                                        Customer
+                                    </span>
+
+                                </div>
+
+
+                                <div class="dashboard-order-total">
+                                    ₹{{ order.total_amount }}
+                                </div>
+
+
+                                <div class="dashboard-order-status">
+                                    {{ order.get_status_display }}
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="dashboard-empty-state">
+
+                        <div>
+                            📦
                         </div>
 
-                    {% else %}
-
-                        <p class="text-muted">
+                        <p>
                             No orders yet.
                         </p>
 
-                    {% endif %}
+                    </div>
 
-                </div>
+                {% endif %}
 
             </div>
 
-        </div>
+
+            <!-- Low Stock -->
+
+            <div class="dashboard-data-card">
+
+                <div class="dashboard-data-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            INVENTORY
+                        </span>
+
+                        <h2>
+                            Low Stock
+                        </h2>
+
+                    </div>
+
+                </div>
 
 
-        <!-- Low Stock -->
+                {% if low_stock_products %}
 
-        <div class="col-lg-4">
-
-            <div class="card shadow-sm">
-
-                <div class="card-body">
-
-                    <h4 class="fw-bold mb-4">
-                        Low Stock
-                    </h4>
-
-                    {% if low_stock_products %}
+                    <div class="dashboard-stock-list">
 
                         {% for product in low_stock_products %}
 
-                            <div class="d-flex justify-content-between mb-3">
+                            <div class="dashboard-stock-row">
 
-                                <span>
-                                    {{ product.name }}
-                                </span>
+                                <div class="dashboard-stock-product">
 
-                                <span class="badge bg-danger">
+                                    <strong>
+                                        {{ product.name }}
+                                    </strong>
+
+                                    <span>
+                                        Remaining stock
+                                    </span>
+
+                                </div>
+
+
+                                <span class="dashboard-stock-badge">
                                     {{ product.stock }}
                                 </span>
 
@@ -313,22 +478,31 @@
 
                         {% endfor %}
 
-                    {% else %}
+                    </div>
 
-                        <p class="text-muted">
+                {% else %}
+
+                    <div class="dashboard-empty-state">
+
+                        <div>
+                            ✓
+                        </div>
+
+                        <p>
                             No low-stock products.
                         </p>
 
-                    {% endif %}
+                    </div>
 
-                </div>
+                {% endif %}
 
             </div>
+
 
         </div>
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}
