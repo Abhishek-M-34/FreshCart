@@ -6,59 +6,101 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="analytics-page">
 
-    <div class="mb-5">
+    <div class="container">
 
-        <h1 class="fw-bold">
-            Sales Analytics
-        </h1>
+        <!-- Analytics Header -->
 
-        <p class="text-muted">
-            Analyze FreshCart sales performance.
-        </p>
+        <div class="analytics-header">
 
-    </div>
+            <div>
+
+                <span class="section-label">
+                    FRESHCART ANALYTICS
+                </span>
+
+                <h1>
+                    Sales Analytics
+                </h1>
+
+                <p>
+                    Analyze FreshCart sales performance.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="analytics-back-btn"
+            >
+                ← Dashboard
+            </a>
+
+        </div>
 
 
-    <!-- Summary Cards -->
+        <!-- Summary Cards -->
 
-    <div class="row g-4 mb-5">
+        <div class="analytics-stat-grid">
 
-        <div class="col-md-4">
+            <div class="analytics-stat-card">
 
-            <div class="card shadow-sm h-100">
+                <div class="analytics-stat-icon">
+                    ₹
+                </div>
 
-                <div class="card-body">
+                <div>
 
-                    <p class="text-muted mb-1">
+                    <span>
                         Total Revenue
-                    </p>
+                    </span>
 
-                    <h2 class="fw-bold">
+                    <strong>
                         ₹{{ total_revenue }}
-                    </h2>
+                    </strong>
 
                 </div>
 
             </div>
 
-        </div>
 
+            <div class="analytics-stat-card">
 
-        <div class="col-md-4">
+                <div class="analytics-stat-icon">
+                    📦
+                </div>
 
-            <div class="card shadow-sm h-100">
+                <div>
 
-                <div class="card-body">
-
-                    <p class="text-muted mb-1">
+                    <span>
                         Delivered Orders
-                    </p>
+                    </span>
 
-                    <h2 class="fw-bold">
+                    <strong>
                         {{ total_orders }}
-                    </h2>
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="analytics-stat-card">
+
+                <div class="analytics-stat-icon">
+                    ↗
+                </div>
+
+                <div>
+
+                    <span>
+                        Average Order Value
+                    </span>
+
+                    <strong>
+                        ₹{{ average_order_value|floatformat:2 }}
+                    </strong>
 
                 </div>
 
@@ -67,80 +109,119 @@
         </div>
 
 
-        <div class="col-md-4">
+        <!-- Daily Sales -->
 
-            <div class="card shadow-sm h-100">
+        <div class="analytics-chart-card">
 
-                <div class="card-body">
+            <div class="analytics-chart-header">
 
-                    <p class="text-muted mb-1">
-                        Average Order Value
+                <div>
+
+                    <span class="analytics-chart-label">
+                        DAILY PERFORMANCE
+                    </span>
+
+                    <h2>
+                        Daily Sales
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div class="analytics-chart-container">
+                {{ daily_chart|safe }}
+            </div>
+
+        </div>
+
+
+        <!-- Monthly Sales -->
+
+        <div class="analytics-chart-card">
+
+            <div class="analytics-chart-header">
+
+                <div>
+
+                    <span class="analytics-chart-label">
+                        MONTHLY PERFORMANCE
+                    </span>
+
+                    <h2>
+                        Monthly Sales
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div class="analytics-chart-container">
+                {{ monthly_chart|safe }}
+            </div>
+
+        </div>
+
+
+        <!-- Yearly Sales -->
+
+        <div class="analytics-chart-card">
+
+            <div class="analytics-chart-header">
+
+                <div>
+
+                    <span class="analytics-chart-label">
+                        YEARLY PERFORMANCE
+                    </span>
+
+                    <h2>
+                        Yearly Sales
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div class="analytics-chart-container">
+                {{ yearly_chart|safe }}
+            </div>
+
+        </div>
+
+
+        <!-- Top Products -->
+
+        <div class="analytics-chart-card">
+
+            <div class="analytics-chart-header">
+
+                <div>
+
+                    <span class="analytics-chart-label">
+                        PRODUCT PERFORMANCE
+                    </span>
+
+                    <h2>
+                        Top Selling Products
+                    </h2>
+
+                    <p>
+                        Your best-performing products based on units sold.
                     </p>
 
-                    <h2 class="fw-bold">
-                        ₹{{ average_order_value|floatformat:2 }}
-                    </h2>
-
                 </div>
 
+            </div>
+
+            <div class="analytics-chart-container">
+                {{ product_chart|safe }}
             </div>
 
         </div>
 
     </div>
 
-
-    <!-- Daily Sales -->
-
-    <div class="card shadow-sm mb-4">
-
-        <div class="card-body">
-
-            {{ daily_chart|safe }}
-
-        </div>
-
-    </div>
-
-
-    <!-- Monthly Sales -->
-
-    <div class="card shadow-sm mb-4">
-
-        <div class="card-body">
-
-            {{ monthly_chart|safe }}
-
-        </div>
-
-    </div>
-
-
-    <!-- Yearly Sales -->
-
-    <div class="card shadow-sm mb-4">
-
-        <div class="card-body">
-
-            {{ yearly_chart|safe }}
-
-        </div>
-
-    </div>
-
-
-    <!-- Top Products -->
-
-    <div class="card shadow-sm mb-4">
-
-        <div class="card-body">
-
-            {{ product_chart|safe }}
-
-        </div>
-
-    </div>
-
-</div>
+</section>
 
 {% endblock %}

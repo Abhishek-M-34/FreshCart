@@ -6,110 +6,174 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="admin-products-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container">
 
-        <div>
-            <h1 class="fw-bold">
-                Products
-            </h1>
+        <!-- Header -->
 
-            <p class="text-muted">
-                Manage FreshCart products.
-            </p>
+        <div class="admin-page-header">
+
+            <div>
+                <span class="section-label">
+                    STORE MANAGEMENT
+                </span>
+
+                <h1>
+                    Products
+                </h1>
+
+                <p>
+                    Manage your FreshCart products and inventory.
+                </p>
+            </div>
+
+            <div class="admin-page-header-actions">
+
+                <a
+                    href="{% url 'admin_dashboard' %}"
+                    class="admin-secondary-btn"
+                >
+                    ← Dashboard
+                </a>
+
+                <a
+                    href="{% url 'admin_product_add' %}"
+                    class="admin-primary-btn"
+                >
+                    + Add Product
+                </a>
+
+            </div>
+
         </div>
 
-        <a
-            href="{% url 'admin_product_add' %}"
-            class="btn btn-success"
-        >
-            + Add Product
-        </a>
 
-    </div>
+        <!-- Product Table -->
+
+        <div class="admin-table-card">
+
+            <div class="admin-table-header">
+
+                <div>
+                    <h2>
+                        All Products
+                    </h2>
+
+                    <p>
+                        Manage pricing, stock and availability.
+                    </p>
+                </div>
+
+            </div>
 
 
-    <div class="card shadow-sm">
+            <div class="admin-table-wrapper">
 
-        <div class="card-body">
+                <table class="admin-product-table">
 
-            <div class="table-responsive">
-
-                <table class="table table-hover align-middle">
-
-                    <thead class="table-success">
+                    <thead>
 
                         <tr>
                             <th>Product</th>
                             <th>Category</th>
                             <th>Price</th>
                             <th>Stock</th>
-                            <th>Available</th>
-                            <th>Actions</th>
+                            <th>Status</th>
+                            <th class="admin-actions-column">
+                                Actions
+                            </th>
                         </tr>
 
                     </thead>
+
 
                     <tbody>
 
                         {% for product in products %}
 
-                            <tr>
+                        <tr>
 
-                                <td>
+                            <td>
+
+                                <div class="admin-product-name">
+
+                                    <div class="admin-product-avatar">
+                                        🛍️
+                                    </div>
+
                                     <strong>
                                         {{ product.name }}
                                     </strong>
-                                </td>
 
-                                <td>
+                                </div>
+
+                            </td>
+
+
+                            <td>
+                                <span class="admin-category-text">
                                     {{ product.category.name }}
-                                </td>
+                                </span>
+                            </td>
 
-                                <td>
+
+                            <td>
+
+                                <strong class="admin-product-price">
                                     ₹{{ product.price }}
-                                </td>
+                                </strong>
 
-                                <td>
+                            </td>
 
-                                    {% if product.stock <= 10 %}
 
-                                        <span class="badge bg-danger">
-                                            {{ product.stock }}
-                                        </span>
+                            <td>
 
-                                    {% else %}
+                                {% if product.stock <= 10 %}
 
+                                    <span class="admin-stock-badge admin-stock-low">
                                         {{ product.stock }}
+                                    </span>
 
-                                    {% endif %}
+                                {% else %}
 
-                                </td>
+                                    <span class="admin-stock-badge">
+                                        {{ product.stock }}
+                                    </span>
 
-                                <td>
+                                {% endif %}
 
-                                    {% if product.is_available %}
+                            </td>
 
-                                        <span class="badge bg-success">
-                                            Yes
-                                        </span>
 
-                                    {% else %}
+                            <td>
 
-                                        <span class="badge bg-secondary">
-                                            No
-                                        </span>
+                                {% if product.is_available %}
 
-                                    {% endif %}
+                                    <span class="admin-status-badge admin-status-active">
+                                        <span></span>
+                                        Available
+                                    </span>
 
-                                </td>
+                                {% else %}
 
-                                <td>
+                                    <span class="admin-status-badge admin-status-inactive">
+                                        <span></span>
+                                        Unavailable
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="admin-product-actions">
 
                                     <a
                                         href="{% url 'admin_product_edit' product.id %}"
-                                        class="btn btn-sm btn-outline-success"
+                                        class="admin-edit-btn"
                                     >
                                         Edit
                                     </a>
@@ -118,7 +182,7 @@
                                     <form
                                         method="POST"
                                         action="{% url 'admin_product_delete' product.id %}"
-                                        class="d-inline"
+                                        class="admin-delete-form"
                                         onsubmit="return confirm('Delete this product?');"
                                     >
 
@@ -126,29 +190,50 @@
 
                                         <button
                                             type="submit"
-                                            class="btn btn-sm btn-outline-danger"
+                                            class="admin-delete-btn"
                                         >
                                             Delete
                                         </button>
 
                                     </form>
 
-                                </td>
+                                </div>
 
-                            </tr>
+                            </td>
+
+                        </tr>
 
                         {% empty %}
 
-                            <tr>
+                        <tr>
 
-                                <td
-                                    colspan="6"
-                                    class="text-center py-4"
+                            <td
+                                colspan="6"
+                                class="admin-empty-cell"
+                            >
+
+                                <div class="admin-empty-icon">
+                                    📦
+                                </div>
+
+                                <strong>
+                                    No products found
+                                </strong>
+
+                                <p>
+                                    Add your first product to get started.
+                                </p>
+
+                                <a
+                                    href="{% url 'admin_product_add' %}"
+                                    class="admin-primary-btn"
                                 >
-                                    No products found.
-                                </td>
+                                    + Add Product
+                                </a>
 
-                            </tr>
+                            </td>
+
+                        </tr>
 
                         {% endfor %}
 
@@ -162,6 +247,6 @@
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}
