@@ -797,7 +797,8 @@ The next development phase should therefore focus on **completing, hardening, te
 - [x] 7-day sales forecasting
 - [x] Inventory prediction
 - [x] Reorder recommendation
-- [x] Step 26.1 — Accounts Automated Tests
+- [x] Automated Tests
+- [x] Security
 
 ### Current checkpoint
 
@@ -805,7 +806,7 @@ The next development phase should therefore focus on **completing, hardening, te
 
 ### Next checkpoint
 
-**Step 26.2 — Products Automated Tests**
+***
 
 ---
 

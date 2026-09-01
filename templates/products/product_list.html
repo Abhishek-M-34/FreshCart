@@ -1,59 +1,41 @@
 {% extends "base.html" %}
 
-{% block title %}
-    FreshCart - Products
-{% endblock %}
+{% block title %}Products | FreshCart{% endblock %}
 
 {% block content %}
 
-<div class="container py-5">
+<section class="products-page">
 
-    <div class="text-center mb-5">
+    <div class="container">
 
-        <h1 class="fw-bold">
-            Shop Fresh Products
-        </h1>
+        <div class="products-header">
 
-        <p class="text-muted">
-            Fresh products delivered to your doorstep.
-        </p>
+            <div>
+                <span class="section-label">FRESHCART STORE</span>
 
-    </div>
+                <h1>Fresh products for you</h1>
+
+                <p>
+                    Browse our selection of fresh groceries and everyday essentials.
+                </p>
+            </div>
+
+        </div>
 
 
-    <!-- Categories -->
+        {% if categories %}
 
-    <div class="mb-5">
+        <div class="category-bar">
 
-        <h4 class="mb-3">
-            Categories
-        </h4>
-
-        <div class="d-flex flex-wrap gap-2">
-
-            <a
-                href="{% url 'product_list' %}"
-                class="btn
-                {% if not selected_category %}
-                    btn-success
-                {% else %}
-                    btn-outline-success
-                {% endif %}"
-            >
+            <a href="{% url 'product_list' %}"
+               class="category-pill {% if not selected_category %}active{% endif %}">
                 All
             </a>
 
             {% for category in categories %}
 
-                <a
-                    href="?category={{ category.id }}"
-                    class="btn
-                    {% if selected_category == category.id|stringformat:'s' %}
-                        btn-success
-                    {% else %}
-                        btn-outline-success
-                    {% endif %}"
-                >
+                <a href="?category={{ category.id }}"
+                   class="category-pill {% if selected_category == category.id|stringformat:'s' %}active{% endif %}">
                     {{ category.name }}
                 </a>
 
@@ -61,101 +43,134 @@
 
         </div>
 
-    </div>
+        {% endif %}
 
 
-    <!-- Products -->
+        {% if products %}
 
-    <div class="row g-4">
+        <div class="products-grid">
 
-        {% for product in products %}
+            {% for product in products %}
 
-            <div class="col-md-6 col-lg-4 col-xl-3">
+            <article class="product-card">
 
-                <div class="card h-100 shadow-sm product-card">
+                <a href="{% url 'product_detail' product.id %}"
+                   class="product-image-wrapper">
 
                     {% if product.image %}
-
                         <img
                             src="{{ product.image.url }}"
-                            class="card-img-top product-image"
                             alt="{{ product.name }}"
+                            class="product-image"
                         >
-
                     {% else %}
-
-                        <div
-                            class="product-image
-                            d-flex
-                            align-items-center
-                            justify-content-center
-                            bg-light"
-                        >
-                            <span class="text-muted">
-                                No Image
-                            </span>
+                        <div class="product-placeholder">
+                            🛒
                         </div>
+                    {% endif %}
+
+                </a>
+
+
+                <div class="product-card-content">
+
+                    {% if product.category %}
+                        <span class="product-category">
+                            {{ product.category.name }}
+                        </span>
+                    {% endif %}
+
+
+                    <h2 class="product-name">
+
+                        <a href="{% url 'product_detail' product.id %}">
+                            {{ product.name }}
+                        </a>
+
+                    </h2>
+
+
+                    {% if product.description %}
+
+                    <p class="product-description">
+                        {{ product.description|truncatechars:75 }}
+                    </p>
 
                     {% endif %}
 
 
-                    <div class="card-body d-flex flex-column">
+                    <div class="product-card-bottom">
 
-                        <small class="text-success">
-                            {{ product.category.name }}
-                        </small>
+                        <div>
 
-                        <h5 class="card-title mt-2">
-                            {{ product.name }}
-                        </h5>
-
-                        <p class="card-text text-muted">
-                            {{ product.description|truncatewords:12 }}
-                        </p>
-
-                        <div class="mt-auto">
-
-                            <h5 class="fw-bold">
+                            <span class="product-price">
                                 ₹{{ product.price }}
-                            </h5>
+                            </span>
 
-                            <p class="small text-muted">
-                                {{ product.stock }} available
-                            </p>
-
-                            <a
-                                href="{% url 'product_detail' product.id %}"
-                                class="btn btn-success w-100"
-                            >
-                                View Product
-                            </a>
+                            {% if product.stock > 0 %}
+                                <span class="stock-status in-stock">
+                                    In stock
+                                </span>
+                            {% else %}
+                                <span class="stock-status out-stock">
+                                    Out of stock
+                                </span>
+                            {% endif %}
 
                         </div>
+
+
+                        {% if product.stock > 0 %}
+
+                        <form method="post"
+                              action="{% url 'add_to_cart' product.id %}">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="add-cart-btn"
+                                    aria-label="Add {{ product.name }} to cart">
+                                +
+                            </button>
+
+                        </form>
+
+                        {% endif %}
 
                     </div>
 
                 </div>
 
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-products">
+
+            <div class="empty-products-icon">
+                🛒
             </div>
 
-        {% empty %}
+            <h2>No products found</h2>
 
-            <div class="col-12 text-center py-5">
+            <p>
+                We couldn't find any products matching your selection.
+            </p>
 
-                <h4>
-                    No products available
-                </h4>
+            <a href="{% url 'product_list' %}" class="btn btn-primary">
+                View All Products
+            </a>
 
-                <p class="text-muted">
-                    Please check again later.
-                </p>
+        </div>
 
-            </div>
-
-        {% endfor %}
+        {% endif %}
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}

@@ -1,62 +1,203 @@
 {% extends "base.html" %}
 
-{% block title %}
-    FreshCart - Home
-{% endblock %}
+{% block title %}FreshCart | Fresh Products Delivered{% endblock %}
 
 {% block content %}
 
-<section class="hero-section bg-success text-white">
+<section class="hero-section">
 
-    <div class="container text-center">
+    <div class="hero-container">
 
-        <h1 class="display-4 fw-bold">
-            Fresh Groceries,
-            Delivered Fresh
-        </h1>
+        <div class="hero-content">
 
-        <p class="lead mt-3">
-            Shop fresh vegetables, fruits, dairy products
-            and more from FreshCart.
-        </p>
+            <span class="hero-badge">
+                🥬 Freshness you can trust
+            </span>
 
-        <a
-            href="{% url 'product_list' %}"
-            class="btn btn-light btn-lg mt-3"
-        >
-            Shop Now
-        </a>
+            <h1>
+                Fresh groceries,
+                <span>delivered simply.</span>
+            </h1>
+
+            <p>
+                Shop fresh fruits, vegetables, dairy and everyday essentials
+                from FreshCart — all in one place.
+            </p>
+
+            <div class="hero-actions">
+
+                <a href="{% url 'product_list' %}" class="btn btn-primary">
+                    Shop Now →
+                </a>
+
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'register' %}" class="btn btn-secondary">
+                        Create Account
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="hero-visual">
+
+            <div class="hero-circle">
+
+                <div class="hero-product">
+                    🥦
+                </div>
+
+                <div class="hero-product hero-product-2">
+                    🍎
+                </div>
+
+                <div class="hero-product hero-product-3">
+                    🍌
+                </div>
+
+                <div class="hero-cart">
+                    🛒
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
 </section>
 
 
-<section class="container py-5">
+<section class="features-section">
 
-    <div class="text-center">
+    <div class="container">
 
-        {% if user.is_authenticated %}
+        <div class="section-heading">
 
-            <h2>
-                Welcome back, {{ user.username }}!
-            </h2>
-
-            <p class="text-muted">
-                Ready to continue shopping?
-            </p>
-
-        {% else %}
+            <span class="section-label">
+                WHY FRESHCART
+            </span>
 
             <h2>
-                Welcome to FreshCart
+                Shopping made easier
             </h2>
 
-            <p class="text-muted">
-                Create an account and start shopping.
+            <p>
+                Everything you need for a convenient grocery shopping
+                experience.
             </p>
 
-        {% endif %}
+        </div>
+
+
+        <div class="features-grid">
+
+            <div class="feature-card card">
+
+                <div class="feature-icon">
+                    🥬
+                </div>
+
+                <h3>
+                    Fresh Products
+                </h3>
+
+                <p>
+                    Find quality groceries and everyday essentials
+                    in one convenient place.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card card">
+
+                <div class="feature-icon">
+                    🛒
+                </div>
+
+                <h3>
+                    Easy Shopping
+                </h3>
+
+                <p>
+                    Add your favorite products to the cart and
+                    checkout with ease.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card card">
+
+                <div class="feature-icon">
+                    📦
+                </div>
+
+                <h3>
+                    Track Orders
+                </h3>
+
+                <p>
+                    Keep track of your purchases and view your
+                    order history anytime.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card card">
+
+                <div class="feature-icon">
+                    📊
+                </div>
+
+                <h3>
+                    Smart Analytics
+                </h3>
+
+                <p>
+                    FreshCart includes analytics and intelligent
+                    inventory insights for administrators.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="cta-section">
+
+    <div class="container">
+
+        <div class="cta-card">
+
+            <div>
+
+                <span class="section-label">
+                    READY TO SHOP?
+                </span>
+
+                <h2>
+                    Bring freshness to your cart.
+                </h2>
+
+                <p>
+                    Browse our products and find everything you need.
+                </p>
+
+            </div>
+
+            <a href="{% url 'product_list' %}" class="btn btn-primary">
+                Explore Products →
+            </a>
+
+        </div>
 
     </div>
 
