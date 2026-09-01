@@ -6,95 +6,171 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="admin-customers-page">
 
-    <div class="mb-4">
+    <div class="container">
 
-        <h1 class="fw-bold">
-            Customers
-        </h1>
+        <div class="admin-page-header">
 
-        <p class="text-muted">
-            View and manage FreshCart customers.
-        </p>
+            <div>
+                <span class="section-label">
+                    CUSTOMER MANAGEMENT
+                </span>
 
-    </div>
+                <h1>
+                    Customers
+                </h1>
+
+                <p>
+                    View and manage FreshCart customers.
+                </p>
+            </div>
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="admin-secondary-btn"
+            >
+                ← Dashboard
+            </a>
+
+        </div>
 
 
-    <div class="card shadow-sm">
+        <div class="admin-customer-card">
 
-        <div class="card-body">
+            <div class="admin-customer-card-header">
 
-            <div class="table-responsive">
+                <div>
+                    <h2>All Customers</h2>
 
-                <table class="table table-hover align-middle">
+                    <p>
+                        Customer accounts and purchasing activity.
+                    </p>
+                </div>
 
-                    <thead class="table-success">
+            </div>
+
+
+            <div class="admin-customer-table-wrapper">
+
+                <table class="admin-customer-table">
+
+                    <thead>
 
                         <tr>
-                            <th>Username</th>
+                            <th>Customer</th>
                             <th>Email</th>
                             <th>Joined</th>
                             <th>Orders</th>
                             <th>Total Spent</th>
-                            <th>Action</th>
+                            <th class="admin-customer-actions-heading">
+                                Action
+                            </th>
                         </tr>
 
                     </thead>
+
 
                     <tbody>
 
                         {% for customer in customers %}
 
-                            <tr>
+                        <tr>
 
-                                <td>
+                            <td>
+
+                                <div class="admin-customer-name">
+
+                                    <div class="admin-customer-avatar">
+                                        {{ customer.username|first|upper }}
+                                    </div>
+
                                     <strong>
                                         {{ customer.username }}
                                     </strong>
-                                </td>
 
-                                <td>
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="admin-customer-email">
                                     {{ customer.email|default:"Not provided" }}
-                                </td>
+                                </span>
 
-                                <td>
+                            </td>
+
+
+                            <td>
+
+                                <span class="admin-customer-date">
                                     {{ customer.date_joined|date:"d M Y" }}
-                                </td>
+                                </span>
 
-                                <td>
+                            </td>
+
+
+                            <td>
+
+                                <span class="admin-order-count">
                                     {{ customer.order_count }}
-                                </td>
+                                </span>
 
-                                <td>
+                            </td>
+
+
+                            <td>
+
+                                <strong class="admin-customer-spent">
                                     ₹{{ customer.total_spent|default:0 }}
-                                </td>
+                                </strong>
 
-                                <td>
+                            </td>
+
+
+                            <td>
+
+                                <div class="admin-customer-actions">
 
                                     <a
                                         href="{% url 'admin_customer_detail' customer.id %}"
-                                        class="btn btn-sm btn-outline-success"
+                                        class="admin-view-btn"
                                     >
                                         View
                                     </a>
 
-                                </td>
+                                </div>
 
-                            </tr>
+                            </td>
+
+                        </tr>
 
                         {% empty %}
 
-                            <tr>
+                        <tr>
 
-                                <td
-                                    colspan="6"
-                                    class="text-center py-4"
-                                >
-                                    No customers found.
-                                </td>
+                            <td
+                                colspan="6"
+                                class="admin-customer-empty"
+                            >
 
-                            </tr>
+                                <div class="admin-empty-icon">
+                                    👤
+                                </div>
+
+                                <strong>
+                                    No customers found
+                                </strong>
+
+                                <p>
+                                    There are currently no customer accounts.
+                                </p>
+
+                            </td>
+
+                        </tr>
 
                         {% endfor %}
 
@@ -108,6 +184,6 @@
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}

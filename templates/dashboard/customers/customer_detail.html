@@ -6,49 +6,153 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="admin-customer-detail-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container">
 
-        <div>
+        <!-- Header -->
 
-            <h1 class="fw-bold">
-                {{ customer.username }}
-            </h1>
+        <div class="admin-customer-detail-header">
 
-            <p class="text-muted">
-                Customer Details
-            </p>
+            <div>
+
+                <a
+                    href="{% url 'admin_customer_list' %}"
+                    class="admin-form-back"
+                >
+                    ← Back to Customers
+                </a>
+
+                <span class="section-label">
+                    CUSTOMER PROFILE
+                </span>
+
+                <div class="admin-customer-profile-heading">
+
+                    <div class="admin-customer-large-avatar">
+                        {{ customer.username|first|upper }}
+                    </div>
+
+                    <div>
+
+                        <h1>
+                            {{ customer.username }}
+                        </h1>
+
+                        <p>
+                            Customer Details
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
-        <a
-            href="{% url 'admin_customer_list' %}"
-            class="btn btn-outline-secondary"
-        >
-            Back to Customers
-        </a>
 
-    </div>
+        <!-- Statistics -->
+
+        <div class="admin-customer-stat-grid">
+
+            <div class="admin-customer-stat-card">
+
+                <span>
+                    Total Orders
+                </span>
+
+                <strong>
+                    {{ orders|length }}
+                </strong>
+
+            </div>
 
 
-    <!-- Customer Information -->
+            <div class="admin-customer-stat-card">
 
-    <div class="row g-4 mb-4">
+                <span>
+                    Total Spent
+                </span>
 
-        <div class="col-md-4">
+                <strong>
+                    ₹{{ total_spent }}
+                </strong>
 
-            <div class="card shadow-sm h-100">
+            </div>
 
-                <div class="card-body">
 
-                    <p class="text-muted mb-1">
+            <div class="admin-customer-stat-card">
+
+                <span>
+                    Member Since
+                </span>
+
+                <strong>
+                    {{ customer.date_joined|date:"d M Y" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Account Information -->
+
+        <div class="admin-detail-card">
+
+            <div class="admin-detail-card-header">
+
+                <div>
+                    <span class="analytics-chart-label">
+                        ACCOUNT
+                    </span>
+
+                    <h2>
+                        Account Information
+                    </h2>
+                </div>
+
+            </div>
+
+
+            <div class="admin-account-details">
+
+                <div class="admin-account-detail-item">
+
+                    <span>
                         Username
-                    </p>
+                    </span>
 
-                    <h4>
+                    <strong>
                         {{ customer.username }}
-                    </h4>
+                    </strong>
+
+                </div>
+
+
+                <div class="admin-account-detail-item">
+
+                    <span>
+                        Email
+                    </span>
+
+                    <strong>
+                        {{ customer.email|default:"Not provided" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="admin-account-detail-item">
+
+                    <span>
+                        Joined
+                    </span>
+
+                    <strong>
+                        {{ customer.date_joined|date:"d M Y, h:i A" }}
+                    </strong>
 
                 </div>
 
@@ -57,88 +161,30 @@
         </div>
 
 
-        <div class="col-md-4">
+        <!-- Order History -->
 
-            <div class="card shadow-sm h-100">
+        <div class="admin-detail-card">
 
-                <div class="card-body">
+            <div class="admin-detail-card-header">
 
-                    <p class="text-muted mb-1">
-                        Total Orders
-                    </p>
+                <div>
 
-                    <h4>
-                        {{ orders|length }}
-                    </h4>
+                    <span class="analytics-chart-label">
+                        PURCHASE ACTIVITY
+                    </span>
 
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="col-md-4">
-
-            <div class="card shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <p class="text-muted mb-1">
-                        Total Spent
-                    </p>
-
-                    <h4>
-                        ₹{{ total_spent }}
-                    </h4>
+                    <h2>
+                        Order History
+                    </h2>
 
                 </div>
 
             </div>
 
-        </div>
 
-    </div>
+            <div class="admin-order-table-wrapper">
 
-
-    <!-- Account Information -->
-
-    <div class="card shadow-sm mb-4">
-
-        <div class="card-body">
-
-            <h4 class="fw-bold mb-3">
-                Account Information
-            </h4>
-
-            <p>
-                <strong>Email:</strong>
-                {{ customer.email|default:"Not provided" }}
-            </p>
-
-            <p class="mb-0">
-                <strong>Joined:</strong>
-                {{ customer.date_joined|date:"d M Y, h:i A" }}
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <!-- Orders -->
-
-    <div class="card shadow-sm">
-
-        <div class="card-body">
-
-            <h4 class="fw-bold mb-4">
-                Order History
-            </h4>
-
-            <div class="table-responsive">
-
-                <table class="table align-middle">
+                <table class="admin-order-table">
 
                     <thead>
 
@@ -152,53 +198,78 @@
 
                     </thead>
 
+
                     <tbody>
 
                         {% for order in orders %}
 
-                            <tr>
+                        <tr>
 
-                                <td>
+                            <td>
+                                <strong>
                                     #{{ order.id }}
-                                </td>
+                                </strong>
+                            </td>
 
-                                <td>
-                                    {{ order.created_at|date:"d M Y" }}
-                                </td>
 
-                                <td>
+                            <td>
+                                {{ order.created_at|date:"d M Y" }}
+                            </td>
+
+
+                            <td>
+                                <strong>
                                     ₹{{ order.total_amount }}
-                                </td>
+                                </strong>
+                            </td>
 
-                                <td>
+
+                            <td>
+
+                                <span class="admin-order-status">
                                     {{ order.get_status_display }}
-                                </td>
+                                </span>
 
-                                <td>
+                            </td>
 
-                                    <a
-                                        href="{% url 'admin_order_detail' order.id %}"
-                                        class="btn btn-sm btn-outline-success"
-                                    >
-                                        View
-                                    </a>
 
-                                </td>
+                            <td>
 
-                            </tr>
+                                <a
+                                    href="{% url 'admin_order_detail' order.id %}"
+                                    class="admin-view-btn"
+                                >
+                                    View
+                                </a>
+
+                            </td>
+
+                        </tr>
 
                         {% empty %}
 
-                            <tr>
+                        <tr>
 
-                                <td
-                                    colspan="5"
-                                    class="text-center py-4"
-                                >
+                            <td
+                                colspan="5"
+                                class="admin-customer-empty"
+                            >
+
+                                <div class="admin-empty-icon">
+                                    📦
+                                </div>
+
+                                <strong>
+                                    No orders yet
+                                </strong>
+
+                                <p>
                                     This customer has no orders.
-                                </td>
+                                </p>
 
-                            </tr>
+                            </td>
+
+                        </tr>
 
                         {% endfor %}
 
@@ -212,6 +283,6 @@
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}
