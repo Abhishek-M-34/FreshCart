@@ -1,0 +1,7 @@
+Django==6.1
+python-dotenv
+Pillow
+pandas
+scikit-learn
+plotly
+psycopg[binary]
