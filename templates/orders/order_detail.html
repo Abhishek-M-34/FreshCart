@@ -6,119 +6,211 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="order-detail-page">
 
-    <a
-        href="{% url 'order_history' %}"
-        class="text-decoration-none"
-    >
-        ← Back to My Orders
-    </a>
+    <div class="container">
 
-    <div class="d-flex justify-content-between align-items-center mt-4">
+        <!-- Back -->
 
-        <h1 class="fw-bold">
-            Order #{{ order.id }}
-        </h1>
-
-        <span class="badge bg-success fs-6">
-            {{ order.get_status_display }}
-        </span>
-
-    </div>
-
-    <p class="text-muted">
-        Placed on
-        {{ order.created_at|date:"d M Y, h:i A" }}
-    </p>
-
-    <hr>
+        <a
+            href="{% url 'order_history' %}"
+            class="order-detail-back"
+        >
+            ← Back to My Orders
+        </a>
 
 
-    <!-- Order Items -->
+        <!-- Header -->
 
-    <h3 class="mb-3">
-        Order Items
-    </h3>
+        <div class="order-detail-header">
 
-    {% for item in items %}
+            <div>
 
-        <div class="card mb-3">
+                <span class="section-label">
+                    ORDER DETAILS
+                </span>
 
-            <div class="card-body">
+                <h1>
+                    Order #{{ order.id }}
+                </h1>
 
-                <div class="row">
+                <p>
+                    Placed on
+                    {{ order.created_at|date:"d M Y, h:i A" }}
+                </p>
 
-                    <div class="col-md-6">
+            </div>
 
-                        <h5>
-                            {{ item.product_name }}
-                        </h5>
+
+            <span class="order-detail-status">
+                {{ order.get_status_display }}
+            </span>
+
+        </div>
+
+
+        <div class="order-detail-layout">
+
+            <!-- Main Order Items -->
+
+            <div class="order-detail-main">
+
+                <div class="order-detail-card">
+
+                    <div class="order-detail-card-header">
+
+                        <div>
+
+                            <h2>
+                                Order Items
+                            </h2>
+
+                            <p>
+                                Items included in this order
+                            </p>
+
+                        </div>
 
                     </div>
 
-                    <div class="col-md-2">
-                        ₹{{ item.price }}
+
+                    <div class="order-detail-divider"></div>
+
+
+                    <div class="order-detail-items">
+
+                        {% for item in items %}
+
+                            <div class="order-detail-item">
+
+                                <div class="order-detail-item-icon">
+                                    🛒
+                                </div>
+
+
+                                <div class="order-detail-item-info">
+
+                                    <h3>
+                                        {{ item.product_name }}
+                                    </h3>
+
+                                    <p>
+                                        ₹{{ item.price }}
+                                        ×
+                                        {{ item.quantity }}
+                                    </p>
+
+                                </div>
+
+
+                                <strong class="order-detail-item-total">
+                                    ₹{{ item.subtotal }}
+                                </strong>
+
+                            </div>
+
+                        {% endfor %}
+
                     </div>
 
-                    <div class="col-md-2">
-                        × {{ item.quantity }}
-                    </div>
 
-                    <div class="col-md-2">
-                        ₹{{ item.subtotal }}
+                    <div class="order-detail-divider"></div>
+
+
+                    <div class="order-detail-total">
+
+                        <span>
+                            Total Amount
+                        </span>
+
+                        <strong>
+                            ₹{{ order.total_amount }}
+                        </strong>
+
                     </div>
 
                 </div>
 
             </div>
 
-        </div>
 
-    {% endfor %}
+            <!-- Sidebar -->
+
+            <aside class="order-detail-sidebar">
+
+                <!-- Delivery Address -->
+
+                <div class="order-detail-card">
+
+                    <div class="order-detail-card-header">
+
+                        <div class="order-detail-sidebar-icon">
+                            📍
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Delivery Address
+                            </h2>
+
+                            <p>
+                                Your order will be delivered here
+                            </p>
+
+                        </div>
+
+                    </div>
 
 
-    <!-- Total -->
+                    <div class="order-detail-divider"></div>
 
-    <div class="card mt-4">
 
-        <div class="card-body">
+                    <p class="order-address">
+                        {{ order.shipping_address }}
+                    </p>
 
-            <div class="d-flex justify-content-between">
+                </div>
 
-                <h4>
-                    Total
-                </h4>
 
-                <h4>
-                    ₹{{ order.total_amount }}
-                </h4>
+                <!-- Order Status -->
 
-            </div>
+                <div class="order-detail-card order-status-card">
+
+                    <div class="order-detail-sidebar-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Order Status
+                        </h3>
+
+                        <span class="order-status-value">
+                            {{ order.get_status_display }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Continue Shopping -->
+
+                <a
+                    href="{% url 'product_list' %}"
+                    class="order-continue-shopping"
+                >
+                    Continue Shopping →
+                </a>
+
+            </aside>
 
         </div>
 
     </div>
 
-
-    <!-- Address -->
-
-    <div class="card mt-4">
-
-        <div class="card-body">
-
-            <h4>
-                Delivery Address
-            </h4>
-
-            <p class="mb-0">
-                {{ order.shipping_address }}
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
+</section>
 
 {% endblock %}

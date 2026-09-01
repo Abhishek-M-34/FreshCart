@@ -1,99 +1,141 @@
 {% extends "base.html" %}
 
 {% block title %}
-    My Orders - FreshCart
+My Orders - FreshCart
 {% endblock %}
 
 {% block content %}
 
-<div class="container py-5">
+<section class="order-history-page">
 
-    <h1 class="fw-bold mb-4">
-        My Orders
-    </h1>
+    <div class="container">
 
-    {% if orders %}
+        <div class="order-history-header">
 
-        <div class="table-responsive">
+            <div>
+                <span class="section-label">
+                    YOUR ACCOUNT
+                </span>
 
-            <table class="table table-hover align-middle">
+                <h1>
+                    My Orders
+                </h1>
 
-                <thead class="table-success">
+                <p>
+                    View and track all your FreshCart orders.
+                </p>
+            </div>
 
-                    <tr>
-                        <th>Order</th>
-                        <th>Date</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
+        </div>
 
-                </thead>
 
-                <tbody>
+        {% if orders %}
 
-                    {% for order in orders %}
+            <div class="orders-list">
 
-                        <tr>
+                {% for order in orders %}
 
-                            <td>
-                                #{{ order.id }}
-                            </td>
+                    <div class="order-history-card">
 
-                            <td>
-                                {{ order.created_at|date:"d M Y, h:i A" }}
-                            </td>
+                        <div class="order-history-main">
 
-                            <td>
-                                ₹{{ order.total_amount }}
-                            </td>
+                            <div class="order-history-id">
 
-                            <td>
-                                <span class="badge bg-secondary">
+                                <span>
+                                    ORDER
+                                </span>
+
+                                <strong>
+                                    #{{ order.id }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="order-history-detail">
+
+                                <span>
+                                    Date
+                                </span>
+
+                                <strong>
+                                    {{ order.created_at|date:"d M Y, h:i A" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="order-history-detail">
+
+                                <span>
+                                    Total
+                                </span>
+
+                                <strong class="order-history-total">
+                                    ₹{{ order.total_amount }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="order-history-status">
+
+                                <span>
+                                    Status
+                                </span>
+
+                                <span class="order-status-badge">
                                     {{ order.get_status_display }}
                                 </span>
-                            </td>
 
-                            <td>
+                            </div>
 
-                                <a
-                                    href="{% url 'order_detail' order.id %}"
-                                    class="btn btn-sm btn-outline-success"
-                                >
-                                    View
-                                </a>
 
-                            </td>
+                            <a
+                                href="{% url 'order_detail' order.id %}"
+                                class="order-view-btn"
+                            >
+                                View Order →
+                            </a>
 
-                        </tr>
+                        </div>
 
-                    {% endfor %}
+                    </div>
 
-                </tbody>
+                {% endfor %}
 
-            </table>
+            </div>
 
-        </div>
+        {% else %}
 
-    {% else %}
+            <div class="empty-orders">
 
-        <div class="text-center py-5">
+                <div class="empty-orders-icon">
+                    📦
+                </div>
 
-            <h3>
-                No orders yet
-            </h3>
+                <h2>
+                    No orders yet
+                </h2>
 
-            <a
-                href="{% url 'product_list' %}"
-                class="btn btn-success mt-3"
-            >
-                Start Shopping
-            </a>
+                <p>
+                    You haven't placed any orders yet.
+                    Start shopping and your orders will appear here.
+                </p>
 
-        </div>
+                <a
+                    href="{% url 'product_list' %}"
+                    class="btn btn-primary"
+                >
+                    Start Shopping
+                </a>
 
-    {% endif %}
+            </div>
 
-</div>
+        {% endif %}
+
+    </div>
+
+</section>
 
 {% endblock %}

@@ -1,60 +1,70 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Order Successful - FreshCart
+Order Successful - FreshCart
 {% endblock %}
 
 {% block content %}
 
-<div class="container py-5">
+<section class="order-success-page">
 
-    <div class="text-center">
+    <div class="container">
 
-        <div class="mb-4">
+        <div class="order-success-card">
 
-            <h1 class="text-success fw-bold">
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <span class="section-label">
+                ORDER CONFIRMED
+            </span>
+
+            <h1>
                 Order Placed Successfully!
             </h1>
 
-            <p class="lead">
+            <p class="success-message">
                 Thank you for shopping with FreshCart.
+                Your order has been received successfully.
             </p>
 
-        </div>
+
+            <div class="success-order-info">
+
+                <div>
+                    <span>Order Number</span>
+                    <strong>#{{ order.id }}</strong>
+                </div>
+
+                <div>
+                    <span>Total Amount</span>
+                    <strong>₹{{ order.total_amount }}</strong>
+                </div>
+
+                <div>
+                    <span>Status</span>
+                    <strong>{{ order.get_status_display }}</strong>
+                </div>
+
+            </div>
 
 
-        <div class="card shadow-sm mx-auto" style="max-width: 500px;">
+            <div class="success-divider"></div>
 
-            <div class="card-body">
 
-                <h3>
-                    Order #{{ order.id }}
-                </h3>
-
-                <hr>
-
-                <p>
-                    Total:
-                    <strong>
-                        ₹{{ order.total_amount }}
-                    </strong>
-                </p>
-
-                <p>
-                    Status:
-                    {{ order.get_status_display }}
-                </p>
+            <div class="success-actions">
 
                 <a
                     href="{% url 'order_detail' order.id %}"
-                    class="btn btn-outline-success"
+                    class="btn btn-primary"
                 >
                     View Order
                 </a>
 
                 <a
                     href="{% url 'product_list' %}"
-                    class="btn btn-success"
+                    class="success-secondary-btn"
                 >
                     Continue Shopping
                 </a>
@@ -65,6 +75,6 @@
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}

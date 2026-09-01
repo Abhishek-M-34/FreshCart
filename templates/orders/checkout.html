@@ -6,110 +6,234 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="checkout-page">
 
-    <h1 class="fw-bold mb-4">
-        Checkout
-    </h1>
+    <div class="container">
 
-    {% if error %}
+        <!-- Checkout Header -->
 
-        <div class="alert alert-danger">
-            {{ error }}
+        <div class="checkout-header">
+
+            <span class="section-label">
+                FRESHCART CHECKOUT
+            </span>
+
+            <h1>
+                Complete Your Order
+            </h1>
+
+            <p>
+                Enter your delivery details and review your order before placing it.
+            </p>
+
         </div>
 
-    {% endif %}
+
+        {% if error %}
+
+            <div class="checkout-error">
+                <span class="checkout-error-icon">!</span>
+
+                <div>
+                    <strong>
+                        Unable to place your order
+                    </strong>
+
+                    <p>
+                        {{ error }}
+                    </p>
+                </div>
+            </div>
+
+        {% endif %}
 
 
-    <div class="row">
+        <div class="checkout-layout">
 
-        <!-- Address -->
+            <!-- Delivery Information -->
 
-        <div class="col-lg-7">
+            <div class="checkout-form-card">
 
-            <div class="card shadow-sm">
+                <div class="checkout-card-header">
 
-                <div class="card-body">
+                    <div class="checkout-step">
+                        1
+                    </div>
 
-                    <h4>
-                        Delivery Address
-                    </h4>
+                    <div>
+                        <h2>
+                            Delivery Address
+                        </h2>
 
-                    <hr>
-
-                    <form method="POST">
-
-                        {% csrf_token %}
-
-                        {{ form.as_p }}
-
-                        <button
-                            type="submit"
-                            class="btn btn-success btn-lg"
-                        >
-                            Place Order
-                        </button>
-
-                    </form>
+                        <p>
+                            Where should we deliver your order?
+                        </p>
+                    </div>
 
                 </div>
 
+
+                <div class="checkout-card-divider"></div>
+
+
+                <form method="POST" class="checkout-form">
+
+                    {% csrf_token %}
+
+
+                    <div class="checkout-field">
+
+                        <label for="{{ form.shipping_address.id_for_label }}">
+                            Delivery Address
+                        </label>
+
+                        {{ form.shipping_address }}
+
+                        {% if form.shipping_address.errors %}
+
+                            <div class="checkout-field-error">
+
+                                {{ form.shipping_address.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary checkout-place-order"
+                    >
+                        Place Order
+                    </button>
+
+
+                    <a
+                        href="{% url 'cart' %}"
+                        class="checkout-back"
+                    >
+                        ← Back to Cart
+                    </a>
+
+                </form>
+
             </div>
 
-        </div>
+
+            <!-- Order Summary -->
+
+            <aside class="checkout-summary">
+
+                <div class="checkout-card-header">
+
+                    <div class="checkout-step">
+                        2
+                    </div>
+
+                    <div>
+                        <h2>
+                            Order Summary
+                        </h2>
+
+                        <p>
+                            Review your items
+                        </p>
+                    </div>
+
+                </div>
 
 
-        <!-- Order Summary -->
+                <div class="checkout-card-divider"></div>
 
-        <div class="col-lg-5 mt-4 mt-lg-0">
 
-            <div class="card shadow-sm">
-
-                <div class="card-body">
-
-                    <h4>
-                        Order Summary
-                    </h4>
-
-                    <hr>
+                <div class="checkout-summary-items">
 
                     {% for item in items %}
 
-                        <div class="d-flex justify-content-between mb-3">
+                        <div class="checkout-summary-item">
 
-                            <span>
-                                {{ item.product.name }}
-                                × {{ item.quantity }}
-                            </span>
+                            <div class="checkout-summary-product">
 
-                            <span>₹{{ item.subtotal }}</span>
+                                <div class="checkout-summary-image">
+
+                                    {% if item.product.image %}
+
+                                        <img
+                                            src="{{ item.product.image.url }}"
+                                            alt="{{ item.product.name }}"
+                                        >
+
+                                    {% else %}
+
+                                        <span>🛒</span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="checkout-summary-info">
+
+                                    <strong>
+                                        {{ item.product.name }}
+                                    </strong>
+
+                                    <span>
+                                        Qty: {{ item.quantity }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <strong class="checkout-item-price">
+                                ₹{{ item.subtotal }}
+                            </strong>
 
                         </div>
 
                     {% endfor %}
 
-                    <hr>
+                </div>
 
-                    <div class="d-flex justify-content-between">
 
-                        <strong>
-                            Total
-                        </strong>
+                <div class="checkout-summary-divider"></div>
 
-                        <strong>
-                            ₹{{ total }}
-                        </strong>
 
-                    </div>
+                <div class="checkout-total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong>
+                        ₹{{ total }}
+                    </strong>
 
                 </div>
 
-            </div>
+
+                <div class="checkout-secure-note">
+
+                    <span>
+                        🔒
+                    </span>
+
+                    <p>
+                        Your order details are securely processed.
+                    </p>
+
+                </div>
+
+            </aside>
 
         </div>
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}
