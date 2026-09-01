@@ -6,97 +6,198 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="admin-orders-page">
 
-    <div class="mb-4">
+    <div class="container">
 
-        <h1 class="fw-bold">
-            Orders
-        </h1>
+        <!-- Header -->
 
-        <p class="text-muted">
-            Manage customer orders.
-        </p>
+        <div class="admin-page-header">
 
-    </div>
+            <div>
+
+                <span class="section-label">
+                    ORDER MANAGEMENT
+                </span>
+
+                <h1>
+                    Orders
+                </h1>
+
+                <p>
+                    Monitor and manage customer orders.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="admin-secondary-btn"
+            >
+                ← Dashboard
+            </a>
+
+        </div>
 
 
-    <div class="card shadow-sm">
+        <!-- Orders Card -->
 
-        <div class="card-body">
+        <div class="admin-orders-card">
 
-            <div class="table-responsive">
+            <div class="admin-orders-card-header">
 
-                <table class="table table-hover align-middle">
+                <div>
 
-                    <thead class="table-success">
+                    <h2>
+                        All Orders
+                    </h2>
+
+                    <p>
+                        Review order details, customers, totals and status.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-orders-table-wrapper">
+
+                <table class="admin-orders-table">
+
+                    <thead>
 
                         <tr>
-                            <th>Order</th>
-                            <th>Customer</th>
-                            <th>Date</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th>Action</th>
+
+                            <th>
+                                Order
+                            </th>
+
+                            <th>
+                                Customer
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Total
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th class="admin-order-action-heading">
+                                Action
+                            </th>
+
                         </tr>
 
                     </thead>
+
 
                     <tbody>
 
                         {% for order in orders %}
 
-                            <tr>
+                        <tr>
 
-                                <td>
+                            <td>
+
+                                <span class="admin-order-number">
+                                    #{{ order.id }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="admin-order-customer">
+
+                                    <div class="admin-order-avatar">
+                                        {{ order.user.username|first|upper }}
+                                    </div>
+
                                     <strong>
-                                        #{{ order.id }}
+                                        {{ order.user.username }}
                                     </strong>
-                                </td>
 
-                                <td>
-                                    {{ order.user.username }}
-                                </td>
+                                </div>
 
-                                <td>
+                            </td>
+
+
+                            <td>
+
+                                <span class="admin-order-date">
                                     {{ order.created_at|date:"d M Y, h:i A" }}
-                                </td>
+                                </span>
 
-                                <td>
+                            </td>
+
+
+                            <td>
+
+                                <strong class="admin-order-total">
                                     ₹{{ order.total_amount }}
-                                </td>
+                                </strong>
 
-                                <td>
+                            </td>
 
+
+                            <td>
+
+                                <span class="admin-order-status">
                                     {{ order.get_status_display }}
+                                </span>
 
-                                </td>
+                            </td>
 
-                                <td>
+
+                            <td>
+
+                                <div class="admin-order-action">
 
                                     <a
                                         href="{% url 'admin_order_detail' order.id %}"
-                                        class="btn btn-sm btn-outline-success"
+                                        class="admin-view-btn"
                                     >
-                                        View
+                                        View Order
                                     </a>
 
-                                </td>
+                                </div>
 
-                            </tr>
+                            </td>
+
+                        </tr>
 
                         {% empty %}
 
-                            <tr>
+                        <tr>
 
-                                <td
-                                    colspan="6"
-                                    class="text-center py-4"
-                                >
-                                    No orders found.
-                                </td>
+                            <td
+                                colspan="6"
+                                class="admin-order-empty"
+                            >
 
-                            </tr>
+                                <div class="admin-empty-icon">
+                                    📦
+                                </div>
+
+                                <strong>
+                                    No orders found
+                                </strong>
+
+                                <p>
+                                    Customer orders will appear here once they are placed.
+                                </p>
+
+                            </td>
+
+                        </tr>
 
                         {% endfor %}
 
@@ -110,6 +211,6 @@
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}

@@ -6,91 +6,44 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="admin-order-detail-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container">
 
-        <div>
+        <!-- Header -->
 
-            <h1 class="fw-bold">
-                Order #{{ order.id }}
-            </h1>
+        <div class="admin-order-detail-header">
 
-            <p class="text-muted">
-                {{ order.created_at|date:"d M Y, h:i A" }}
-            </p>
+            <div>
 
-        </div>
+                <a
+                    href="{% url 'admin_order_list' %}"
+                    class="admin-form-back"
+                >
+                    ← Back to Orders
+                </a>
 
-        <a
-            href="{% url 'admin_order_list' %}"
-            class="btn btn-outline-secondary"
-        >
-            Back to Orders
-        </a>
+                <span class="section-label">
+                    ORDER DETAILS
+                </span>
 
-    </div>
+                <div class="admin-order-heading">
 
+                    <div class="admin-order-large-icon">
+                        📦
+                    </div>
 
-    <div class="row g-4">
+                    <div>
 
-        <!-- Customer -->
+                        <h1>
+                            Order #{{ order.id }}
+                        </h1>
 
-        <div class="col-lg-4">
+                        <p>
+                            {{ order.created_at|date:"d M Y, h:i A" }}
+                        </p>
 
-            <div class="card shadow-sm">
-
-                <div class="card-body">
-
-                    <h4 class="fw-bold mb-3">
-                        Customer
-                    </h4>
-
-                    <p class="mb-1">
-                        <strong>
-                            Username:
-                        </strong>
-                    </p>
-
-                    <p>
-                        {{ order.user.username }}
-                    </p>
-
-                    <p class="mb-1">
-                        <strong>
-                            Email:
-                        </strong>
-                    </p>
-
-                    <p>
-                        {{ order.user.email|default:"Not provided" }}
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- Status -->
-
-            <div class="card shadow-sm mt-4">
-
-                <div class="card-body">
-
-                    <h4 class="fw-bold mb-3">
-                        Order Status
-                    </h4>
-
-                    <p>
-                        {{ order.get_status_display }}
-                    </p>
-
-                    <a
-                        href="{% url 'admin_order_update' order.id %}"
-                        class="btn btn-success w-100"
-                    >
-                        Update Status
-                    </a>
+                    </div>
 
                 </div>
 
@@ -99,56 +52,199 @@
         </div>
 
 
-        <!-- Items -->
+        <div class="admin-order-detail-grid">
 
-        <div class="col-lg-8">
 
-            <div class="card shadow-sm">
+            <!-- LEFT SIDE -->
 
-                <div class="card-body">
+            <div class="admin-order-sidebar">
 
-                    <h4 class="fw-bold mb-4">
-                        Order Items
-                    </h4>
 
-                    <div class="table-responsive">
+                <!-- Customer -->
 
-                        <table class="table align-middle">
+                <div class="admin-detail-card">
+
+                    <div class="admin-detail-card-header">
+
+                        <span class="analytics-chart-label">
+                            CUSTOMER
+                        </span>
+
+                        <h2>
+                            Customer Information
+                        </h2>
+
+                    </div>
+
+
+                    <div class="admin-order-customer-detail">
+
+                        <div class="admin-customer-large-avatar">
+                            {{ order.user.username|first|upper }}
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                {{ order.user.username }}
+                            </strong>
+
+                            <span>
+                                {{ order.user.email|default:"Not provided" }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Status -->
+
+                <div class="admin-detail-card">
+
+                    <div class="admin-detail-card-header">
+
+                        <span class="analytics-chart-label">
+                            CURRENT STATUS
+                        </span>
+
+                        <h2>
+                            Order Status
+                        </h2>
+
+                    </div>
+
+
+                    <div class="admin-order-status-box">
+
+                        <span class="admin-order-status-large">
+                            {{ order.get_status_display }}
+                        </span>
+
+
+                        <a
+                            href="{% url 'admin_order_update' order.id %}"
+                            class="admin-primary-btn"
+                        >
+                            Update Status
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT SIDE -->
+
+            <div class="admin-order-items-card">
+
+                <div class="admin-detail-card">
+
+                    <div class="admin-detail-card-header">
+
+                        <span class="analytics-chart-label">
+                            PURCHASE
+                        </span>
+
+                        <h2>
+                            Order Items
+                        </h2>
+
+                    </div>
+
+
+                    <div class="admin-order-items-wrapper">
+
+                        <table class="admin-order-items-table">
 
                             <thead>
 
                                 <tr>
-                                    <th>Product</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Subtotal</th>
+
+                                    <th>
+                                        Product
+                                    </th>
+
+                                    <th>
+                                        Price
+                                    </th>
+
+                                    <th>
+                                        Quantity
+                                    </th>
+
+                                    <th>
+                                        Subtotal
+                                    </th>
+
                                 </tr>
 
                             </thead>
+
 
                             <tbody>
 
                                 {% for item in items %}
 
-                                    <tr>
+                                <tr>
 
-                                        <td>
-                                            {{ item.product_name }}
-                                        </td>
+                                    <td>
 
-                                        <td>
-                                            ₹{{ item.price }}
-                                        </td>
+                                        <div class="admin-order-product">
 
-                                        <td>
+                                            <div class="admin-order-product-icon">
+                                                🛒
+                                            </div>
+
+                                            <strong>
+                                                {{ item.product_name }}
+                                            </strong>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        ₹{{ item.price }}
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="admin-order-quantity">
                                             {{ item.quantity }}
-                                        </td>
+                                        </span>
 
-                                        <td>
-                                            ₹{{ item.subtotal }} 
-                                        </td>
+                                    </td>
 
-                                    </tr>
+
+                                    <td>
+
+                                        <strong>
+                                            ₹{{ item.subtotal }}
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="4"
+                                        class="admin-order-empty"
+                                    >
+                                        No items found for this order.
+                                    </td>
+
+                                </tr>
 
                                 {% endfor %}
 
@@ -158,13 +254,14 @@
 
                     </div>
 
-                    <hr>
 
-                    <div class="d-flex justify-content-between">
+                    <!-- Total -->
 
-                        <strong>
-                            Total
-                        </strong>
+                    <div class="admin-order-total-row">
+
+                        <span>
+                            Order Total
+                        </span>
 
                         <strong>
                             ₹{{ order.total_amount }}
@@ -180,6 +277,6 @@
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}
