@@ -6789,3 +6789,1076 @@ textarea {
     }
 
 }
+
+/* =========================================
+   SALES PREDICTION
+========================================= */
+
+.sales-prediction-page {
+    padding: 50px 0 90px;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.sales-prediction-header {
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    margin-bottom: 30px;
+}
+
+
+.sales-prediction-header h1 {
+    margin: 5px 0 7px;
+
+    font-size: clamp(2rem, 4vw, 2.7rem);
+}
+
+
+.sales-prediction-header p {
+    max-width: 620px;
+
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.82rem;
+
+    line-height: 1.7;
+}
+
+
+.sales-ai-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 12px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 999px;
+
+    background: var(--white);
+
+    color: var(--primary-dark);
+
+    font-size: 0.68rem;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+.sales-ai-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+}
+
+
+/* =========================================
+   OVERVIEW CARDS
+========================================= */
+
+.sales-prediction-overview {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 22px;
+}
+
+
+.sales-overview-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 20px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+.sales-overview-icon {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: var(--radius-sm);
+
+    background: var(--primary-light);
+
+    font-size: 1rem;
+}
+
+
+.sales-overview-card span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--text-muted);
+
+    font-size: 0.62rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+}
+
+
+.sales-overview-card strong {
+    color: var(--text-dark);
+
+    font-size: 0.82rem;
+}
+
+
+/* =========================================
+   MAIN CARDS
+========================================= */
+
+.sales-prediction-card {
+    margin-bottom: 22px;
+
+    overflow: hidden;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+.sales-card-header {
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 24px 25px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.sales-card-header h2 {
+    margin: 3px 0 5px;
+
+    font-size: 1.1rem;
+}
+
+
+.sales-card-header p {
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.72rem;
+}
+
+
+.sales-chart-badge {
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    background: var(--primary-light);
+
+    color: var(--primary-dark);
+
+    font-size: 0.62rem;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   CHART
+========================================= */
+
+.sales-chart-container {
+    width: 100%;
+
+    padding: 20px;
+
+    overflow-x: auto;
+}
+
+
+.sales-chart-container > div {
+    width: 100% !important;
+}
+
+
+/* =========================================
+   PREDICTION TABLE
+========================================= */
+
+.sales-prediction-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+.sales-prediction-table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+
+.sales-prediction-table th {
+    padding: 14px 22px;
+
+    background: var(--background);
+
+    color: var(--text-muted);
+
+    font-size: 0.66rem;
+
+    font-weight: 800;
+
+    text-align: left;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+}
+
+
+.sales-prediction-table td {
+    padding: 16px 22px;
+
+    border-top: 1px solid var(--border);
+
+    font-size: 0.77rem;
+}
+
+
+.sales-prediction-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+
+.sales-prediction-table tbody tr:hover {
+    background: var(--background);
+}
+
+
+/* =========================================
+   PRODUCT CELL
+========================================= */
+
+.sales-product-cell {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.sales-product-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: var(--radius-sm);
+
+    background: var(--primary-light);
+
+    font-size: 0.9rem;
+}
+
+
+.sales-product-cell strong {
+    font-size: 0.78rem;
+}
+
+
+.sales-date-cell {
+    color: var(--text-muted);
+
+    font-size: 0.74rem;
+}
+
+
+.sales-predicted-value {
+    display: inline-flex;
+
+    min-width: 48px;
+
+    justify-content: center;
+
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    background: var(--primary-light);
+
+    color: var(--primary-dark);
+
+    font-size: 0.68rem;
+
+    font-weight: 800;
+}
+
+
+/* =========================================
+   ERROR
+========================================= */
+
+.sales-prediction-error {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 13px;
+
+    padding: 20px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-left: 4px solid var(--primary);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+.sales-error-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--primary-light);
+
+    color: var(--primary-dark);
+
+    font-weight: 900;
+}
+
+
+.sales-prediction-error strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 0.82rem;
+}
+
+
+.sales-prediction-error p {
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.74rem;
+}
+
+
+/* =========================================
+   INFO
+========================================= */
+
+.sales-prediction-info {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 18px 20px;
+
+    background: var(--primary-light);
+
+    border-radius: var(--radius-md);
+}
+
+
+.sales-info-icon {
+    font-size: 1rem;
+}
+
+
+.sales-prediction-info strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--primary-dark);
+
+    font-size: 0.75rem;
+}
+
+
+.sales-prediction-info p {
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.7rem;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 800px) {
+
+    .sales-prediction-overview {
+        grid-template-columns: 1fr;
+    }
+
+
+    .sales-prediction-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .sales-card-header {
+        flex-direction: column;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .sales-prediction-page {
+        padding: 35px 0 60px;
+    }
+
+
+    .sales-chart-container {
+        padding: 10px;
+    }
+
+
+    .sales-prediction-table {
+        min-width: 600px;
+    }
+
+}
+
+
+/* =========================================
+   INVENTORY PREDICTION
+========================================= */
+
+.inventory-prediction-page {
+    padding: 50px 0 90px;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.inventory-prediction-header {
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    margin-bottom: 30px;
+}
+
+
+.inventory-prediction-header h1 {
+    margin: 5px 0 7px;
+
+    font-size: clamp(2rem, 4vw, 2.7rem);
+}
+
+
+.inventory-prediction-header p {
+    max-width: 650px;
+
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.82rem;
+
+    line-height: 1.7;
+}
+
+
+.inventory-ai-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 12px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: 999px;
+
+    color: var(--primary-dark);
+
+    font-size: 0.68rem;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+.inventory-ai-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+}
+
+
+/* =========================================
+   OVERVIEW
+========================================= */
+
+.inventory-overview-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 22px;
+}
+
+
+.inventory-overview-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 20px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+.inventory-overview-icon {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: var(--radius-sm);
+
+    background: var(--primary-light);
+
+    font-size: 1rem;
+}
+
+
+.inventory-overview-card span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--text-muted);
+
+    font-size: 0.62rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+}
+
+
+.inventory-overview-card strong {
+    color: var(--text-dark);
+
+    font-size: 0.82rem;
+}
+
+
+/* =========================================
+   MAIN CARD
+========================================= */
+
+.inventory-prediction-card {
+    overflow: hidden;
+
+    margin-bottom: 22px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+.inventory-card-header {
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 24px 25px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.inventory-card-header h2 {
+    margin: 3px 0 5px;
+
+    font-size: 1.1rem;
+}
+
+
+.inventory-card-header p {
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.72rem;
+}
+
+
+.inventory-forecast-badge {
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    background: var(--primary-light);
+
+    color: var(--primary-dark);
+
+    font-size: 0.62rem;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.inventory-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+.inventory-prediction-table {
+    width: 100%;
+
+    min-width: 1000px;
+
+    border-collapse: collapse;
+}
+
+
+.inventory-prediction-table th {
+    padding: 14px 20px;
+
+    background: var(--background);
+
+    color: var(--text-muted);
+
+    font-size: 0.65rem;
+
+    font-weight: 800;
+
+    text-align: left;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.45px;
+}
+
+
+.inventory-prediction-table td {
+    padding: 17px 20px;
+
+    border-top: 1px solid var(--border);
+
+    font-size: 0.77rem;
+}
+
+
+.inventory-prediction-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+
+.inventory-prediction-table tbody tr:hover {
+    background: var(--background);
+}
+
+
+/* =========================================
+   PRODUCT
+========================================= */
+
+.inventory-product-cell {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.inventory-product-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: var(--radius-sm);
+
+    background: var(--primary-light);
+
+    font-size: 0.9rem;
+}
+
+
+.inventory-product-cell strong {
+    font-size: 0.78rem;
+}
+
+
+/* =========================================
+   VALUES
+========================================= */
+
+.inventory-number,
+.inventory-demand,
+.inventory-stock-after {
+    display: inline-flex;
+
+    min-width: 38px;
+
+    justify-content: center;
+
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    background: var(--background);
+
+    color: var(--text-dark);
+
+    font-size: 0.68rem;
+
+    font-weight: 800;
+}
+
+
+.inventory-demand {
+    background: var(--primary-light);
+
+    color: var(--primary-dark);
+}
+
+
+.inventory-reorder-value {
+    color: var(--primary-dark);
+
+    font-size: 0.8rem;
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+.inventory-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: 0.66rem;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+.inventory-status-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+}
+
+
+.inventory-status-danger {
+    background: #fff0f0;
+
+    color: #c0392b;
+}
+
+
+.inventory-status-warning {
+    background: #fff8df;
+
+    color: #9a7300;
+}
+
+
+.inventory-status-good {
+    background: var(--primary-light);
+
+    color: var(--primary-dark);
+}
+
+
+/* =========================================
+   ERROR
+========================================= */
+
+.inventory-prediction-error {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 13px;
+
+    padding: 20px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-left: 4px solid var(--primary);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+.inventory-error-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--primary-light);
+
+    color: var(--primary-dark);
+
+    font-weight: 900;
+}
+
+
+.inventory-prediction-error strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 0.82rem;
+}
+
+
+.inventory-prediction-error p {
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.74rem;
+}
+
+
+/* =========================================
+   INSIGHT
+========================================= */
+
+.inventory-insight {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 18px 20px;
+
+    background: var(--primary-light);
+
+    border-radius: var(--radius-md);
+}
+
+
+.inventory-insight-icon {
+    font-size: 1rem;
+}
+
+
+.inventory-insight strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--primary-dark);
+
+    font-size: 0.75rem;
+}
+
+
+.inventory-insight p {
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.7rem;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 800px) {
+
+    .inventory-overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .inventory-prediction-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .inventory-card-header {
+        flex-direction: column;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .inventory-prediction-page {
+        padding: 35px 0 60px;
+    }
+
+
+    .inventory-prediction-table {
+        min-width: 1000px;
+    }
+
+}

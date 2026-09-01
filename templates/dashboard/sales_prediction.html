@@ -6,86 +6,264 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="sales-prediction-page">
 
-    <div class="mb-5">
+    <div class="container">
 
-        <h1 class="fw-bold">
-            Sales Prediction
-        </h1>
+        <!-- Header -->
 
-        <p class="text-muted">
-            Machine learning based product demand forecast
-            for the next 7 days.
-        </p>
+        <div class="sales-prediction-header">
 
-    </div>
+            <div>
 
+                <span class="section-label">
+                    AI & MACHINE LEARNING
+                </span>
 
-    {% if error %}
+                <h1>
+                    Sales Prediction
+                </h1>
 
-        <div class="alert alert-warning">
-            {{ error }}
-        </div>
+                <p>
+                    Machine-learning-based product demand forecast
+                    for the next 7 days.
+                </p>
 
-    {% else %}
+            </div>
 
-        <!-- Chart -->
-
-        <div class="card shadow-sm mb-4">
-
-            <div class="card-body">
-
-                {{ chart|safe }}
-
+            <div class="sales-ai-badge">
+                <span class="sales-ai-dot"></span>
+                AI Forecast
             </div>
 
         </div>
 
 
-        <!-- Prediction Table -->
+        {% if error %}
 
-        <div class="card shadow-sm">
+            <!-- Error -->
 
-            <div class="card-body">
+            <div class="sales-prediction-error">
 
-                <h4 class="fw-bold mb-4">
-                    Product Demand Forecast
-                </h4>
+                <div class="sales-error-icon">
+                    !
+                </div>
 
-                <div class="table-responsive">
+                <div>
 
-                    <table class="table table-hover">
+                    <strong>
+                        Prediction unavailable
+                    </strong>
 
-                        <thead class="table-success">
+                    <p>
+                        {{ error }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+
+            <!-- Overview -->
+
+            <div class="sales-prediction-overview">
+
+                <div class="sales-overview-card">
+
+                    <div class="sales-overview-icon">
+                        📈
+                    </div>
+
+                    <div>
+
+                        <span>
+                            FORECAST TYPE
+                        </span>
+
+                        <strong>
+                            Product Demand
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="sales-overview-card">
+
+                    <div class="sales-overview-icon">
+                        📅
+                    </div>
+
+                    <div>
+
+                        <span>
+                            FORECAST PERIOD
+                        </span>
+
+                        <strong>
+                            Next 7 Days
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="sales-overview-card">
+
+                    <div class="sales-overview-icon">
+                        🤖
+                    </div>
+
+                    <div>
+
+                        <span>
+                            MODEL
+                        </span>
+
+                        <strong>
+                            ML Prediction
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Chart -->
+
+            <div class="sales-prediction-card">
+
+                <div class="sales-card-header">
+
+                    <div>
+
+                        <span class="analytics-chart-label">
+                            FORECAST ANALYTICS
+                        </span>
+
+                        <h2>
+                            Demand Forecast
+                        </h2>
+
+                        <p>
+                            Predicted product demand across the forecast period.
+                        </p>
+
+                    </div>
+
+                    <div class="sales-chart-badge">
+                        7 DAY FORECAST
+                    </div>
+
+                </div>
+
+
+                <div class="sales-chart-container">
+
+                    {{ chart|safe }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Prediction Table -->
+
+            <div class="sales-prediction-card">
+
+                <div class="sales-card-header">
+
+                    <div>
+
+                        <span class="analytics-chart-label">
+                            PREDICTION DATA
+                        </span>
+
+                        <h2>
+                            Product Demand Forecast
+                        </h2>
+
+                        <p>
+                            Detailed predicted units for each product and date.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="sales-prediction-table-wrapper">
+
+                    <table class="sales-prediction-table">
+
+                        <thead>
 
                             <tr>
-                                <th>Product</th>
-                                <th>Date</th>
-                                <th>Predicted Units</th>
+
+                                <th>
+                                    Product
+                                </th>
+
+                                <th>
+                                    Forecast Date
+                                </th>
+
+                                <th>
+                                    Predicted Units
+                                </th>
+
                             </tr>
 
                         </thead>
+
 
                         <tbody>
 
                             {% for prediction in predictions %}
 
-                                <tr>
+                            <tr>
 
-                                    <td>
-                                        {{ prediction.product }}
-                                    </td>
+                                <td>
 
-                                    <td>
+                                    <div class="sales-product-cell">
+
+                                        <div class="sales-product-icon">
+                                            🛒
+                                        </div>
+
+                                        <strong>
+                                            {{ prediction.product }}
+                                        </strong>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="sales-date-cell">
                                         {{ prediction.date|date:"d M Y" }}
-                                    </td>
+                                    </span>
 
-                                    <td>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="sales-predicted-value">
                                         {{ prediction.predicted_quantity }}
-                                    </td>
+                                    </span>
 
-                                </tr>
+                                </td>
+
+                            </tr>
 
                             {% endfor %}
 
@@ -97,10 +275,34 @@
 
             </div>
 
-        </div>
 
-    {% endif %}
+            <!-- Information -->
 
-</div>
+            <div class="sales-prediction-info">
+
+                <div class="sales-info-icon">
+                    💡
+                </div>
+
+                <div>
+
+                    <strong>
+                        Forecasting insight
+                    </strong>
+
+                    <p>
+                        These predictions can help with inventory planning,
+                        product availability and future stock decisions.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
 
 {% endblock %}

@@ -6,43 +6,172 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="inventory-prediction-page">
 
-    <div class="mb-5">
+    <div class="container">
 
-        <h1 class="fw-bold">
-            Inventory Prediction
-        </h1>
+        <!-- Header -->
 
-        <p class="text-muted">
-            AI-powered stock planning based on predicted
-            product demand for the next 7 days.
-        </p>
+        <div class="inventory-prediction-header">
 
-    </div>
+            <div>
 
+                <span class="section-label">
+                    AI & INVENTORY INTELLIGENCE
+                </span>
 
-    {% if error %}
+                <h1>
+                    Inventory Prediction
+                </h1>
 
-        <div class="alert alert-warning">
-            {{ error }}
+                <p>
+                    AI-powered stock planning based on predicted
+                    product demand for the next 7 days.
+                </p>
+
+            </div>
+
+            <div class="inventory-ai-badge">
+                <span class="inventory-ai-dot"></span>
+                AI Forecast
+            </div>
+
         </div>
 
-    {% else %}
 
-        <div class="card shadow-sm">
+        {% if error %}
 
-            <div class="card-body">
+            <!-- Error -->
 
-                <h4 class="fw-bold mb-4">
-                    Stock Forecast
-                </h4>
+            <div class="inventory-prediction-error">
 
-                <div class="table-responsive">
+                <div class="inventory-error-icon">
+                    !
+                </div>
 
-                    <table class="table table-hover align-middle">
+                <div>
 
-                        <thead class="table-success">
+                    <strong>
+                        Inventory prediction unavailable
+                    </strong>
+
+                    <p>
+                        {{ error }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+
+            <!-- Overview -->
+
+            <div class="inventory-overview-grid">
+
+                <div class="inventory-overview-card">
+
+                    <div class="inventory-overview-icon">
+                        📦
+                    </div>
+
+                    <div>
+
+                        <span>
+                            PLANNING TYPE
+                        </span>
+
+                        <strong>
+                            Stock Forecast
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="inventory-overview-card">
+
+                    <div class="inventory-overview-icon">
+                        📅
+                    </div>
+
+                    <div>
+
+                        <span>
+                            FORECAST PERIOD
+                        </span>
+
+                        <strong>
+                            Next 7 Days
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="inventory-overview-card">
+
+                    <div class="inventory-overview-icon">
+                        🤖
+                    </div>
+
+                    <div>
+
+                        <span>
+                            PURPOSE
+                        </span>
+
+                        <strong>
+                            Reorder Planning
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Forecast Card -->
+
+            <div class="inventory-prediction-card">
+
+                <div class="inventory-card-header">
+
+                    <div>
+
+                        <span class="analytics-chart-label">
+                            INVENTORY ANALYTICS
+                        </span>
+
+                        <h2>
+                            Stock Forecast
+                        </h2>
+
+                        <p>
+                            Use predicted demand to identify products
+                            that may require replenishment.
+                        </p>
+
+                    </div>
+
+                    <div class="inventory-forecast-badge">
+                        7 DAY FORECAST
+                    </div>
+
+                </div>
+
+
+                <!-- Table -->
+
+                <div class="inventory-table-wrapper">
+
+                    <table class="inventory-prediction-table">
+
+                        <thead>
 
                             <tr>
 
@@ -55,7 +184,7 @@
                                 </th>
 
                                 <th>
-                                    Predicted 7-Day Demand
+                                    7-Day Demand
                                 </th>
 
                                 <th>
@@ -74,67 +203,125 @@
 
                         </thead>
 
+
                         <tbody>
 
                             {% for item in inventory_data %}
 
-                                <tr>
+                            <tr>
 
-                                    <td>
+                                <!-- Product -->
+
+                                <td>
+
+                                    <div class="inventory-product-cell">
+
+                                        <div class="inventory-product-icon">
+                                            📦
+                                        </div>
+
                                         <strong>
                                             {{ item.product }}
                                         </strong>
-                                    </td>
 
-                                    <td>
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Current Stock -->
+
+                                <td>
+
+                                    <span class="inventory-number">
                                         {{ item.current_stock }}
-                                    </td>
+                                    </span>
 
-                                    <td>
+                                </td>
+
+
+                                <!-- Predicted Demand -->
+
+                                <td>
+
+                                    <span class="inventory-demand">
                                         {{ item.predicted_demand }}
-                                    </td>
+                                    </span>
 
-                                    <td>
+                                </td>
+
+
+                                <!-- Stock After Forecast -->
+
+                                <td>
+
+                                    <span class="inventory-stock-after">
                                         {{ item.stock_after_forecast }}
-                                    </td>
+                                    </span>
 
-                                    <td>
-                                        <strong>
-                                            {{ item.recommended_reorder }}
-                                        </strong>
-                                    </td>
+                                </td>
 
-                                    <td>
 
-                                        {% if item.status == "Out of Stock" %}
+                                <!-- Reorder -->
 
-                                            <span class="badge bg-danger">
-                                                Out of Stock
-                                            </span>
+                                <td>
 
-                                        {% elif item.status == "Reorder Required" %}
+                                    <strong class="inventory-reorder-value">
+                                        {{ item.recommended_reorder }}
+                                    </strong>
 
-                                            <span class="badge bg-danger">
-                                                Reorder Required
-                                            </span>
+                                </td>
 
-                                        {% elif item.status == "Low Stock" %}
 
-                                            <span class="badge bg-warning text-dark">
-                                                Low Stock
-                                            </span>
+                                <!-- Status -->
 
-                                        {% else %}
+                                <td>
 
-                                            <span class="badge bg-success">
-                                                Stock Sufficient
-                                            </span>
+                                    {% if item.status == "Out of Stock" %}
 
-                                        {% endif %}
+                                        <span class="inventory-status inventory-status-danger">
 
-                                    </td>
+                                            <span class="inventory-status-dot"></span>
 
-                                </tr>
+                                            Out of Stock
+
+                                        </span>
+
+                                    {% elif item.status == "Reorder Required" %}
+
+                                        <span class="inventory-status inventory-status-danger">
+
+                                            <span class="inventory-status-dot"></span>
+
+                                            Reorder Required
+
+                                        </span>
+
+                                    {% elif item.status == "Low Stock" %}
+
+                                        <span class="inventory-status inventory-status-warning">
+
+                                            <span class="inventory-status-dot"></span>
+
+                                            Low Stock
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="inventory-status inventory-status-good">
+
+                                            <span class="inventory-status-dot"></span>
+
+                                            Stock Sufficient
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
 
                             {% endfor %}
 
@@ -146,10 +333,35 @@
 
             </div>
 
-        </div>
 
-    {% endif %}
+            <!-- Explanation -->
 
-</div>
+            <div class="inventory-insight">
+
+                <div class="inventory-insight-icon">
+                    💡
+                </div>
+
+                <div>
+
+                    <strong>
+                        Inventory planning insight
+                    </strong>
+
+                    <p>
+                        Compare current stock with predicted demand to
+                        identify products that may need replenishment
+                        before inventory levels become critical.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
 
 {% endblock %}
