@@ -7862,3 +7862,791 @@ textarea {
     }
 
 }
+
+/* =========================================
+   AUTH PAGES
+========================================= */
+
+.auth-page {
+    min-height: calc(100vh - 150px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 50px 20px 80px;
+}
+
+
+.auth-card {
+    width: 100%;
+
+    max-width: 440px;
+
+    padding: 35px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+/* =========================================
+   AUTH HEADER
+========================================= */
+
+.auth-brand {
+    margin-bottom: 28px;
+
+    text-align: center;
+}
+
+
+.auth-icon {
+    width: 55px;
+    height: 55px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 15px;
+
+    border-radius: var(--radius-md);
+
+    background: var(--primary-light);
+
+    font-size: 1.25rem;
+}
+
+
+.auth-brand h1 {
+    margin: 5px 0 8px;
+
+    font-size: 1.65rem;
+}
+
+
+.auth-brand p {
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.76rem;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   AUTH FORM
+========================================= */
+
+.auth-form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+
+.auth-field {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+.auth-field label {
+    color: var(--text-dark);
+
+    font-size: 0.72rem;
+
+    font-weight: 700;
+}
+
+
+.auth-field input {
+    width: 100%;
+
+    padding: 12px 13px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-sm);
+
+    color: var(--text-dark);
+
+    font-family: inherit;
+
+    font-size: 0.78rem;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.auth-field input::placeholder {
+    color: var(--text-muted);
+}
+
+
+.auth-field input:focus {
+    border-color: var(--primary);
+
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+
+/* =========================================
+   SUBMIT
+========================================= */
+
+.auth-submit-btn {
+    width: 100%;
+
+    margin-top: 4px;
+
+    padding: 12px 18px;
+
+    border: 0;
+
+    border-radius: var(--radius-sm);
+
+    background: var(--primary);
+
+    color: var(--white);
+
+    font-family: inherit;
+
+    font-size: 0.78rem;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+
+.auth-submit-btn:hover {
+    opacity: 0.9;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================
+   MESSAGES
+========================================= */
+
+.auth-messages {
+    margin-bottom: 18px;
+}
+
+
+.auth-message {
+    padding: 10px 12px;
+
+    background: var(--primary-light);
+
+    border-radius: var(--radius-sm);
+
+    color: var(--primary-dark);
+
+    font-size: 0.72rem;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.auth-footer {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    margin-top: 25px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid var(--border);
+
+    color: var(--text-muted);
+
+    font-size: 0.72rem;
+}
+
+
+.auth-footer a {
+    color: var(--primary-dark);
+
+    font-weight: 800;
+
+    text-decoration: none;
+}
+
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 500px) {
+
+    .auth-page {
+        padding: 35px 15px 60px;
+    }
+
+
+    .auth-card {
+        padding: 25px 20px;
+    }
+
+
+    .auth-brand h1 {
+        font-size: 1.4rem;
+    }
+
+}
+
+/* =========================================
+   REGISTER FORM
+========================================= */
+
+.auth-form-errors {
+    padding: 11px 13px;
+
+    background: #fff0f0;
+
+    border-radius: var(--radius-sm);
+
+    color: #c0392b;
+
+    font-size: 0.72rem;
+
+    line-height: 1.5;
+}
+
+
+.auth-field-error {
+    color: #c0392b;
+
+    font-size: 0.68rem;
+
+    line-height: 1.4;
+}
+
+
+.auth-help-text {
+    color: var(--text-muted);
+
+    font-size: 0.64rem;
+
+    line-height: 1.5;
+}
+
+
+/* Django-generated form controls */
+
+.auth-field input,
+.auth-field select,
+.auth-field textarea {
+    width: 100%;
+
+    padding: 12px 13px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-sm);
+
+    color: var(--text-dark);
+
+    font-family: inherit;
+
+    font-size: 0.78rem;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.auth-field input:focus,
+.auth-field select:focus,
+.auth-field textarea:focus {
+    border-color: var(--primary);
+
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+
+.auth-field ul.errorlist {
+    margin: 0;
+
+    padding: 0;
+
+    list-style: none;
+
+    color: #c0392b;
+
+    font-size: 0.68rem;
+}
+
+/* =========================================
+   ACCOUNT PAGE
+========================================= */
+
+.account-page {
+    padding: 50px 0 90px;
+}
+
+.account-page .container {
+    max-width: 1100px;
+}
+
+
+/* =========================================
+   ACCOUNT HEADER
+========================================= */
+
+.account-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    margin-bottom: 32px;
+}
+
+.account-heading h1 {
+    margin: 6px 0 8px;
+
+    font-size: clamp(2rem, 4vw, 2.6rem);
+
+    letter-spacing: -0.5px;
+}
+
+.account-heading p {
+    max-width: 650px;
+
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.8rem;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================
+   USER AVATAR
+========================================= */
+
+.account-avatar {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+
+    color: var(--white);
+
+    font-size: 1.3rem;
+    font-weight: 800;
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+/* =========================================
+   MAIN ACCOUNT LAYOUT
+========================================= */
+
+.account-layout {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+}
+
+
+/* =========================================
+   ACCOUNT CARDS
+========================================= */
+
+.account-info-card,
+.account-actions-card {
+    padding: 26px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+/* =========================================
+   CARD HEADERS
+========================================= */
+
+.account-card-header {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    margin-bottom: 25px;
+}
+
+.account-card-icon {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: var(--radius-sm);
+
+    background: var(--primary-light);
+
+    font-size: 1rem;
+}
+
+.account-card-header span {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--text-muted);
+
+    font-size: 0.6rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.6px;
+}
+
+.account-card-header h2 {
+    margin: 0;
+
+    color: var(--text-dark);
+
+    font-size: 1rem;
+}
+
+
+/* =========================================
+   ACCOUNT DETAILS
+========================================= */
+
+.account-details {
+    border-top: 1px solid var(--border);
+}
+
+.account-detail {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 17px 0;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.account-detail:last-child {
+    border-bottom: none;
+}
+
+.account-detail-label {
+    color: var(--text-muted);
+
+    font-size: 0.72rem;
+}
+
+.account-detail strong {
+    max-width: 65%;
+
+    overflow: hidden;
+
+    color: var(--text-dark);
+
+    font-size: 0.76rem;
+
+    text-align: right;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   QUICK ACTIONS
+========================================= */
+
+.account-actions {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.account-action {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 13px 14px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-md);
+
+    color: var(--text-dark);
+
+    text-decoration: none;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+}
+
+.account-action:hover {
+    transform: translateX(3px);
+
+    border-color: var(--primary);
+
+    box-shadow: var(--shadow-sm);
+}
+
+.account-action-primary {
+    border-color: var(--primary);
+}
+
+.account-action-icon {
+    width: 37px;
+    height: 37px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: var(--radius-sm);
+
+    background: var(--primary-light);
+
+    font-size: 0.85rem;
+}
+
+.account-action-content {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    flex: 1;
+}
+
+.account-action-content strong {
+    color: var(--text-dark);
+
+    font-size: 0.76rem;
+}
+
+.account-action-content span {
+    color: var(--text-muted);
+
+    font-size: 0.65rem;
+}
+
+.account-action-arrow {
+    color: var(--primary-dark);
+
+    font-size: 1rem;
+
+    font-weight: 800;
+
+    transition: transform 0.18s ease;
+}
+
+.account-action:hover .account-action-arrow {
+    transform: translateX(3px);
+}
+
+
+/* =========================================
+   LOGOUT ACTION
+========================================= */
+
+.account-action-logout:hover {
+    border-color: #d9534f;
+}
+
+.account-action-logout:hover .account-action-arrow {
+    color: #d9534f;
+}
+
+
+/* =========================================
+   BOTTOM BANNER
+========================================= */
+
+.account-bottom-banner {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    margin-top: 20px;
+
+    padding: 19px 22px;
+
+    background: var(--primary-light);
+
+    border-radius: var(--radius-lg);
+}
+
+.account-banner-icon {
+    font-size: 1.2rem;
+}
+
+.account-bottom-banner strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--primary-dark);
+
+    font-size: 0.78rem;
+}
+
+.account-bottom-banner p {
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: 0.68rem;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   RESPONSIVE — TABLET
+========================================= */
+
+@media (max-width: 850px) {
+
+    .account-layout {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================
+   RESPONSIVE — MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .account-page {
+        padding: 35px 0 60px;
+    }
+
+    .account-page-header {
+        align-items: flex-start;
+    }
+
+    .account-avatar {
+        width: 50px;
+        height: 50px;
+
+        font-size: 1rem;
+    }
+
+    .account-info-card,
+    .account-actions-card {
+        padding: 20px;
+    }
+
+    .account-detail {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+    .account-detail strong {
+        max-width: 100%;
+
+        text-align: left;
+
+        white-space: normal;
+    }
+
+    .account-bottom-banner {
+        align-items: flex-start;
+    }
+
+}

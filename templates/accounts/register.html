@@ -1,31 +1,124 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register - FreshCart</title>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}Register - FreshCart{% endblock %}
 
-    <h1>Create FreshCart Account</h1>
+{% block content %}
 
-    <form method="POST">
+<section class="auth-page">
 
-        {% csrf_token %}
+    <div class="auth-card">
 
-        {{ form.as_p }}
+        <div class="auth-brand">
 
-        <button type="submit">
-            Register
-        </button>
+            <div class="auth-icon">
+                🛒
+            </div>
 
-    </form>
+            <span class="section-label">
+                JOIN FRESHCART
+            </span>
 
-    <p>
-        Already have an account?
-        <a href="{% url 'login' %}">
-            Login
-        </a>
-    </p>
+            <h1>
+                Create an Account
+            </h1>
 
-</body>
-</html>
+            <p>
+                Create your FreshCart account and start shopping fresh.
+            </p>
+
+        </div>
+
+
+        {% if messages %}
+
+            <div class="auth-messages">
+
+                {% for message in messages %}
+
+                    <div class="auth-message">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <form
+            method="POST"
+            class="auth-form"
+        >
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+
+                <div class="auth-form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+
+            {% endif %}
+
+
+            {% for field in form %}
+
+                <div class="auth-field">
+
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+
+                    {% if field.help_text %}
+
+                        <div class="auth-help-text">
+                            {{ field.help_text }}
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if field.errors %}
+
+                        <div class="auth-field-error">
+                            {{ field.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+
+            <button
+                type="submit"
+                class="auth-submit-btn"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+
+        <div class="auth-footer">
+
+            <span>
+                Already have an account?
+            </span>
+
+            <a href="{% url 'login' %}">
+                Login
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

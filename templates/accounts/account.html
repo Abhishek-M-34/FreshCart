@@ -6,61 +6,244 @@
 
 {% block content %}
 
-<div class="container py-5">
+<section class="account-page">
 
-    <h1 class="fw-bold mb-4">
-        My Account
-    </h1>
+    <div class="container">
 
-    <div class="row">
+        <!-- Account Header -->
+        <div class="account-page-header">
 
-        <!-- Account Information -->
+            <div class="account-heading">
 
-        <div class="col-lg-6">
+                <span class="section-label">
+                    MY FRESHCART
+                </span>
 
-            <div class="card shadow-sm">
+                <h1>
+                    My Account
+                </h1>
 
-                <div class="card-body">
+                <p>
+                    Manage your account information and access your FreshCart activities.
+                </p>
 
-                    <h4 class="mb-4">
-                        Account Information
-                    </h4>
+            </div>
 
-                    <div class="mb-3">
+            <div class="account-avatar">
+                {{ user.username|first|upper }}
+            </div>
 
-                        <label class="text-muted">
-                            Username
-                        </label>
+        </div>
 
-                        <p class="fw-bold">
-                            {{ user.username }}
-                        </p>
 
-                    </div>
+        <!-- Account Content -->
+        <div class="account-layout">
 
-                    <div class="mb-3">
+            <!-- Account Information -->
+            <div class="account-info-card">
 
-                        <label class="text-muted">
-                            Email
-                        </label>
+                <div class="account-card-header">
 
-                        <p class="fw-bold">
-                            {{ user.email|default:"Not provided" }}
-                        </p>
-
+                    <div class="account-card-icon">
+                        👤
                     </div>
 
                     <div>
 
-                        <label class="text-muted">
-                            Account Created
-                        </label>
+                        <span>
+                            PROFILE
+                        </span>
 
-                        <p class="fw-bold">
-                            {{ user.date_joined|date:"d M Y" }}
-                        </p>
+                        <h2>
+                            Account Information
+                        </h2>
 
                     </div>
+
+                </div>
+
+
+                <div class="account-details">
+
+                    <div class="account-detail">
+
+                        <span class="account-detail-label">
+                            Username
+                        </span>
+
+                        <strong>
+                            {{ user.username }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-detail">
+
+                        <span class="account-detail-label">
+                            Email
+                        </span>
+
+                        <strong>
+                            {{ user.email|default:"Not provided" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-detail">
+
+                        <span class="account-detail-label">
+                            Account Created
+                        </span>
+
+                        <strong>
+                            {{ user.date_joined|date:"d M Y" }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Quick Actions -->
+            <div class="account-actions-card">
+
+                <div class="account-card-header">
+
+                    <div class="account-card-icon">
+                        ⚡
+                    </div>
+
+                    <div>
+
+                        <span>
+                            QUICK ACCESS
+                        </span>
+
+                        <h2>
+                            Quick Actions
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="account-actions">
+
+                    <a
+                        href="{% url 'order_history' %}"
+                        class="account-action account-action-primary"
+                    >
+
+                        <div class="account-action-icon">
+                            📦
+                        </div>
+
+                        <div class="account-action-content">
+
+                            <strong>
+                                My Orders
+                            </strong>
+
+                            <span>
+                                View your order history
+                            </span>
+
+                        </div>
+
+                        <span class="account-action-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'cart' %}"
+                        class="account-action"
+                    >
+
+                        <div class="account-action-icon">
+                            🛒
+                        </div>
+
+                        <div class="account-action-content">
+
+                            <strong>
+                                Shopping Cart
+                            </strong>
+
+                            <span>
+                                Review items in your cart
+                            </span>
+
+                        </div>
+
+                        <span class="account-action-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'product_list' %}"
+                        class="account-action"
+                    >
+
+                        <div class="account-action-icon">
+                            🥬
+                        </div>
+
+                        <div class="account-action-content">
+
+                            <strong>
+                                Continue Shopping
+                            </strong>
+
+                            <span>
+                                Explore fresh products
+                            </span>
+
+                        </div>
+
+                        <span class="account-action-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'logout' %}"
+                        class="account-action account-action-logout"
+                    >
+
+                        <div class="account-action-icon">
+                            ↪
+                        </div>
+
+                        <div class="account-action-content">
+
+                            <strong>
+                                Logout
+                            </strong>
+
+                            <span>
+                                Sign out of your account
+                            </span>
+
+                        </div>
+
+                        <span class="account-action-arrow">
+                            →
+                        </span>
+
+                    </a>
 
                 </div>
 
@@ -69,51 +252,22 @@
         </div>
 
 
-        <!-- Quick Actions -->
+        <!-- Bottom Banner -->
+        <div class="account-bottom-banner">
 
-        <div class="col-lg-6 mt-4 mt-lg-0">
+            <div class="account-banner-icon">
+                🛍️
+            </div>
 
-            <div class="card shadow-sm">
+            <div>
 
-                <div class="card-body">
+                <strong>
+                    Fresh products are waiting for you.
+                </strong>
 
-                    <h4 class="mb-4">
-                        Quick Actions
-                    </h4>
-
-                    <div class="d-grid gap-3">
-
-                        <a
-                            href="{% url 'order_history' %}"
-                            class="btn btn-success"
-                        >
-                            My Orders
-                        </a>
-
-                        <a
-                            href="{% url 'cart' %}"
-                            class="btn btn-outline-success"
-                        >
-                            Shopping Cart
-                        </a>
-
-                        <a
-                            href="{% url 'product_list' %}"
-                            class="btn btn-outline-success"
-                        >
-                            Continue Shopping
-                        </a>
-
-                        <a
-                            href="{% url 'logout' %}"
-                            class="btn btn-outline-danger"
-                        >
-                            Logout
-                        </a>
-
-                    </div>
-
-                </div>
+                <p>
+                    Continue exploring FreshCart and discover your next favourite product.
+                </p>
 
             </div>
 
@@ -121,6 +275,6 @@
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}

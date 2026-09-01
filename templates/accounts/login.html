@@ -1,51 +1,101 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login - FreshCart</title>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}Login - FreshCart{% endblock %}
 
-    <h1>Login to FreshCart</h1>
+{% block content %}
 
-    {% if error %}
-        <p>{{ error }}</p>
-    {% endif %}
+<section class="auth-page">
 
-    <form method="POST">
+    <div class="auth-card">
 
-        {% csrf_token %}
+        <div class="auth-brand">
+            <div class="auth-icon">🛒</div>
 
-        <label>Username</label>
-        <input
-            type="text"
-            name="username"
-            required
-        >
+            <span class="section-label">WELCOME BACK</span>
 
-        <br><br>
+            <h1>Login to FreshCart</h1>
 
-        <label>Password</label>
-        <input
-            type="password"
-            name="password"
-            required
-        >
+            <p>
+                Sign in to continue shopping and manage your orders.
+            </p>
+        </div>
 
-        <br><br>
 
-        <button type="submit">
-            Login
-        </button>
+        {% if messages %}
+            <div class="auth-messages">
+                {% for message in messages %}
+                    <div class="auth-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-    </form>
 
-    <p>
-        Don't have an account?
-        <a href="{% url 'register' %}">
-            Register
-        </a>
-    </p>
+        <form method="POST" class="auth-form">
 
-</body>
-</html>
+            {% csrf_token %}
+
+            <div class="auth-field">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    placeholder="Enter your username"
+                    required
+                    autocomplete="username"
+                >
+
+            </div>
+
+
+            <div class="auth-field">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                    autocomplete="current-password"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="auth-submit-btn"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <div class="auth-footer">
+
+            <span>
+                Don't have an account?
+            </span>
+
+            <a href="{% url 'register' %}">
+                Create an account
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
