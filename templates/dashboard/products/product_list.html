@@ -10,11 +10,14 @@
 
     <div class="container">
 
-        <!-- Header -->
+        <!-- =========================================
+             HEADER
+        ========================================== -->
 
         <div class="admin-page-header">
 
             <div>
+
                 <span class="section-label">
                     STORE MANAGEMENT
                 </span>
@@ -26,7 +29,9 @@
                 <p>
                     Manage your FreshCart products and inventory.
                 </p>
+
             </div>
+
 
             <div class="admin-page-header-actions">
 
@@ -49,13 +54,21 @@
         </div>
 
 
-        <!-- Product Table -->
+        <!-- =========================================
+             PRODUCT TABLE CARD
+        ========================================== -->
 
         <div class="admin-table-card">
+
+
+            <!-- =====================================
+                 TABLE HEADER
+            ====================================== -->
 
             <div class="admin-table-header">
 
                 <div>
+
                     <h2>
                         All Products
                     </h2>
@@ -63,10 +76,150 @@
                     <p>
                         Manage pricing, stock and availability.
                     </p>
+
                 </div>
 
             </div>
 
+
+            <!-- =====================================
+                 SEARCH & FILTER
+            ====================================== -->
+
+            <form
+                method="GET"
+                class="admin-product-filters"
+            >
+
+                <!-- Search -->
+
+                <div class="admin-product-search">
+
+                    <label for="product-search">
+                        Search Products
+                    </label>
+
+                    <div class="admin-search-input">
+
+                        <span>
+                            🔍
+                        </span>
+
+                        <input
+                            type="text"
+                            id="product-search"
+                            name="search"
+                            value="{{ search_query }}"
+                            placeholder="Search by product name..."
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Category -->
+
+                <div class="admin-product-category-filter">
+
+                    <label for="product-category">
+                        Category
+                    </label>
+
+                    <select
+                        id="product-category"
+                        name="category"
+                    >
+
+                        <option value="">
+                            All Categories
+                        </option>
+
+                        {% for category in categories %}
+
+                        <option
+                            value="{{ category.id }}"
+                            {% if selected_category == category.id|stringformat:"s" %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ category.name }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Search button -->
+
+                <button
+                    type="submit"
+                    class="admin-filter-btn"
+                >
+                    Search
+                </button>
+
+
+                <!-- Clear -->
+
+                {% if search_query or selected_category %}
+
+                <a
+                    href="{% url 'admin_product_list' %}"
+                    class="admin-clear-filter-btn"
+                >
+                    Clear
+                </a>
+
+                {% endif %}
+
+            </form>
+
+
+            <!-- =====================================
+                 ACTIVE FILTER MESSAGE
+            ====================================== -->
+
+            {% if search_query or selected_category %}
+
+            <div class="admin-filter-result">
+
+                {% if search_query %}
+
+                    Showing results for
+                    <strong>
+                        "{{ search_query }}"
+                    </strong>
+
+                {% endif %}
+
+                {% if selected_category %}
+
+                    {% if search_query %}
+                        in
+                    {% endif %}
+
+                    <strong>
+                        {% for category in categories %}
+                            {% if selected_category == category.id|stringformat:"s" %}
+                                {{ category.name }}
+                            {% endif %}
+                        {% endfor %}
+                    </strong>
+
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- =====================================
+                 PRODUCT TABLE
+            ====================================== -->
 
             <div class="admin-table-wrapper">
 
@@ -75,14 +228,31 @@
                     <thead>
 
                         <tr>
-                            <th>Product</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Status</th>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Category
+                            </th>
+
+                            <th>
+                                Price
+                            </th>
+
+                            <th>
+                                Stock
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
                             <th class="admin-actions-column">
                                 Actions
                             </th>
+
                         </tr>
 
                     </thead>
@@ -93,6 +263,8 @@
                         {% for product in products %}
 
                         <tr>
+
+                            <!-- Product -->
 
                             <td>
 
@@ -111,12 +283,18 @@
                             </td>
 
 
+                            <!-- Category -->
+
                             <td>
+
                                 <span class="admin-category-text">
                                     {{ product.category.name }}
                                 </span>
+
                             </td>
 
+
+                            <!-- Price -->
 
                             <td>
 
@@ -126,6 +304,8 @@
 
                             </td>
 
+
+                            <!-- Stock -->
 
                             <td>
 
@@ -146,26 +326,36 @@
                             </td>
 
 
+                            <!-- Status -->
+
                             <td>
 
                                 {% if product.is_available %}
 
                                     <span class="admin-status-badge admin-status-active">
+
                                         <span></span>
+
                                         Available
+
                                     </span>
 
                                 {% else %}
 
                                     <span class="admin-status-badge admin-status-inactive">
+
                                         <span></span>
+
                                         Unavailable
+
                                     </span>
 
                                 {% endif %}
 
                             </td>
 
+
+                            <!-- Actions -->
 
                             <td>
 
@@ -203,6 +393,7 @@
 
                         </tr>
 
+
                         {% empty %}
 
                         <tr>
@@ -221,14 +412,14 @@
                                 </strong>
 
                                 <p>
-                                    Add your first product to get started.
+                                    Try changing your search or category filter.
                                 </p>
 
                                 <a
-                                    href="{% url 'admin_product_add' %}"
-                                    class="admin-primary-btn"
+                                    href="{% url 'admin_product_list' %}"
+                                    class="admin-secondary-btn"
                                 >
-                                    + Add Product
+                                    Clear Filters
                                 </a>
 
                             </td>

@@ -1,29 +1,44 @@
 {% extends "base.html" %}
 
+{% block title %}
+Sales Prediction - FreshCart
+{% endblock %}
+
 {% block content %}
 
-<div class="sales-prediction-page">
+<section class="sales-prediction-page">
+
+<div class="container">
 
     <!-- =========================================
-         PAGE HEADER
+         HEADER
     ========================================== -->
 
     <div class="sales-prediction-header">
 
         <div>
-            <span class="section-label">AI INSIGHTS</span>
 
-            <h1>Sales Prediction</h1>
+            <span class="section-label">
+                AI & MACHINE LEARNING
+            </span>
+
+            <h1>
+                Sales Prediction
+            </h1>
 
             <p>
-                AI-powered demand forecasting based on historical sales
-                to help you plan inventory and future stock requirements.
+                Machine-learning-based product demand forecast
+                for the next 7 days.
             </p>
+
         </div>
 
         <div class="sales-ai-badge">
+
             <span class="sales-ai-dot"></span>
-            Random Forest Model
+
+            AI Forecast
+
         </div>
 
     </div>
@@ -31,286 +46,352 @@
 
     {% if error %}
 
-        <div class="sales-prediction-error">
+    <!-- =========================================
+         ERROR
+    ========================================== -->
 
-            <div class="sales-error-icon">
-                !
-            </div>
+    <div class="sales-prediction-error">
 
-            <div>
-                <strong>Prediction Unavailable</strong>
+        <div class="sales-error-icon">
+            !
+        </div>
 
-                <p>
-                    {{ error }}
-                </p>
-            </div>
+        <div>
+
+            <strong>
+                Prediction unavailable
+            </strong>
+
+            <p>
+                {{ error }}
+            </p>
 
         </div>
+
+    </div>
 
     {% else %}
 
 
-        <!-- =========================================
-             OVERVIEW
-        ========================================== -->
+    <!-- =========================================
+         OVERVIEW
+    ========================================== -->
 
-        <div class="sales-prediction-overview">
+    <div class="sales-prediction-overview">
 
-            <div class="sales-overview-card">
+        <div class="sales-overview-card">
 
-                <div class="sales-overview-icon">
-                    📅
-                </div>
-
-                <div>
-                    <span>FORECAST PERIOD</span>
-                    <strong>Next 7 Days</strong>
-                </div>
-
-            </div>
-
-
-            <div class="sales-overview-card">
-
-                <div class="sales-overview-icon">
-                    📦
-                </div>
-
-                <div>
-                    <span>PRODUCTS FORECASTED</span>
-                    <strong id="salesProductCount">
-                        {{ predictions|length }}
-                    </strong>
-                </div>
-
-            </div>
-
-
-            <div class="sales-overview-card">
-
-                <div class="sales-overview-icon">
-                    🤖
-                </div>
-
-                <div>
-                    <span>MODEL</span>
-                    <strong>Random Forest</strong>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =========================================
-             FORECAST CHART
-        ========================================== -->
-
-        <div class="sales-prediction-card">
-
-            <div class="sales-card-header">
-
-                <div>
-                    <span class="analytics-chart-label">
-                        DEMAND TREND
-                    </span>
-
-                    <h2>7-Day Product Demand Forecast</h2>
-
-                    <p>
-                        Predicted product demand for the upcoming seven days.
-                    </p>
-                </div>
-
-                <span class="sales-chart-badge">
-                    7 DAY FORECAST
-                </span>
-
-            </div>
-
-            <div class="sales-chart-container">
-                {{ chart|safe }}
-            </div>
-
-        </div>
-
-
-        <!-- =========================================
-             FILTERED FORECAST
-        ========================================== -->
-
-        <div class="sales-prediction-card">
-
-            <div class="sales-card-header">
-
-                <div>
-                    <span class="analytics-chart-label">
-                        FORECAST DETAILS
-                    </span>
-
-                    <h2>Product Demand</h2>
-
-                    <p>
-                        Filter the forecast by day or product.
-                    </p>
-                </div>
-
-                <span class="sales-chart-badge" id="salesFilterBadge">
-                    DAY 1
-                </span>
-
-            </div>
-
-
-            <!-- FILTERS -->
-
-            <div class="sales-filter-panel">
-
-                <div class="sales-filter-group">
-
-                    <label for="forecastDate">
-                        Forecast Day
-                    </label>
-
-                    <select id="forecastDate">
-                        <option value="all">
-                            All Forecast Days
-                        </option>
-                    </select>
-
-                </div>
-
-
-                <div class="sales-filter-group">
-
-                    <label for="forecastProduct">
-                        Product
-                    </label>
-
-                    <select id="forecastProduct">
-
-                        <option value="all">
-                            All Products
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <!-- SUMMARY -->
-
-            <div class="sales-filter-summary" id="forecastSummary">
-                Showing Forecast Day 1 for all products.
-            </div>
-
-
-            <!-- TABLE -->
-
-            <div class="sales-prediction-table-wrapper">
-
-                <table class="sales-prediction-table">
-
-                    <thead>
-
-                        <tr>
-                            <th>Product</th>
-                            <th>Forecast Date</th>
-                            <th>Predicted Quantity</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="forecastTableBody">
-                    </tbody>
-
-                </table>
-
-            </div>
-
-
-            <!-- EMPTY STATE -->
-
-            <div
-                id="noForecastMessage"
-                class="sales-filter-empty"
-                style="display: none;"
-            >
-                No forecast data matches the selected filters.
-            </div>
-
-        </div>
-
-
-        <!-- =========================================
-             INFORMATION
-        ========================================== -->
-
-        <div class="sales-prediction-info">
-
-            <div class="sales-info-icon">
-                💡
+            <div class="sales-overview-icon">
+                📈
             </div>
 
             <div>
 
-                <strong>
-                    About this forecast
-                </strong>
+                <span>
+                    FORECAST TYPE
+                </span>
 
-                <p>
-                    Predictions are generated using historical delivered
-                    order data and machine-learning features including
-                    previous sales, weekly patterns, monthly patterns,
-                    weekends, and rolling demand averages.
-                </p>
+                <strong>
+                    Product Demand
+                </strong>
 
             </div>
 
         </div>
+
+
+        <div class="sales-overview-card">
+
+            <div class="sales-overview-icon">
+                📅
+            </div>
+
+            <div>
+
+                <span>
+                    FORECAST PERIOD
+                </span>
+
+                <strong>
+                    Next 7 Days
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="sales-overview-card">
+
+            <div class="sales-overview-icon">
+                🤖
+            </div>
+
+            <div>
+
+                <span>
+                    MODEL
+                </span>
+
+                <strong>
+                    ML Prediction
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         CHART
+         DO NOT CHANGE
+    ========================================== -->
+
+    <div class="sales-prediction-card">
+
+        <div class="sales-card-header">
+
+            <div>
+
+                <span class="analytics-chart-label">
+                    FORECAST ANALYTICS
+                </span>
+
+                <h2>
+                    Demand Forecast
+                </h2>
+
+                <p>
+                    Predicted product demand across the forecast period.
+                </p>
+
+            </div>
+
+            <div class="sales-chart-badge">
+                7 DAY FORECAST
+            </div>
+
+        </div>
+
+        <div class="sales-chart-container">
+
+            {{ chart|safe }}
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         FILTER + PREDICTION TABLE
+    ========================================== -->
+
+    <div class="sales-prediction-card">
+
+        <!-- Card Header -->
+
+        <div class="sales-card-header">
+
+            <div>
+
+                <span class="analytics-chart-label">
+                    PREDICTION DATA
+                </span>
+
+                <h2>
+                    Product Demand Forecast
+                </h2>
+
+                <p>
+                    Filter the predicted demand by forecast day or product.
+                </p>
+
+            </div>
+
+            <div
+                class="sales-chart-badge"
+                id="salesFilterBadge"
+            >
+                DAY 1
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             FILTERS
+        ====================================== -->
+
+        <div class="sales-filter-area">
+
+            <div class="sales-filter">
+
+                <label for="forecastDate">
+                    Forecast Day
+                </label>
+
+                <select id="forecastDate">
+
+                    <option value="all">
+                        All Forecast Days
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="sales-filter">
+
+                <label for="forecastProduct">
+                    Product
+                </label>
+
+                <select id="forecastProduct">
+
+                    <option value="all">
+                        All Products
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             FILTER SUMMARY
+        ====================================== -->
+
+        <div
+            class="sales-filter-summary"
+            id="forecastSummary"
+        >
+            Showing Forecast Day 1 for all products.
+        </div>
+
+
+        <!-- =====================================
+             TABLE
+        ====================================== -->
+
+        <div class="sales-prediction-table-wrapper">
+
+            <table class="sales-prediction-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Forecast Date
+                        </th>
+
+                        <th>
+                            Predicted Units
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="forecastTableBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- =====================================
+             EMPTY STATE
+        ====================================== -->
+
+        <div
+            id="noForecastMessage"
+            class="sales-filter-empty"
+            style="display: none;"
+        >
+
+            No forecast data matches the selected filters.
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         INFORMATION
+    ========================================== -->
+
+    <div class="sales-prediction-info">
+
+        <div class="sales-info-icon">
+            💡
+        </div>
+
+        <div>
+
+            <strong>
+                Forecasting insight
+            </strong>
+
+            <p>
+                These predictions can help with inventory planning,
+                product availability and future stock decisions.
+            </p>
+
+        </div>
+
+    </div>
 
 
     {% endif %}
 
 </div>
 
+</section>
 
-<!-- =========================================
-     FORECAST DATA
-========================================== -->
 
 {% if predictions %}
+
+<!-- =========================================
+     PREDICTION DATA
+========================================== -->
 
 <script id="forecast-data" type="application/json">
 [
     {% for prediction in predictions %}
+
     {
         "product": "{{ prediction.product|escapejs }}",
         "date": "{{ prediction.date|date:'Y-m-d' }}",
         "formattedDate": "{{ prediction.date|date:'d M Y' }}",
         "quantity": {{ prediction.predicted_quantity }}
-    }{% if not forloop.last %},{% endif %}
+    }
+
+    {% if not forloop.last %},{% endif %}
+
     {% endfor %}
 ]
 </script>
+
 
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const forecastDataElement =
+    const dataElement =
         document.getElementById("forecast-data");
-
-    if (!forecastDataElement) {
-        return;
-    }
-
-
-    const predictions =
-        JSON.parse(forecastDataElement.textContent);
-
 
     const dateFilter =
         document.getElementById("forecastDate");
@@ -331,25 +412,68 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("salesFilterBadge");
 
 
+    if (!dataElement) {
+        return;
+    }
+
+
+    const predictions =
+        JSON.parse(dataElement.textContent);
+
+
     /* =========================================
-       BUILD DATE OPTIONS
+       GET UNIQUE DATES
     ========================================== */
 
-    const uniqueDates = [];
+    const dates = [];
 
     predictions.forEach(function (prediction) {
 
-        if (!uniqueDates.includes(prediction.date)) {
-            uniqueDates.push(prediction.date);
+        if (!dates.includes(prediction.date)) {
+
+            dates.push(prediction.date);
+
         }
 
     });
 
 
-    uniqueDates.forEach(function (date, index) {
+    /* =========================================
+       GET UNIQUE PRODUCTS
+    ========================================== */
+
+    const products = [];
+
+    predictions.forEach(function (prediction) {
+
+        if (!products.includes(prediction.product)) {
+
+            products.push(prediction.product);
+
+        }
+
+    });
+
+
+    products.sort();
+
+
+    /* =========================================
+       CREATE DATE OPTIONS
+    ========================================== */
+
+    dates.forEach(function (date, index) {
 
         const option =
             document.createElement("option");
+
+        const prediction =
+            predictions.find(function (item) {
+
+                return item.date === date;
+
+            });
+
 
         option.value = date;
 
@@ -357,9 +481,8 @@ document.addEventListener("DOMContentLoaded", function () {
             "Forecast Day " +
             (index + 1) +
             " — " +
-            predictions.find(
-                item => item.date === date
-            ).formattedDate;
+            prediction.formattedDate;
+
 
         dateFilter.appendChild(option);
 
@@ -367,21 +490,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================================
-       BUILD PRODUCT OPTIONS
+       CREATE PRODUCT OPTIONS
     ========================================== */
 
-    const uniqueProducts = [];
-
-    predictions.forEach(function (prediction) {
-
-        if (!uniqueProducts.includes(prediction.product)) {
-            uniqueProducts.push(prediction.product);
-        }
-
-    });
-
-
-    uniqueProducts.sort().forEach(function (product) {
+    products.forEach(function (product) {
 
         const option =
             document.createElement("option");
@@ -396,20 +508,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================================
-       DEFAULT
+       DEFAULT FILTER
        FORECAST DAY 1
     ========================================== */
 
-    if (uniqueDates.length > 0) {
-        dateFilter.value = uniqueDates[0];
+    if (dates.length > 0) {
+
+        dateFilter.value = dates[0];
+
     }
 
 
     /* =========================================
-       RENDER TABLE
+       RENDER FORECAST
     ========================================== */
 
-    function renderTable() {
+    function renderForecast() {
 
         const selectedDate =
             dateFilter.value;
@@ -418,30 +532,40 @@ document.addEventListener("DOMContentLoaded", function () {
             productFilter.value;
 
 
-        let filteredPredictions =
+        /* =====================================
+           FILTER DATA
+        ====================================== */
+
+        const filtered =
             predictions.filter(function (prediction) {
 
                 const dateMatches =
                     selectedDate === "all" ||
                     prediction.date === selectedDate;
 
+
                 const productMatches =
                     selectedProduct === "all" ||
                     prediction.product === selectedProduct;
+
 
                 return dateMatches && productMatches;
 
             });
 
 
+        /* =====================================
+           CLEAR TABLE
+        ====================================== */
+
         tableBody.replaceChildren();
 
 
         /* =====================================
            EMPTY STATE
-        ===================================== */
+        ====================================== */
 
-        if (filteredPredictions.length === 0) {
+        if (filtered.length === 0) {
 
             emptyMessage.style.display = "block";
 
@@ -460,27 +584,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /* =====================================
-           SUMMARY
-        ===================================== */
-
-        let summaryText = "";
-
+           SUMMARY + BADGE
+        ====================================== */
 
         if (
             selectedDate !== "all" &&
             selectedProduct === "all"
         ) {
 
-            const dayIndex =
-                uniqueDates.indexOf(selectedDate) + 1;
+            const dayNumber =
+                dates.indexOf(selectedDate) + 1;
 
-            summaryText =
+
+            summary.textContent =
                 "Showing Forecast Day " +
-                dayIndex +
+                dayNumber +
                 " for all products.";
 
+
             filterBadge.textContent =
-                "DAY " + dayIndex;
+                "DAY " + dayNumber;
 
         }
 
@@ -490,9 +613,10 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedProduct !== "all"
         ) {
 
-            summaryText =
+            summary.textContent =
                 "Showing the 7-day forecast for " +
                 selectedProduct + ".";
+
 
             filterBadge.textContent =
                 "7 DAYS";
@@ -505,25 +629,28 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedProduct !== "all"
         ) {
 
-            const dayIndex =
-                uniqueDates.indexOf(selectedDate) + 1;
+            const dayNumber =
+                dates.indexOf(selectedDate) + 1;
 
-            summaryText =
+
+            summary.textContent =
                 "Showing Forecast Day " +
-                dayIndex +
+                dayNumber +
                 " for " +
                 selectedProduct + ".";
 
+
             filterBadge.textContent =
-                "DAY " + dayIndex;
+                "DAY " + dayNumber;
 
         }
 
 
         else {
 
-            summaryText =
+            summary.textContent =
                 "Showing the complete 7-day forecast.";
+
 
             filterBadge.textContent =
                 "7 DAYS";
@@ -531,15 +658,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        summary.textContent =
-            summaryText;
-
-
         /* =====================================
-           TABLE ROWS
-        ===================================== */
+           CREATE TABLE ROWS
+        ====================================== */
 
-        filteredPredictions.forEach(function (prediction) {
+        filtered.forEach(function (prediction) {
 
             const row =
                 document.createElement("tr");
@@ -550,35 +673,48 @@ document.addEventListener("DOMContentLoaded", function () {
             const productCell =
                 document.createElement("td");
 
-            const productWrapper =
+
+            const productContainer =
                 document.createElement("div");
 
-            productWrapper.className =
+
+            productContainer.className =
                 "sales-product-cell";
 
 
             const productIcon =
                 document.createElement("div");
 
+
             productIcon.className =
                 "sales-product-icon";
 
+
             productIcon.textContent =
-                "📦";
+                "🛒";
 
 
             const productName =
                 document.createElement("strong");
 
+
             productName.textContent =
                 prediction.product;
 
 
-            productWrapper.appendChild(productIcon);
+            productContainer.appendChild(
+                productIcon
+            );
 
-            productWrapper.appendChild(productName);
 
-            productCell.appendChild(productWrapper);
+            productContainer.appendChild(
+                productName
+            );
+
+
+            productCell.appendChild(
+                productContainer
+            );
 
 
             /* Date */
@@ -586,11 +722,22 @@ document.addEventListener("DOMContentLoaded", function () {
             const dateCell =
                 document.createElement("td");
 
-            dateCell.className =
+
+            const dateText =
+                document.createElement("span");
+
+
+            dateText.className =
                 "sales-date-cell";
 
-            dateCell.textContent =
+
+            dateText.textContent =
                 prediction.formattedDate;
+
+
+            dateCell.appendChild(
+                dateText
+            );
 
 
             /* Quantity */
@@ -599,27 +746,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.createElement("td");
 
 
-            const quantityBadge =
+            const quantityValue =
                 document.createElement("span");
 
-            quantityBadge.className =
+
+            quantityValue.className =
                 "sales-predicted-value";
 
-            quantityBadge.textContent =
+
+            quantityValue.textContent =
                 prediction.quantity;
 
 
-            quantityCell.appendChild(quantityBadge);
+            quantityCell.appendChild(
+                quantityValue
+            );
 
 
-            row.appendChild(productCell);
+            /* Add cells */
 
-            row.appendChild(dateCell);
+            row.appendChild(
+                productCell
+            );
 
-            row.appendChild(quantityCell);
+            row.appendChild(
+                dateCell
+            );
+
+            row.appendChild(
+                quantityCell
+            );
 
 
-            tableBody.appendChild(row);
+            tableBody.appendChild(
+                row
+            );
 
         });
 
@@ -632,12 +793,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     dateFilter.addEventListener(
         "change",
-        renderTable
+        renderForecast
     );
+
 
     productFilter.addEventListener(
         "change",
-        renderTable
+        renderForecast
     );
 
 
@@ -645,7 +807,7 @@ document.addEventListener("DOMContentLoaded", function () {
        INITIAL RENDER
     ========================================== */
 
-    renderTable();
+    renderForecast();
 
 });
 

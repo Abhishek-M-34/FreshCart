@@ -55,15 +55,35 @@ def is_admin(user):
 @user_passes_test(is_admin)
 def admin_product_list(request):
 
-    products = Product.objects.select_related(
-        "category"
-    ).order_by("-id")
+    search_query = request.GET.get("search", "").strip()
+    category_id = request.GET.get("category", "").strip()
+
+    products = (
+        Product.objects
+        .select_related("category")
+        .order_by("-id")
+    )
+
+    if search_query:
+        products = products.filter(
+            name__icontains=search_query
+        )
+
+    if category_id:
+        products = products.filter(
+            category_id=category_id
+        )
+
+    categories = Category.objects.all().order_by("name")
 
     return render(
         request,
         "dashboard/products/product_list.html",
         {
-            "products": products
+            "products": products,
+            "categories": categories,
+            "search_query": search_query,
+            "selected_category": category_id,
         }
     )
 
