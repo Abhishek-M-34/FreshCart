@@ -50,6 +50,57 @@
 
             </div>
 
+            <form
+    method="GET"
+    class="admin-product-filters"
+>
+
+    <div class="admin-product-search">
+
+        <label for="customer-search">
+            Search Customers
+        </label>
+
+        <div class="admin-search-input">
+
+            <span>
+                🔍
+            </span>
+
+            <input
+                type="text"
+                id="customer-search"
+                name="search"
+                value="{{ search_query }}"
+                placeholder="Search by Customer Name or Email..."
+            >
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="submit"
+        class="admin-filter-btn"
+    >
+        Search
+    </button>
+
+
+    {% if search_query %}
+
+        <a
+            href="{% url 'admin_customer_list' %}"
+            class="admin-clear-filter-btn"
+        >
+            Clear
+        </a>
+
+    {% endif %}
+
+</form>
+
 
             <div class="admin-customer-table-wrapper">
 

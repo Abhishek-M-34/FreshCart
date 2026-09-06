@@ -57,6 +57,56 @@
                     </p>
 
                 </div>
+<form
+    method="GET"
+    class="admin-product-filters"
+>
+
+    <div class="admin-product-search">
+
+        <label for="order-search">
+            Search Orders
+        </label>
+
+        <div class="admin-search-input">
+
+            <span>
+                🔍
+            </span>
+
+            <input
+                type="text"
+                id="order-search"
+                name="search"
+                value="{{ search_query }}"
+                placeholder="Search by Order ID or Customer Name..."
+            >
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="submit"
+        class="admin-filter-btn"
+    >
+        Search
+    </button>
+
+
+    {% if search_query %}
+
+        <a
+            href="{% url 'admin_order_list' %}"
+            class="admin-clear-filter-btn"
+        >
+            Clear
+        </a>
+
+    {% endif %}
+
+</form>
 
             </div>
 

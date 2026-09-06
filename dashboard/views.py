@@ -67,6 +67,8 @@ def dashboard(request):
 @user_passes_test(is_admin)
 def admin_customer_list(request):
 
+    search_query = request.GET.get("search", "").strip()
+
     customers = (
         User.objects
         .filter(is_staff=False)
@@ -79,17 +81,24 @@ def admin_customer_list(request):
                 )
             )
         )
-        .order_by("-date_joined")
     )
+
+    if search_query:
+        customers = customers.filter(
+            models.Q(username__icontains=search_query) |
+            models.Q(email__icontains=search_query)
+        )
+
+    customers = customers.order_by("-date_joined")
 
     return render(
         request,
         "dashboard/customers/customer_list.html",
         {
-            "customers": customers
+            "customers": customers,
+            "search_query": search_query,
         }
     )
-
 @user_passes_test(is_admin)
 def admin_customer_detail(request, customer_id):
 
