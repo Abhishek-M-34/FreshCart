@@ -133,205 +133,111 @@
 
         <!-- Management Actions -->
 
-        <div class="dashboard-section-heading">
+<!-- Business Intelligence -->
 
-            <div>
-                <span class="section-label">
-                    STORE MANAGEMENT
-                </span>
+<div class="dashboard-section-heading">
 
-                <h2>
-                    Quick Actions
-                </h2>
-            </div>
+    <div>
+
+        <span class="section-label">
+            BUSINESS INTELLIGENCE
+        </span>
+
+        <h2>
+            Insights & Predictions
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="dashboard-action-grid">
+
+    <a
+        href="{% url 'analytics' %}"
+        class="dashboard-action-card dashboard-action-featured"
+    >
+
+        <div class="dashboard-action-icon">
+            📊
+        </div>
+
+        <div>
+
+            <h3>
+                Sales Analytics
+            </h3>
+
+            <p>
+                Explore sales and business performance.
+            </p>
 
         </div>
 
+        <span class="dashboard-action-arrow">
+            →
+        </span>
 
-        <div class="dashboard-action-grid">
-
-            <a
-                href="{% url 'admin_product_list' %}"
-                class="dashboard-action-card"
-            >
-
-                <div class="dashboard-action-icon">
-                    🛍️
-                </div>
-
-                <div>
-                    <h3>
-                        Manage Products
-                    </h3>
-
-                    <p>
-                        Add, edit and manage store products.
-                    </p>
-                </div>
-
-                <span class="dashboard-action-arrow">
-                    →
-                </span>
-
-            </a>
+    </a>
 
 
-            <a
-                href="{% url 'admin_category_list' %}"
-                class="dashboard-action-card"
-            >
+    <a
+        href="{% url 'sales_prediction' %}"
+        class="dashboard-action-card dashboard-action-featured"
+    >
 
-                <div class="dashboard-action-icon">
-                    🗂️
-                </div>
+        <div class="dashboard-action-icon">
+            📈
+        </div>
 
-                <div>
-                    <h3>
-                        Manage Categories
-                    </h3>
+        <div>
 
-                    <p>
-                        Organize products into categories.
-                    </p>
-                </div>
+            <h3>
+                Sales Prediction
+            </h3>
 
-                <span class="dashboard-action-arrow">
-                    →
-                </span>
-
-            </a>
-
-
-            <a
-                href="{% url 'admin_order_list' %}"
-                class="dashboard-action-card"
-            >
-
-                <div class="dashboard-action-icon">
-                    📋
-                </div>
-
-                <div>
-                    <h3>
-                        Manage Orders
-                    </h3>
-
-                    <p>
-                        Review and update customer orders.
-                    </p>
-                </div>
-
-                <span class="dashboard-action-arrow">
-                    →
-                </span>
-
-            </a>
-
-
-            <a
-                href="{% url 'admin_customer_list' %}"
-                class="dashboard-action-card"
-            >
-
-                <div class="dashboard-action-icon">
-                    👤
-                </div>
-
-                <div>
-                    <h3>
-                        Manage Customers
-                    </h3>
-
-                    <p>
-                        View customers and their activity.
-                    </p>
-                </div>
-
-                <span class="dashboard-action-arrow">
-                    →
-                </span>
-
-            </a>
-
-
-            <a
-                href="{% url 'analytics' %}"
-                class="dashboard-action-card dashboard-action-featured"
-            >
-
-                <div class="dashboard-action-icon">
-                    📊
-                </div>
-
-                <div>
-                    <h3>
-                        Sales Analytics
-                    </h3>
-
-                    <p>
-                        Explore sales and business performance.
-                    </p>
-                </div>
-
-                <span class="dashboard-action-arrow">
-                    →
-                </span>
-
-            </a>
-
-
-            <a
-                href="{% url 'sales_prediction' %}"
-                class="dashboard-action-card dashboard-action-featured"
-            >
-
-                <div class="dashboard-action-icon">
-                    📈
-                </div>
-
-                <div>
-                    <h3>
-                        Sales Prediction
-                    </h3>
-
-                    <p>
-                        View predicted future sales.
-                    </p>
-                </div>
-
-                <span class="dashboard-action-arrow">
-                    →
-                </span>
-
-            </a>
-
-
-            <a
-                href="{% url 'inventory_prediction' %}"
-                class="dashboard-action-card dashboard-action-featured"
-            >
-
-                <div class="dashboard-action-icon">
-                    📦
-                </div>
-
-                <div>
-                    <h3>
-                        Inventory Prediction
-                    </h3>
-
-                    <p>
-                        Monitor and predict inventory requirements.
-                    </p>
-                </div>
-
-                <span class="dashboard-action-arrow">
-                    →
-                </span>
-
-            </a>
+            <p>
+                View predicted future sales.
+            </p>
 
         </div>
+
+        <span class="dashboard-action-arrow">
+            →
+        </span>
+
+    </a>
+
+
+    <a
+        href="{% url 'inventory_prediction' %}"
+        class="dashboard-action-card dashboard-action-featured"
+    >
+
+        <div class="dashboard-action-icon">
+            📦
+        </div>
+
+        <div>
+
+            <h3>
+                Inventory Prediction
+            </h3>
+
+            <p>
+                Monitor and predict inventory requirements.
+            </p>
+
+        </div>
+
+        <span class="dashboard-action-arrow">
+            →
+        </span>
+
+    </a>
+
+</div>
 
 
         <!-- Dashboard Data -->
