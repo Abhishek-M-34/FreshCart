@@ -4,6 +4,206 @@
 
 {% block content %}
 
+{% if user.is_staff %}
+
+<section class="hero-section">
+
+    <div class="hero-container">
+
+        <div class="hero-content">
+
+            <span class="hero-badge">
+                🛒 FreshCart Administration
+            </span>
+
+            <h1>
+                Manage FreshCart,
+                <span>smarter and simpler.</span>
+            </h1>
+
+            <p>
+                Manage products, customers and orders while using
+                analytics and intelligent predictions to monitor your business.
+            </p>
+
+            <div class="hero-actions">
+
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">
+                    Go to Dashboard →
+                </a>
+
+                <a href="{% url 'admin_product_list' %}" class="btn btn-secondary">
+                    Manage Products
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="hero-visual">
+
+            <div class="hero-circle">
+
+                <div class="hero-product">
+                    📦
+                </div>
+
+                <div class="hero-product hero-product-2">
+                    📊
+                </div>
+
+                <div class="hero-product hero-product-3">
+                    👥
+                </div>
+
+                <div class="hero-cart">
+                    🛒
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="features-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span class="section-label">
+                FRESHCART MANAGEMENT
+            </span>
+
+            <h2>
+                Everything you need to manage your store
+            </h2>
+
+            <p>
+                Manage your store operations and monitor business performance
+                from one place.
+            </p>
+
+        </div>
+
+
+        <div class="features-grid customer-features-grid">
+
+            <div class="feature-card card">
+
+                <div class="feature-icon">
+                    📦
+                </div>
+
+                <h3>
+                    Manage Products
+                </h3>
+
+                <p>
+                    Add, edit and manage the products available in your store.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card card">
+
+                <div class="feature-icon">
+                    🛍️
+                </div>
+
+                <h3>
+                    Manage Orders
+                </h3>
+
+                <p>
+                    View and manage customer orders throughout the order process.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card card">
+
+                <div class="feature-icon">
+                    👥
+                </div>
+
+                <h3>
+                    Manage Customers
+                </h3>
+
+                <p>
+                    View and manage customer information and their activity.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card card">
+
+                <div class="feature-icon">
+                    📊
+                </div>
+
+                <h3>
+                    Business Intelligence
+                </h3>
+
+                <p>
+                    Analyze sales and use intelligent predictions to support
+                    better business decisions.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="cta-section">
+
+    <div class="container">
+
+        <div class="cta-card">
+
+            <div>
+
+                <span class="section-label">
+                    FRESHCART ADMINISTRATION
+                </span>
+
+                <h2>
+                    Stay in control of your store.
+                </h2>
+
+                <p>
+                    Manage your store operations and monitor business
+                    performance from the administration panel.
+                </p>
+
+            </div>
+
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">
+                View Dashboard →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{% else %}
+
 <section class="hero-section">
 
     <div class="hero-container">
@@ -91,7 +291,7 @@
         </div>
 
 
-        <div class="features-grid">
+        <div class="features-grid customer-features-grid">
 
             <div class="feature-card card">
 
@@ -146,24 +346,6 @@
 
             </div>
 
-
-            <div class="feature-card card">
-
-                <div class="feature-icon">
-                    📊
-                </div>
-
-                <h3>
-                    Smart Analytics
-                </h3>
-
-                <p>
-                    FreshCart includes analytics and intelligent
-                    inventory insights for administrators.
-                </p>
-
-            </div>
-
         </div>
 
     </div>
@@ -202,5 +384,7 @@
     </div>
 
 </section>
+
+{% endif %}
 
 {% endblock %}

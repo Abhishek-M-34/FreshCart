@@ -743,6 +743,12 @@ textarea {
     gap: 20px;
 }
 
+.customer-features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 950px;
+    margin: 0 auto;
+}
+
 
 .feature-card {
     padding: 28px 22px;

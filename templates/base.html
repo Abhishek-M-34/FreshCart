@@ -33,13 +33,16 @@
                         Home
                     </a>
 
-                    <a href="{% url 'product_list' %}">
-                        Products
-                    </a>
+                    {% if not user.is_staff %}
+                        <a href="{% url 'product_list' %}">
+                            Products
+                        </a>
 
-                    <a href="{% url 'cart' %}">
-                        Cart
-                    </a>
+                        <a href="{% url 'cart' %}">
+                            Cart
+                        </a>
+
+                    {% endif %}
 
                     {% if user.is_authenticated %}
 
