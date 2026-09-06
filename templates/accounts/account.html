@@ -109,145 +109,169 @@
 
 
             <!-- Quick Actions -->
-            <div class="account-actions-card">
+<div class="account-section">
 
-                <div class="account-card-header">
+    <div class="section-heading">
 
-                    <div class="account-card-icon">
-                        ⚡
-                    </div>
+        <span class="section-label">
+            QUICK ACCESS
+        </span>
 
-                    <div>
+        <h2>
+            Manage FreshCart
+        </h2>
 
-                        <span>
-                            QUICK ACCESS
-                        </span>
+        <p>
+            Quickly access your administration tools.
+        </p>
 
-                        <h2>
-                            Quick Actions
-                        </h2>
-
-                    </div>
-
-                </div>
+    </div>
 
 
-                <div class="account-actions">
+<div class="account-actions">
 
-                    <a
-                        href="{% url 'order_history' %}"
-                        class="account-action account-action-primary"
-                    >
+    <a
+        href="{% url 'admin_product_list' %}"
+        class="account-action account-action-primary"
+    >
 
-                        <div class="account-action-icon">
-                            📦
-                        </div>
+        <div class="account-action-icon">
+            🥬
+        </div>
 
-                        <div class="account-action-content">
+        <div class="account-action-content">
 
-                            <strong>
-                                My Orders
-                            </strong>
+            <strong>
+                Manage Products
+            </strong>
 
-                            <span>
-                                View your order history
-                            </span>
+            <span>
+                Add, edit and manage products
+            </span>
 
-                        </div>
+        </div>
 
-                        <span class="account-action-arrow">
-                            →
-                        </span>
+        <span class="account-action-arrow">
+            →
+        </span>
 
-                    </a>
-
-
-                    <a
-                        href="{% url 'cart' %}"
-                        class="account-action"
-                    >
-
-                        <div class="account-action-icon">
-                            🛒
-                        </div>
-
-                        <div class="account-action-content">
-
-                            <strong>
-                                Shopping Cart
-                            </strong>
-
-                            <span>
-                                Review items in your cart
-                            </span>
-
-                        </div>
-
-                        <span class="account-action-arrow">
-                            →
-                        </span>
-
-                    </a>
+    </a>
 
 
-                    <a
-                        href="{% url 'product_list' %}"
-                        class="account-action"
-                    >
+    <a
+        href="{% url 'admin_category_list' %}"
+        class="account-action"
+    >
 
-                        <div class="account-action-icon">
-                            🥬
-                        </div>
+        <div class="account-action-icon">
+            🗂️
+        </div>
 
-                        <div class="account-action-content">
+        <div class="account-action-content">
 
-                            <strong>
-                                Continue Shopping
-                            </strong>
+            <strong>
+                Manage Categories
+            </strong>
 
-                            <span>
-                                Explore fresh products
-                            </span>
+            <span>
+                Add and manage product categories
+            </span>
 
-                        </div>
+        </div>
 
-                        <span class="account-action-arrow">
-                            →
-                        </span>
+        <span class="account-action-arrow">
+            →
+        </span>
 
-                    </a>
+    </a>
 
 
-                    <a
-                        href="{% url 'logout' %}"
-                        class="account-action account-action-logout"
-                    >
+    <a
+        href="{% url 'admin_customer_list' %}"
+        class="account-action"
+    >
 
-                        <div class="account-action-icon">
-                            ↪
-                        </div>
+        <div class="account-action-icon">
+            👥
+        </div>
 
-                        <div class="account-action-content">
+        <div class="account-action-content">
 
-                            <strong>
-                                Logout
-                            </strong>
+            <strong>
+                Manage Customers
+            </strong>
 
-                            <span>
-                                Sign out of your account
-                            </span>
+            <span>
+                View and manage customer accounts
+            </span>
 
-                        </div>
+        </div>
 
-                        <span class="account-action-arrow">
-                            →
-                        </span>
+        <span class="account-action-arrow">
+            →
+        </span>
 
-                    </a>
+    </a>
 
-                </div>
 
-            </div>
+    <a
+        href="{% url 'admin_order_list' %}"
+        class="account-action"
+    >
+
+        <div class="account-action-icon">
+            📦
+        </div>
+
+        <div class="account-action-content">
+
+            <strong>
+                Manage Orders
+            </strong>
+
+            <span>
+                View and manage customer orders
+            </span>
+
+        </div>
+
+        <span class="account-action-arrow">
+            →
+        </span>
+
+    </a>
+
+
+    <a
+        href="{% url 'logout' %}"
+        class="account-action account-action-logout"
+    >
+
+        <div class="account-action-icon">
+            ↪
+        </div>
+
+        <div class="account-action-content">
+
+            <strong>
+                Logout
+            </strong>
+
+            <span>
+                Sign out of your account
+            </span>
+
+        </div>
+
+        <span class="account-action-arrow">
+            →
+        </span>
+
+    </a>
+
+</div>
+
+</div>
 
         </div>
 

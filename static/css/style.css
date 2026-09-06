@@ -9257,6 +9257,10 @@ textarea {
     letter-spacing: -0.4px;
 }
 
+.admin-home-grid {
+    grid-template-columns: repeat(4, 1fr);
+}
+
 
 .admin-category-count {
     padding: 6px 11px;
