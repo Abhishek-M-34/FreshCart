@@ -64,11 +64,13 @@ def admin_product_list(request):
         .order_by("-id")
     )
 
+    # Search
     if search_query:
         products = products.filter(
             name__icontains=search_query
         )
 
+    # Category filter
     if category_id:
         products = products.filter(
             category_id=category_id
@@ -76,17 +78,34 @@ def admin_product_list(request):
 
     categories = Category.objects.all().order_by("name")
 
+    # Group products category-wise
+    category_sections = []
+
+    for category in categories:
+
+        category_products = products.filter(
+            category=category
+        )
+
+        if category_products.exists():
+
+            category_sections.append({
+                "category": category,
+                "products": category_products,
+            })
+
+    context = {
+        "category_sections": category_sections,
+        "categories": categories,
+        "search_query": search_query,
+        "selected_category": category_id,
+    }
+
     return render(
         request,
         "dashboard/products/product_list.html",
-        {
-            "products": products,
-            "categories": categories,
-            "search_query": search_query,
-            "selected_category": category_id,
-        }
+        context
     )
-
 @user_passes_test(is_admin)
 def admin_product_add(request):
 
