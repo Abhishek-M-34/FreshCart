@@ -137,8 +137,7 @@
 
                 <!-- Sales by Items -->
 
-        <div class="analytics-chart-card">
-
+        <div id="sales-by-items" class="analytics-chart-card">
             <div class="analytics-chart-header">
 
                 <div>
@@ -150,13 +149,13 @@
                         Sales by Items
                     </h2>
 
-                    <form method="GET">
+                    <form method="GET" action="{% url 'analytics' %}#sales-by-items">
 
                         <select
-                            name="category"
-                            class="admin-search-input"
-                            onchange="this.form.submit()"
-                        >
+    name="category"
+    class="analytics-category-select"
+    onchange="this.form.submit()"
+>
 
                             <option value="">
                                 All Categories
