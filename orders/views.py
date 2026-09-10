@@ -178,30 +178,34 @@ def is_admin(user):
 @user_passes_test(is_admin)
 def admin_order_list(request):
 
-    search_query = request.GET.get("search", "").strip()
-
     orders = (
         Order.objects
         .select_related("user")
         .order_by("-created_at")
     )
 
-    if search_query:
+    search_query = request.GET.get("search", "").strip()
+    selected_date = request.GET.get("date", "").strip()
+    selected_status = request.GET.get("status", "").strip()
 
+    if search_query:
         from django.db.models import Q
 
-        if search_query.isdigit():
+        orders = orders.filter(
+            Q(id__icontains=search_query)
+            | Q(user__username__icontains=search_query)
+            | Q(user__email__icontains=search_query)
+        )
 
-            orders = orders.filter(
-                Q(id=int(search_query)) |
-                Q(user__username__icontains=search_query)
-            )
+    if selected_date:
+        orders = orders.filter(
+            created_at__date=selected_date
+        )
 
-        else:
-
-            orders = orders.filter(
-                user__username__icontains=search_query
-            )
+    if selected_status:
+        orders = orders.filter(
+            status=selected_status
+        )
 
     return render(
         request,
@@ -209,8 +213,12 @@ def admin_order_list(request):
         {
             "orders": orders,
             "search_query": search_query,
+            "selected_date": selected_date,
+            "selected_status": selected_status,
+            "status_choices": Order.STATUS_CHOICES,
         }
     )
+
 @user_passes_test(is_admin)
 def admin_order_detail(request, order_id):
 

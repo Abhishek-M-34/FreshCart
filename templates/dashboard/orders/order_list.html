@@ -109,7 +109,31 @@
 </form>
 
             </div>
+<form method="GET" class="admin-orders-search">
+    <input
+        type="text"
+        name="search"
+        class="admin-search-input"
+        placeholder="Search order ID, customer or email..."
+        value="{{ search_query }}"
+    >
 
+    <button
+        type="submit"
+        class="admin-filter-btn"
+    >
+        Search
+    </button>
+
+    {% if search_query or selected_date or selected_status %}
+        <a
+            href="{% url 'admin_order_list' %}"
+            class="admin-clear-filter-btn"
+        >
+            Clear
+        </a>
+    {% endif %}
+</form>
 
             <div class="admin-orders-table-wrapper">
 
@@ -128,16 +152,101 @@
                             </th>
 
                             <th>
-                                Date
-                            </th>
+    <div class="admin-order-filter-heading">
+
+        {% if selected_date %}
+            <span>Date: {{ selected_date|date:"d M Y" }}</span>
+        {% else %}
+            <span>Date</span>
+        {% endif %}
+
+        <form method="GET" class="admin-order-header-filter">
+            <input
+                type="hidden"
+                name="search"
+                value="{{ search_query }}"
+            >
+
+            <input
+                type="hidden"
+                name="status"
+                value="{{ selected_status }}"
+            >
+
+            <label
+                for="order-date-filter"
+                class="admin-order-filter-icon"
+                title="Filter by date"
+            >
+                📅
+            </label>
+
+            <input
+                type="date"
+                id="order-date-filter"
+                name="date"
+                value="{{ selected_date }}"
+                class="admin-order-date-input"
+                onchange="this.form.submit()"
+            >
+        </form>
+
+    </div>
+</th>
 
                             <th>
                                 Total
                             </th>
 
                             <th>
-                                Status
-                            </th>
+    <div class="admin-order-filter-heading">
+
+        {% if selected_status %}
+            <span>
+                Status: {{ selected_status|title }}
+            </span>
+        {% else %}
+            <span>Status</span>
+        {% endif %}
+
+        <form method="GET" class="admin-order-header-filter">
+
+            <input
+                type="hidden"
+                name="search"
+                value="{{ search_query }}"
+            >
+
+            <input
+                type="hidden"
+                name="date"
+                value="{{ selected_date }}"
+            >
+
+            <select
+                name="status"
+                class="admin-order-status-select"
+                onchange="this.form.submit()"
+                title="Filter by status"
+            >
+                <option value="">All</option>
+
+                {% for value, label in status_choices %}
+                    <option
+                        value="{{ value }}"
+                        {% if selected_status == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+        </form>
+
+    </div>
+</th>
 
                             <th class="admin-order-action-heading">
                                 Action

@@ -6299,6 +6299,84 @@ textarea {
     background: var(--background);
 }
 
+/* =========================================
+   ORDER TABLE HEADER FILTERS
+========================================= */
+
+.admin-order-filter-heading {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+.admin-order-header-filter {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+.admin-order-filter-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 22px;
+    height: 22px;
+
+    font-size: 0.85rem;
+    cursor: pointer;
+
+    border-radius: 4px;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.admin-order-filter-icon:hover {
+    background: var(--primary-light);
+    transform: scale(1.05);
+}
+
+.admin-order-date-input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+    pointer-events: none;
+}
+
+.admin-order-status-select {
+    border: none;
+    background: transparent;
+
+    width: 20px;
+    height: 22px;
+
+    padding: 0;
+
+    color: var(--text-dark);
+
+    font-size: 0;
+    cursor: pointer;
+
+    outline: none;
+}
+
+.admin-order-status-select option {
+    font-size: 0.9rem;
+}
+
+.admin-orders-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
 
 /* =========================================
    ORDER ID
