@@ -226,7 +226,7 @@ def analytics(request):
         .order_by("-quantity_sold")[:10]
     )
 
-        # -------------------------
+    # -------------------------
     # Sales by Items
     # -------------------------
 
@@ -242,39 +242,60 @@ def analytics(request):
         .order_by("category__name")
     )
 
-    sales_by_items = (
-        OrderItem.objects
-        .filter(
-            order__status="delivered",
-            product__isnull=False
-        )
-        .annotate(
-            day=TruncDay("order__created_at")
-        )
-        .values(
-            "day",
-            "product_name",
-            "product__category_id",
-            "product__category__name"
-        )
-        .annotate(
-            sales=Sum(
-                F("quantity") * F("price"),
-                output_field=DecimalField()
+    if selected_category:
+
+        sales_by_items = (
+            OrderItem.objects
+            .filter(
+                order__status="delivered",
+                product__isnull=False,
+                product__category_id=selected_category
+            )
+            .annotate(
+                day=TruncDay("order__created_at")
+            )
+            .values(
+                "day",
+                "product_name"
+            )
+            .annotate(
+                sales=Sum(
+                    F("quantity") * F("price"),
+                    output_field=DecimalField()
+                )
+            )
+            .order_by(
+                "day",
+                "product_name"
             )
         )
-        .order_by(
-            "day",
-            "product_name"
+
+    else:
+
+        sales_by_items = (
+            OrderItem.objects
+            .filter(
+                order__status="delivered",
+                product__isnull=False
+            )
+            .annotate(
+                day=TruncDay("order__created_at")
+            )
+            .values(
+                "day",
+                "product__category__name"
+            )
+            .annotate(
+                sales=Sum(
+                    F("quantity") * F("price"),
+                    output_field=DecimalField()
+                )
+            )
+            .order_by(
+                "day",
+                "product__category__name"
+            )
         )
-    )
-
-    if selected_category:
-        sales_by_items = sales_by_items.filter(
-            product__category_id=selected_category
-        )
-
-
     # -------------------------
     # Daily Chart
     # -------------------------
@@ -302,41 +323,43 @@ def analytics(request):
         yaxis_title="Revenue (₹)",
         template="plotly_white"
     )
-
-        # -------------------------
+    # -------------------------
     # Sales by Items Chart
     # -------------------------
 
     item_chart = go.Figure()
 
-    product_data = {}
+    sales_data = {}
 
     for item in sales_by_items:
 
-        product_name = item["product_name"]
+        if selected_category:
+            series_name = item["product_name"]
+        else:
+            series_name = item["product__category__name"]
 
-        if product_name not in product_data:
-            product_data[product_name] = {
+        if series_name not in sales_data:
+            sales_data[series_name] = {
                 "dates": [],
                 "sales": []
             }
 
-        product_data[product_name]["dates"].append(
+        sales_data[series_name]["dates"].append(
             item["day"]
         )
 
-        product_data[product_name]["sales"].append(
+        sales_data[series_name]["sales"].append(
             float(item["sales"])
         )
 
-    for product_name, data in product_data.items():
+    for series_name, data in sales_data.items():
 
         item_chart.add_trace(
             go.Scatter(
                 x=data["dates"],
                 y=data["sales"],
                 mode="lines+markers",
-                name=product_name
+                name=series_name
             )
         )
 
@@ -442,14 +465,7 @@ def analytics(request):
         )
     )
 
-    product_chart.update_layout(
-        title="Top Selling Products",
-        xaxis_title="Units Sold",
-        yaxis_title="Product",
-        template="plotly_white"
-    )
-
-
+    
     context = {
 
         "total_revenue": total_revenue,
@@ -473,7 +489,7 @@ def analytics(request):
         "product_chart": product_chart.to_html(
             full_html=False
         ),
-                "categories": categories,
+        "categories": categories,
 
         "selected_category": selected_category,
 
@@ -481,6 +497,15 @@ def analytics(request):
             full_html=False
         ),
     }
+
+
+    product_chart.update_layout(
+        title="Top Selling Products",
+        xaxis_title="Units Sold",
+        yaxis_title="Product",
+        template="plotly_white"
+    )
+
 
 
     return render(
