@@ -153,27 +153,57 @@ Sales Prediction - FreshCart
 
         <div class="sales-card-header">
 
-            <div>
+    <div>
 
-                <span class="analytics-chart-label">
-                    FORECAST ANALYTICS
-                </span>
+        <span class="analytics-chart-label">
+            FORECAST ANALYTICS
+        </span>
 
-                <h2>
-                    Demand Forecast
-                </h2>
+        <h2>
+            Demand Forecast
+        </h2>
 
-                <p>
-                    Predicted product demand across the forecast period.
-                </p>
+        <p>
+            Predicted product demand across the forecast period.
+        </p>
 
-            </div>
+    </div>
 
-            <div class="sales-chart-badge">
-                7 DAY FORECAST
-            </div>
+    <div class="sales-chart-filter">
 
-        </div>
+        <form method="GET">
+
+            <select
+                name="category"
+                class="admin-search-input"
+                onchange="this.form.submit()"
+            >
+
+                <option value="">
+                    All Categories
+                </option>
+
+                {% for category in categories %}
+
+                    <option
+                        value="{{ category }}"
+                        {% if selected_category == category %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ category }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </form>
+
+    </div>
+
+</div>
+
 
         <div class="sales-chart-container">
 

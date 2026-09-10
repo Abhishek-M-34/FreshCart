@@ -86,6 +86,11 @@ def generate_predictions():
 
     all_predictions = []
 
+    product_categories = {
+        product.name: product.category.name
+        for product in Product.objects.select_related("category")
+    }
+
     for product_name in all_products:
 
         product_df = df[
@@ -228,6 +233,10 @@ def generate_predictions():
             all_predictions.append(
                 {
                     "product": product_name,
+                    "category": product_categories.get(
+                        product_name,
+                        "Uncategorized"
+                    ),
                     "date": future_date,
                     "predicted_quantity": round(
                         predicted_quantity
@@ -260,31 +269,80 @@ def sales_prediction(request):
         predictions
     )
 
+    selected_category = request.GET.get(
+        "category",
+        ""
+    )
+
+    categories = sorted(
+        prediction_df["category"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
     chart = go.Figure()
 
-    for product in (
-        prediction_df["product"].unique()
-    ):
+    if selected_category:
+        chart_data = prediction_df[
+            prediction_df["category"] == selected_category
+        ]
 
-        product_predictions = (
-            prediction_df[
-                prediction_df["product"] == product
+        for product in chart_data["product"].unique():
+
+            product_predictions = chart_data[
+                chart_data["product"] == product
             ]
+
+            chart.add_trace(
+                go.Scatter(
+                    x=product_predictions["date"],
+                    y=product_predictions[
+                        "predicted_quantity"
+                    ],
+                    mode="lines+markers",
+                    name=product
+                )
+            )
+
+        chart_title = (
+            f"7-Day {selected_category} "
+            "Product Demand Forecast"
         )
 
-        chart.add_trace(
-            go.Scatter(
-                x=product_predictions["date"],
-                y=product_predictions[
-                    "predicted_quantity"
-                ],
-                mode="lines+markers",
-                name=product
+    else:
+        category_data = (
+            prediction_df
+            .groupby(
+                ["category", "date"],
+                as_index=False
+            )["predicted_quantity"]
+            .sum()
+        )
+
+        for category in category_data["category"].unique():
+
+            category_predictions = category_data[
+                category_data["category"] == category
+            ]
+
+            chart.add_trace(
+                go.Scatter(
+                    x=category_predictions["date"],
+                    y=category_predictions[
+                        "predicted_quantity"
+                    ],
+                    mode="lines+markers",
+                    name=category
+                )
             )
+
+        chart_title = (
+            "7-Day Category Demand Forecast"
         )
 
     chart.update_layout(
-        title="7-Day Product Demand Forecast",
+        title=chart_title,
         xaxis_title="Date",
         yaxis_title="Predicted Units",
         template="plotly_white"
@@ -300,6 +358,8 @@ def sales_prediction(request):
         {
             "predictions": predictions,
             "chart": chart_html,
+            "categories": categories,
+            "selected_category": selected_category,
         }
     )
 
