@@ -16,6 +16,22 @@
 </head>
 
 <body>
+    <div
+    class="page-loading-overlay"
+    id="pageLoadingOverlay"
+>
+
+    <div class="page-loading-spinner"></div>
+
+    <strong>
+        Loading Sales Prediction
+    </strong>
+
+    <span>
+        Please wait while the forecast is generated.
+    </span>
+
+</div>
 
     <header class="site-header">
         <nav class="navbar">
@@ -164,5 +180,46 @@
 
     </footer>
 
+
+    <script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const pageLoadingOverlay =
+            document.getElementById(
+                "pageLoadingOverlay"
+            );
+
+        if (!pageLoadingOverlay) {
+            return;
+        }
+
+        const salesPredictionLinks =
+            document.querySelectorAll(
+                "[data-sales-prediction-link]"
+            );
+
+        salesPredictionLinks.forEach(
+            function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function () {
+
+                        pageLoadingOverlay.style.display =
+                            "flex";
+
+                    }
+                );
+
+            }
+        );
+
+    }
+);
+
+</script>
 </body>
 </html>

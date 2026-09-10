@@ -174,10 +174,10 @@ Sales Prediction - FreshCart
         <form method="GET">
 
             <select
-                name="category"
-                class="admin-search-input"
-                onchange="this.form.submit()"
-            >
+    id="salesCategoryFilter"
+    name="category"
+    class="sales-chart-category-select"
+>
 
                 <option value="">
                     All Categories
@@ -207,9 +207,26 @@ Sales Prediction - FreshCart
 
         <div class="sales-chart-container">
 
-            {{ chart|safe }}
+    <div
+        class="sales-chart-loading"
+        id="salesChartLoading"
+    >
 
-        </div>
+        <div class="sales-loading-spinner"></div>
+
+        <strong>
+            Updating Forecast
+        </strong>
+
+        <span>
+            Please wait while the prediction is generated.
+        </span>
+
+    </div>
+
+    {{ chart|safe }}
+
+</div>
 
     </div>
 
@@ -419,6 +436,85 @@ Sales Prediction - FreshCart
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
+
+    const categoryFilter =
+        document.getElementById("salesCategoryFilter");
+        if (categoryFilter) {
+
+    categoryFilter.addEventListener(
+        "change",
+        function () {
+
+            if (salesChartLoading) {
+                salesChartLoading.style.display = "flex";
+            }
+
+            sessionStorage.setItem(
+                "salesPredictionScrollY",
+                window.scrollY
+            );
+
+            const form =
+                categoryFilter.closest("form");
+
+            setTimeout(function () {
+
+                form.submit();
+
+            }, 50);
+
+        }
+    );
+
+}
+
+    const salesChartLoading =
+        document.getElementById("salesChartLoading");
+
+    if (categoryFilter) {
+
+        categoryFilter.addEventListener(
+            "change",
+            function () {
+
+                if (salesChartLoading) {
+
+                    salesChartLoading.style.display =
+                        "flex";
+
+                }
+
+                const form =
+                    categoryFilter.closest("form");
+
+                setTimeout(function () {
+
+                    form.submit();
+
+                }, 50);
+
+            }
+        );
+
+    }
+
+    const savedScrollY =
+    sessionStorage.getItem(
+        "salesPredictionScrollY"
+    );
+
+if (savedScrollY !== null) {
+
+    window.scrollTo(
+        0,
+        parseInt(savedScrollY, 10)
+    );
+
+    sessionStorage.removeItem(
+        "salesPredictionScrollY"
+    );
+
+}
 
     const dataElement =
         document.getElementById("forecast-data");
