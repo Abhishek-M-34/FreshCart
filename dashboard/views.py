@@ -473,6 +473,13 @@ def analytics(request):
         "product_chart": product_chart.to_html(
             full_html=False
         ),
+                "categories": categories,
+
+        "selected_category": selected_category,
+
+        "item_chart": item_chart.to_html(
+            full_html=False
+        ),
     }
 
 
