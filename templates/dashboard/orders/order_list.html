@@ -42,7 +42,7 @@
 
         <!-- Orders Card -->
 
-        <div class="admin-orders-card">
+        <div id="orders-table" class="admin-orders-card">
 
             <div class="admin-orders-card-header">
 
@@ -109,31 +109,7 @@
 </form>
 
             </div>
-<form method="GET" class="admin-orders-search">
-    <input
-        type="text"
-        name="search"
-        class="admin-search-input"
-        placeholder="Search order ID, customer or email..."
-        value="{{ search_query }}"
-    >
 
-    <button
-        type="submit"
-        class="admin-filter-btn"
-    >
-        Search
-    </button>
-
-    {% if search_query or selected_date or selected_status %}
-        <a
-            href="{% url 'admin_order_list' %}"
-            class="admin-clear-filter-btn"
-        >
-            Clear
-        </a>
-    {% endif %}
-</form>
 
             <div class="admin-orders-table-wrapper">
 
@@ -160,7 +136,11 @@
             <span>Date</span>
         {% endif %}
 
-        <form method="GET" class="admin-order-header-filter">
+        <form
+    method="GET"
+    action="{% url 'admin_order_list' %}#orders-table"
+    class="admin-order-header-filter"
+>
             <input
                 type="hidden"
                 name="search"
@@ -209,7 +189,11 @@
             <span>Status</span>
         {% endif %}
 
-        <form method="GET" class="admin-order-header-filter">
+        <form
+    method="GET"
+    action="{% url 'admin_order_list' %}#orders-table"
+    class="admin-order-header-filter"
+>
 
             <input
                 type="hidden"
