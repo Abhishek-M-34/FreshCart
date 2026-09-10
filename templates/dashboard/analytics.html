@@ -135,6 +135,60 @@
 
         </div>
 
+                <!-- Sales by Items -->
+
+        <div class="analytics-chart-card">
+
+            <div class="analytics-chart-header">
+
+                <div>
+                    <span class="analytics-chart-label">
+                        ITEM PERFORMANCE
+                    </span>
+
+                    <h2>
+                        Sales by Items
+                    </h2>
+
+                    <form method="GET">
+
+                        <select
+                            name="category"
+                            class="admin-search-input"
+                            onchange="this.form.submit()"
+                        >
+
+                            <option value="">
+                                All Categories
+                            </option>
+
+                            {% for category in categories %}
+
+                                <option
+                                    value="{{ category.category__id }}"
+                                    {% if selected_category == category.category__id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ category.category__name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <div class="analytics-chart-container">
+                {{ item_chart|safe }}
+            </div>
+
+        </div>
+
 
         <!-- Monthly Sales -->
 

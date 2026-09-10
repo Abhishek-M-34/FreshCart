@@ -226,6 +226,54 @@ def analytics(request):
         .order_by("-quantity_sold")[:10]
     )
 
+        # -------------------------
+    # Sales by Items
+    # -------------------------
+
+    selected_category = request.GET.get("category", "")
+
+    categories = (
+        Product.objects
+        .values(
+            "category__id",
+            "category__name"
+        )
+        .distinct()
+        .order_by("category__name")
+    )
+
+    sales_by_items = (
+        OrderItem.objects
+        .filter(
+            order__status="delivered",
+            product__isnull=False
+        )
+        .annotate(
+            day=TruncDay("order__created_at")
+        )
+        .values(
+            "day",
+            "product_name",
+            "product__category_id",
+            "product__category__name"
+        )
+        .annotate(
+            sales=Sum(
+                F("quantity") * F("price"),
+                output_field=DecimalField()
+            )
+        )
+        .order_by(
+            "day",
+            "product_name"
+        )
+    )
+
+    if selected_category:
+        sales_by_items = sales_by_items.filter(
+            product__category_id=selected_category
+        )
+
 
     # -------------------------
     # Daily Chart
@@ -252,6 +300,67 @@ def analytics(request):
         title="Daily Sales",
         xaxis_title="Date",
         yaxis_title="Revenue (₹)",
+        template="plotly_white"
+    )
+
+        # -------------------------
+    # Sales by Items Chart
+    # -------------------------
+
+    item_chart = go.Figure()
+
+    product_data = {}
+
+    for item in sales_by_items:
+
+        product_name = item["product_name"]
+
+        if product_name not in product_data:
+            product_data[product_name] = {
+                "dates": [],
+                "sales": []
+            }
+
+        product_data[product_name]["dates"].append(
+            item["day"]
+        )
+
+        product_data[product_name]["sales"].append(
+            float(item["sales"])
+        )
+
+    for product_name, data in product_data.items():
+
+        item_chart.add_trace(
+            go.Scatter(
+                x=data["dates"],
+                y=data["sales"],
+                mode="lines+markers",
+                name=product_name
+            )
+        )
+
+    selected_category_name = "All Categories"
+
+    if selected_category:
+        selected_category_data = next(
+            (
+                category
+                for category in categories
+                if str(category["category__id"]) == str(selected_category)
+            ),
+            None
+        )
+
+        if selected_category_data:
+            selected_category_name = (
+                selected_category_data["category__name"]
+            )
+
+    item_chart.update_layout(
+        title=f"Sales by Items — {selected_category_name}",
+        xaxis_title="Date",
+        yaxis_title="Sales (₹)",
         template="plotly_white"
     )
 
