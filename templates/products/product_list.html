@@ -231,6 +231,8 @@ document.addEventListener(
             "floatingCart"
         );
 
+
+
         const cartCount = document.getElementById(
             "floatingCartCount"
         );
@@ -238,6 +240,8 @@ document.addEventListener(
         const cartItems = document.getElementById(
             "floatingCartItems"
         );
+        let notificationTimer = null;
+        let cartHovered = false;
 
 
         const addToCartForms =
@@ -245,6 +249,102 @@ document.addEventListener(
                 ".add-to-cart-form"
             );
 
+        function hideCartNotification() {
+
+    const notification =
+        document.getElementById(
+            "cartNotification"
+        );
+
+    if (!notification) {
+        return;
+    }
+
+    notification.classList.remove("show");
+
+    if (notificationTimer) {
+        clearTimeout(notificationTimer);
+        notificationTimer = null;
+    }
+}
+
+
+function showCartNotification(productName) {
+
+    /*
+     * Never show the notification while
+     * the cart item list is being viewed.
+     */
+    if (cartHovered) {
+        return;
+    }
+
+    let notification =
+        document.getElementById(
+            "cartNotification"
+        );
+
+    if (!notification) {
+
+        notification =
+            document.createElement("div");
+
+        notification.id =
+            "cartNotification";
+
+        notification.className =
+            "cart-notification";
+
+        document.body.appendChild(
+            notification
+        );
+    }
+
+    notification.textContent =
+        productName + " added to cart";
+
+    notification.classList.add("show");
+
+    if (notificationTimer) {
+        clearTimeout(notificationTimer);
+    }
+
+    notificationTimer = setTimeout(
+        function () {
+            hideCartNotification();
+        },
+        2500
+    );
+}
+
+        if (cart) {
+
+    cart.addEventListener(
+        "mouseenter",
+        function () {
+
+            cartHovered = true;
+
+            /*
+             * Hide notification immediately
+             * when cart items are displayed.
+             */
+            hideCartNotification();
+        }
+    );
+
+    cart.addEventListener(
+        "mouseleave",
+        function () {
+
+            cartHovered = false;
+
+            /*
+             * Do NOT show the notification again.
+             */
+        }
+    );
+}
 
         addToCartForms.forEach(
             function (form) {
@@ -361,6 +461,9 @@ document.addEventListener(
                             /* Show floating cart */
 
                             cart.style.display = "block";
+                            showCartNotification(
+    data.added_product_name
+);
 
 
                         } catch (error) {

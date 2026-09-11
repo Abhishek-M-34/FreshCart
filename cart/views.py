@@ -102,12 +102,13 @@ def add_to_cart(request, product_id):
         ]
 
         return JsonResponse(
-            {
-                "success": True,
-                "cart_total_quantity": cart_total_quantity,
-                "items": items,
-            }
-        )
+    {
+        "success": True,
+        "cart_total_quantity": cart_total_quantity,
+        "added_product_name": product.name,
+        "items": items,
+    }
+)
 
     return redirect("cart")
 

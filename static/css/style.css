@@ -1402,6 +1402,48 @@ textarea {
 
 }
 
+/* =========================================
+   CART NOTIFICATION
+========================================= */
+
+.cart-notification {
+    position: fixed;
+    right: 95px;
+    bottom: 32px;
+    z-index: 1200;
+
+    padding: 10px 16px;
+
+    background: var(--white);
+    color: var(--text-dark);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-md);
+
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateX(10px);
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease,
+        transform 0.25s ease;
+
+    pointer-events: none;
+}
+
+.cart-notification.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}s
+
 
 /* Empty state */
 
