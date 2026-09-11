@@ -1,13 +1,14 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import CategoryForm, ProductForm
+from cart.models import Cart
 
+from .forms import CategoryForm, ProductForm
 from .models import Category, Product
 
 
-def product_list(request):
 
+def product_list(request):
     category_id = request.GET.get("category")
 
     products = Product.objects.filter(
@@ -22,10 +23,30 @@ def product_list(request):
             category_id=category_id
         )
 
+    cart_items = []
+    cart_total_quantity = 0
+
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(
+            user=request.user
+        ).first()
+
+        if cart:
+            cart_items = cart.items.select_related(
+                "product"
+            ).order_by("id")
+
+            cart_total_quantity = sum(
+                item.quantity
+                for item in cart_items
+            )
+
     context = {
         "products": products,
         "categories": categories,
         "selected_category": category_id,
+        "cart_items": cart_items,
+        "cart_total_quantity": cart_total_quantity,
     }
 
     return render(
@@ -33,7 +54,6 @@ def product_list(request):
         "products/product_list.html",
         context
     )
-
 
 def product_detail(request, product_id):
 

@@ -66,8 +66,7 @@ def add_to_cart(request, product_id):
 
     cart_item.save()
 
-    return redirect("cart")
-
+    return redirect("product_list")
 
 @login_required
 def update_cart(request, item_id):

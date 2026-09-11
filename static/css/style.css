@@ -1231,7 +1231,184 @@ textarea {
     transform: scale(1.08);
 }
 
+/* =========================================
+   FLOATING CART
+========================================= */
 
+.floating-cart {
+    position: fixed;
+
+    right: 25px;
+    bottom: 25px;
+
+    z-index: 1100;
+}
+
+
+/* Cart item list */
+
+.floating-cart-items {
+    position: absolute;
+
+    right: 0;
+    bottom: calc(100% + 10px);
+
+    width: 230px;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 8px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-md);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(8px);
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* Show cart items on hover */
+
+.floating-cart:hover .floating-cart-items {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+
+/* Individual cart item */
+
+.floating-cart-item {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 9px 10px;
+
+    border-bottom: 1px solid var(--border);
+
+    color: var(--text-dark);
+
+    font-size: 0.82rem;
+}
+
+.floating-cart-item:last-child {
+    border-bottom: none;
+}
+
+.floating-cart-item span {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.floating-cart-item strong {
+    flex-shrink: 0;
+
+    color: var(--primary);
+
+    font-size: 0.82rem;
+}
+
+
+/* Floating cart button */
+
+.floating-cart-button {
+    position: relative;
+
+    width: 56px;
+    height: 56px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+
+    color: var(--white);
+
+    box-shadow: var(--shadow-md);
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.floating-cart-button:hover {
+    background: var(--primary-dark);
+
+    transform: scale(1.05);
+}
+
+
+/* Cart icon */
+
+.floating-cart-icon {
+    font-size: 1.5rem;
+}
+
+
+/* Quantity badge */
+
+.floating-cart-count {
+    position: absolute;
+
+    top: -5px;
+    right: -5px;
+
+    min-width: 23px;
+    height: 23px;
+
+    padding: 0 6px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--danger);
+
+    color: var(--white);
+
+    border: 2px solid var(--white);
+
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+@media (max-width: 500px) {
+
+    .floating-cart {
+        right: 18px;
+        bottom: 18px;
+    }
+
+    .floating-cart-items {
+        width: 210px;
+    }
+
+}
 /* Empty state */
 
 .empty-products {

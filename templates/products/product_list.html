@@ -169,8 +169,35 @@
 
         {% endif %}
 
-    </div>
+      </div>
 
 </section>
+
+{% if user.is_authenticated and cart_total_quantity > 0 %}
+<div class="floating-cart">
+
+    <div class="floating-cart-items">
+        {% for item in cart_items %}
+        <div class="floating-cart-item">
+            <span>{{ item.product.name }}</span>
+            <strong>× {{ item.quantity }}</strong>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'cart' %}"
+       class="floating-cart-button"
+       aria-label="View cart">
+
+        <span class="floating-cart-icon">🛒</span>
+
+        <span class="floating-cart-count">
+            {{ cart_total_quantity }}
+        </span>
+
+    </a>
+
+</div>
+{% endif %}
 
 {% endblock %}
