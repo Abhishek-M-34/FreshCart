@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-
 from products.models import Product
 
 from .models import Cart, CartItem
@@ -38,7 +38,10 @@ def cart_view(request):
 def add_to_cart(request, product_id):
 
     if request.method != "POST":
-        return redirect("product_detail", product_id=product_id)
+        return redirect(
+            "product_detail",
+            product_id=product_id
+        )
 
     product = get_object_or_404(
         Product,
@@ -47,7 +50,20 @@ def add_to_cart(request, product_id):
     )
 
     if product.stock <= 0:
-        return redirect("product_detail", product_id=product.id)
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "This product is out of stock."
+                },
+                status=400
+            )
+
+        return redirect(
+            "product_detail",
+            product_id=product.id
+        )
 
     cart, created = Cart.objects.get_or_create(
         user=request.user
@@ -66,7 +82,34 @@ def add_to_cart(request, product_id):
 
     cart_item.save()
 
-    return redirect("product_list")
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+
+        cart_items = cart.items.select_related(
+            "product"
+        ).order_by("id")
+
+        cart_total_quantity = sum(
+            item.quantity
+            for item in cart_items
+        )
+
+        items = [
+            {
+                "name": item.product.name,
+                "quantity": item.quantity,
+            }
+            for item in cart_items
+        ]
+
+        return JsonResponse(
+            {
+                "success": True,
+                "cart_total_quantity": cart_total_quantity,
+                "items": items,
+            }
+        )
+
+    return redirect("cart")
 
 @login_required
 def update_cart(request, item_id):

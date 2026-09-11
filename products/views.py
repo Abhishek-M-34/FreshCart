@@ -9,6 +9,7 @@ from .models import Category, Product
 
 
 def product_list(request):
+
     category_id = request.GET.get("category")
 
     products = Product.objects.filter(
@@ -27,11 +28,13 @@ def product_list(request):
     cart_total_quantity = 0
 
     if request.user.is_authenticated:
+
         cart = Cart.objects.filter(
             user=request.user
         ).first()
 
         if cart:
+
             cart_items = cart.items.select_related(
                 "product"
             ).order_by("id")

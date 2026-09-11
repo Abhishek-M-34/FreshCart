@@ -123,17 +123,18 @@
                         {% if product.stock > 0 %}
 
                         <form method="post"
-                              action="{% url 'add_to_cart' product.id %}">
+      action="{% url 'add_to_cart' product.id %}"
+      class="add-to-cart-form">
 
-                            {% csrf_token %}
+    {% csrf_token %}
 
-                            <button type="submit"
-                                    class="add-cart-btn"
-                                    aria-label="Add {{ product.name }} to cart">
-                                +
-                            </button>
+    <button type="submit"
+            class="add-cart-btn"
+            aria-label="Add {{ product.name }} to cart">
+        +
+    </button>
 
-                        </form>
+</form>
 
                         {% endif %}
 
@@ -173,31 +174,224 @@
 
 </section>
 
-{% if user.is_authenticated and cart_total_quantity > 0 %}
-<div class="floating-cart">
+{% if user.is_authenticated %}
 
-    <div class="floating-cart-items">
+<div class="floating-cart"
+     id="floatingCart"
+     {% if cart_total_quantity == 0 %}style="display: none;"{% endif %}>
+
+    <div class="floating-cart-items"
+         id="floatingCartItems">
+
         {% for item in cart_items %}
+
         <div class="floating-cart-item">
-            <span>{{ item.product.name }}</span>
-            <strong>× {{ item.quantity }}</strong>
+
+            <span>
+                {{ item.product.name }}
+            </span>
+
+            <strong>
+                × {{ item.quantity }}
+            </strong>
+
         </div>
+
         {% endfor %}
+
     </div>
+
 
     <a href="{% url 'cart' %}"
        class="floating-cart-button"
        aria-label="View cart">
 
-        <span class="floating-cart-icon">🛒</span>
+        <span class="floating-cart-icon">
+            🛒
+        </span>
 
-        <span class="floating-cart-count">
+        <span class="floating-cart-count"
+              id="floatingCartCount">
             {{ cart_total_quantity }}
         </span>
 
     </a>
 
 </div>
+
 {% endif %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const cart = document.getElementById(
+            "floatingCart"
+        );
+
+        const cartCount = document.getElementById(
+            "floatingCartCount"
+        );
+
+        const cartItems = document.getElementById(
+            "floatingCartItems"
+        );
+
+
+        const addToCartForms =
+            document.querySelectorAll(
+                ".add-to-cart-form"
+            );
+
+
+        addToCartForms.forEach(
+            function (form) {
+
+                form.addEventListener(
+                    "submit",
+                    async function (event) {
+
+                        event.preventDefault();
+
+
+                        const button =
+                            form.querySelector(
+                                ".add-cart-btn"
+                            );
+
+                        const originalText =
+                            button.textContent;
+
+
+                        button.disabled = true;
+
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    form.action,
+                                    {
+                                        method: "POST",
+                                        headers: {
+                                            "X-Requested-With":
+                                                "XMLHttpRequest"
+                                        },
+                                        body:
+                                            new FormData(form)
+                                    }
+                                );
+
+
+                            const data =
+                                await response.json();
+
+
+                            if (!response.ok ||
+                                !data.success) {
+
+                                throw new Error(
+                                    data.message ||
+                                    "Unable to add item to cart."
+                                );
+                            }
+
+
+                            /* Update quantity badge */
+
+                            cartCount.textContent =
+                                data.cart_total_quantity;
+
+
+                            /* Rebuild cart item list */
+
+                            cartItems.innerHTML = "";
+
+
+                            data.items.forEach(
+                                function (item) {
+
+                                    const itemElement =
+                                        document.createElement(
+                                            "div"
+                                        );
+
+                                    itemElement.className =
+                                        "floating-cart-item";
+
+
+                                    const name =
+                                        document.createElement(
+                                            "span"
+                                        );
+
+                                    name.textContent =
+                                        item.name;
+
+
+                                    const quantity =
+                                        document.createElement(
+                                            "strong"
+                                        );
+
+                                    quantity.textContent =
+                                        "× " +
+                                        item.quantity;
+
+
+                                    itemElement.appendChild(
+                                        name
+                                    );
+
+                                    itemElement.appendChild(
+                                        quantity
+                                    );
+
+
+                                    cartItems.appendChild(
+                                        itemElement
+                                    );
+
+                                }
+                            );
+
+
+                            /* Show floating cart */
+
+                            cart.style.display = "block";
+
+
+                        } catch (error) {
+
+                            console.error(
+                                "Add to cart error:",
+                                error
+                            );
+
+                            alert(
+                                error.message
+                            );
+
+                        } finally {
+
+                            button.disabled = false;
+
+                            button.textContent =
+                                originalText;
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+);
+
+</script>
 
 {% endblock %}
