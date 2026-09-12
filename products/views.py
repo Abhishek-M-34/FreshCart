@@ -69,6 +69,9 @@ def product_detail(request, product_id):
         is_available=True
     )
 
+    if product.get_available_stock() <= 0:
+        return redirect("product_list")
+
     return render(
         request,
         "products/product_detail.html",

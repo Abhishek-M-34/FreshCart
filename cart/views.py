@@ -49,7 +49,9 @@ def add_to_cart(request, product_id):
         is_available=True
     )
 
-    if product.stock <= 0:
+    available_stock = product.get_available_stock()
+
+    if available_stock <= 0:
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse(
@@ -77,7 +79,7 @@ def add_to_cart(request, product_id):
     if created:
         cart_item.quantity = 1
 
-    elif cart_item.quantity < product.stock:
+    elif cart_item.quantity < available_stock:
         cart_item.quantity += 1
 
     cart_item.save()
@@ -134,8 +136,7 @@ def update_cart(request, item_id):
 
             cart_item.delete()
 
-        elif quantity <= cart_item.product.stock:
-
+        elif quantity <= cart_item.product.get_available_stock():
             cart_item.quantity = quantity
             cart_item.save()
 
