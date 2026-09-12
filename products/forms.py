@@ -9,14 +9,15 @@ class ProductForm(forms.ModelForm):
         model = Product
 
         fields = [
-            "name",
-            "category",
-            "description",
-            "price",
-            "stock",
-            "image",
-            "is_available",
-        ]
+    "name",
+    "category",
+    "description",
+    "price",
+    "stock",
+    "expiry_days",
+    "image",
+    "is_available",
+]
 
         widgets = {
             "name": forms.TextInput(
@@ -63,6 +64,12 @@ class ProductForm(forms.ModelForm):
                     "class": "form-check-input"
                 }
             ),
+            "expiry_days": forms.NumberInput(
+    attrs={
+        "class": "form-control",
+        "min": "0"
+    }
+),
         }
 
 class CategoryForm(forms.ModelForm):

@@ -20,6 +20,7 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
+    expiry_days = models.PositiveIntegerField(default=0)    
     image = models.ImageField(upload_to="products/", blank=True, null=True)
     is_available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -27,3 +28,22 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class StockBatch(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="stock_batches"
+    )
+    quantity_received = models.PositiveIntegerField()
+    quantity_remaining = models.PositiveIntegerField()
+    arrival_date = models.DateField()
+    expiry_date = models.DateField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return (
+            f"{self.product.name} - "
+            f"{self.arrival_date}"
+        )
