@@ -744,7 +744,13 @@ class OrderTests(TestCase):
     def test_fefo_consumes_earlier_expiry_batch_first(self):
         """Checkout should consume the batch that expires first."""
         today = date.today()
+        StockBatch.objects.filter(
+            product=self.product
+        ).delete()
 
+        cart = Cart.objects.create(
+            user=self.user
+        )
         early_batch = StockBatch.objects.create(
             product=self.product,
             quantity_received=10,
@@ -761,16 +767,18 @@ class OrderTests(TestCase):
             expiry_date=today + timedelta(days=5),
         )
 
-        cart = Cart.objects.get(user=self.user)
-
         CartItem.objects.create(
             cart=cart,
             product=self.product,
             quantity=6,
         )
 
+        self.login_customer()
         response = self.client.post(
-            reverse("checkout")
+            reverse("checkout"),
+            {
+                "shipping_address": "Test Address"
+            }
         )
 
         early_batch.refresh_from_db()
@@ -783,7 +791,13 @@ class OrderTests(TestCase):
     def test_fefo_consumes_across_multiple_batches(self):
         """Checkout should consume from the next batch when the first is insufficient."""
         today = date.today()
-
+        StockBatch.objects.filter(
+            product=self.product
+        ).delete()
+        
+        cart = Cart.objects.create(
+            user=self.user
+        )
         first_batch = StockBatch.objects.create(
             product=self.product,
             quantity_received=5,
@@ -800,16 +814,18 @@ class OrderTests(TestCase):
             expiry_date=today + timedelta(days=5),
         )   
 
-        cart = Cart.objects.get(user=self.user)
-
         CartItem.objects.create(
             cart=cart,
             product=self.product,
             quantity=8,
         )
 
+        self.login_customer()
         response = self.client.post(
-            reverse("checkout")
+            reverse("checkout"),
+            {
+                "shipping_address": "Test Address"
+            }
         )
 
         first_batch.refresh_from_db()
@@ -822,7 +838,13 @@ class OrderTests(TestCase):
     def test_fefo_skips_expired_batch(self):
         """Expired stock should never be consumed during checkout."""
         today = date.today()
-
+        StockBatch.objects.filter(
+            product=self.product
+        ).delete()
+        
+        cart = Cart.objects.create(
+            user=self.user
+        )
         expired_batch = StockBatch.objects.create(
             product=self.product,
             quantity_received=10,
@@ -839,16 +861,18 @@ class OrderTests(TestCase):
             expiry_date=today + timedelta(days=5),
         )
 
-        cart = Cart.objects.get(user=self.user)
-
         CartItem.objects.create(
             cart=cart,
             product=self.product,
             quantity=5,
         )
 
+        self.login_customer()
         response = self.client.post(
-            reverse("checkout")
+            reverse("checkout"),
+            {
+                "shipping_address": "Test Address"
+            }
         )
 
         expired_batch.refresh_from_db()
@@ -861,7 +885,13 @@ class OrderTests(TestCase):
     def test_fefo_consumes_non_expiring_batch_last(self):
         """A non-expiring batch should be consumed after batches with expiry dates."""
         today = date.today()
-
+        StockBatch.objects.filter(
+            product=self.product
+        ).delete()
+        
+        cart = Cart.objects.create(
+            user=self.user
+        )
         expiring_batch = StockBatch.objects.create(
             product=self.product,
             quantity_received=5,
@@ -878,16 +908,18 @@ class OrderTests(TestCase):
             expiry_date=None,
         )
 
-        cart = Cart.objects.get(user=self.user)
-
         CartItem.objects.create(
             cart=cart,
             product=self.product,
             quantity=8,
         )
 
+        self.login_customer()
         response = self.client.post(
-            reverse("checkout")
+            reverse("checkout"),
+            {
+                "shipping_address": "Test Address"
+            }
         )
 
         expiring_batch.refresh_from_db()
