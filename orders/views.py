@@ -14,7 +14,7 @@ from .forms import CheckoutForm
 from .models import Order, OrderItem
 
 from django.utils import timezone
-
+from django.db.models import F
 
 @login_required
 def checkout(request):
@@ -76,10 +76,10 @@ def checkout(request):
                             quantity_remaining__gt=0
                         )
                         .order_by(
-                            "expiry_date",
-                            "arrival_date",
-                            "id"
-                        )
+    F("expiry_date").asc(nulls_last=True),
+    "arrival_date",
+    "id"
+)
                     )
 
                     valid_batches = []
@@ -148,10 +148,10 @@ def checkout(request):
                             quantity_remaining__gt=0
                         )
                         .order_by(
-                            "expiry_date",
-                            "arrival_date",
-                            "id"
-                        )
+    F("expiry_date").asc(nulls_last=True),
+    "arrival_date",
+    "id"
+)
                     )
 
                     for batch in batches:
