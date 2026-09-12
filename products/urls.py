@@ -77,4 +77,9 @@ urlpatterns = [
         views.admin_stock_add,
         name="admin_stock_add"
     ),
+    path(
+        "admin-dashboard/products/stock/",
+        views.admin_stock_list,
+        name="admin_stock_list"
+    ),
 ]

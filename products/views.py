@@ -135,6 +135,7 @@ def admin_product_list(request):
         "dashboard/products/product_list.html",
         context
     )
+
 @user_passes_test(is_admin)
 def admin_product_add(request):
 
@@ -245,6 +246,28 @@ def admin_stock_add(request):
         {
             "form": form,
             "title": "Add Stock",
+        }
+    )
+
+@user_passes_test(is_admin)
+def admin_stock_list(request):
+
+    stock_batches = (
+        StockBatch.objects
+        .select_related("product")
+        .order_by(
+            "product__name",
+            "expiry_date",
+            "arrival_date",
+            "id"
+        )
+    )
+
+    return render(
+        request,
+        "dashboard/products/stock_list.html",
+        {
+            "stock_batches": stock_batches,
         }
     )
 

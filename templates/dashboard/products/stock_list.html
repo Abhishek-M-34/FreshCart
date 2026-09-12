@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Stock Management - FreshCart
+{% endblock %}
+
+{% block content %}
+
+<section class="products-page">
+
+    <div class="container">
+
+        <div class="products-header">
+
+            <div>
+                <span class="section-label">
+                    INVENTORY MANAGEMENT
+                </span>
+
+                <h1>
+                    Stock Management
+                </h1>
+
+                <p>
+                    View stock batches, arrival dates and expiry dates.
+                </p>
+            </div>
+
+            <div class="admin-page-header-actions">
+                <a
+                    href="{% url 'admin_stock_add' %}"
+                    class="admin-primary-btn"
+                >
+                    + Add Stock
+                </a>
+            </div>
+
+        </div>
+
+        {% if stock_batches %}
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Received</th>
+                        <th>Remaining</th>
+                        <th>Arrival Date</th>
+                        <th>Expiry Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for batch in stock_batches %}
+
+                    <tr>
+                        <td>
+                            {{ batch.product.name }}
+                        </td>
+
+                        <td>
+                            {{ batch.quantity_received }}
+                        </td>
+
+                        <td>
+                            {{ batch.quantity_remaining }}
+                        </td>
+
+                        <td>
+                            {{ batch.arrival_date }}
+                        </td>
+
+                        <td>
+                            {% if batch.expiry_date %}
+                                {{ batch.expiry_date }}
+                            {% else %}
+                                No expiry
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-products">
+
+            <div class="empty-products-icon">
+                📦
+            </div>
+
+            <h2>
+                No stock batches found
+            </h2>
+
+            <p>
+                Add stock to start managing inventory.
+            </p>
+
+            <a
+                href="{% url 'admin_stock_add' %}"
+                class="admin-primary-btn"
+            >
+                + Add Stock
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}
