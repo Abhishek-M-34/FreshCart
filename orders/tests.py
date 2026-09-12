@@ -761,8 +761,10 @@ class OrderTests(TestCase):
             expiry_date=today + timedelta(days=5),
         )
 
-        cart_item = CartItem.objects.create(
-            cart=self.cart,
+        cart = Cart.objects.get(user=self.user)
+
+        CartItem.objects.create(
+            cart=cart,
             product=self.product,
             quantity=6,
         )
@@ -798,8 +800,10 @@ class OrderTests(TestCase):
             expiry_date=today + timedelta(days=5),
         )   
 
+        cart = Cart.objects.get(user=self.user)
+
         CartItem.objects.create(
-            cart=self.cart,
+            cart=cart,
             product=self.product,
             quantity=8,
         )
@@ -835,8 +839,10 @@ class OrderTests(TestCase):
             expiry_date=today + timedelta(days=5),
         )
 
+        cart = Cart.objects.get(user=self.user)
+
         CartItem.objects.create(
-            cart=self.cart,
+            cart=cart,
             product=self.product,
             quantity=5,
         )
@@ -872,8 +878,10 @@ class OrderTests(TestCase):
             expiry_date=None,
         )
 
+        cart = Cart.objects.get(user=self.user)
+
         CartItem.objects.create(
-            cart=self.cart,
+            cart=cart,
             product=self.product,
             quantity=8,
         )
