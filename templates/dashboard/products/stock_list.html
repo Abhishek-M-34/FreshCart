@@ -153,6 +153,24 @@
     >
         Edit
     </a>
+
+    {% if item.batch.quantity_remaining > 0 %}
+        <form
+            method="post"
+            action="{% url 'admin_stock_discard' item.batch.id %}"
+            style="display: inline;"
+            onsubmit="return confirm('Are you sure you want to discard the remaining stock from this batch?');"
+        >
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-sm btn-outline-danger"
+            >
+                Discard
+            </button>
+        </form>
+    {% endif %}
 </td>
                             </tr>
 

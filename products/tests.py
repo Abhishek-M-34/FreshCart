@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Category, Product
+from .models import Category, Product, StockBatch
 
 
 class ProductTests(TestCase):
@@ -310,5 +310,166 @@ class ProductTests(TestCase):
         self.assertFalse(
             Category.objects.filter(
                 id=self.category.id
+            ).exists()
+        )
+
+from datetime import date, timedelta
+
+
+class StockBatchTests(TestCase):
+
+    def setUp(self):
+        self.admin = User.objects.create_user(
+            username="stock_admin",
+            password="AdminPassword123",
+            is_staff=True
+        )
+
+        self.category = Category.objects.create(
+            name="Dairy",
+            description="Fresh dairy products"
+        )
+
+        self.product = Product.objects.create(
+            category=self.category,
+            name="FreshCart Milk",
+            description="500 ml milk",
+            price=Decimal("30.00"),
+            stock=0,
+            expiry_days=5,
+            is_available=True
+        )
+
+        self.client.login(
+            username="stock_admin",
+            password="AdminPassword123"
+        )
+
+    def test_admin_can_add_stock_batch(self):
+
+        arrival_date = date.today()
+
+        response = self.client.post(
+            reverse("admin_stock_add"),
+            {
+                "product": self.product.id,
+                "quantity_received": 20,
+                "arrival_date": arrival_date,
+            }
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("admin_product_list")
+        )
+
+        batch = StockBatch.objects.get(
+            product=self.product
+        )
+
+        self.assertEqual(
+            batch.quantity_received,
+            20
+        )
+
+        self.assertEqual(
+            batch.quantity_remaining,
+            20
+        )
+
+        self.assertEqual(
+            batch.expiry_date,
+            arrival_date + timedelta(days=5)
+        )
+
+    def test_admin_can_edit_stock_batch(self):
+
+        batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=20,
+            quantity_remaining=20,
+            arrival_date=date.today(),
+            expiry_date=date.today() + timedelta(days=5)
+        )
+
+        new_arrival_date = date.today() - timedelta(days=1)
+        new_expiry_date = date.today() + timedelta(days=10)
+
+        response = self.client.post(
+            reverse(
+                "admin_stock_edit",
+                args=[batch.id]
+            ),
+            {
+                "quantity_remaining": 12,
+                "arrival_date": new_arrival_date,
+                "expiry_date": new_expiry_date,
+            }
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("admin_stock_list")
+        )
+
+        batch.refresh_from_db()
+
+        self.assertEqual(
+            batch.quantity_received,
+            20
+        )
+
+        self.assertEqual(
+            batch.quantity_remaining,
+            12
+        )
+
+        self.assertEqual(
+            batch.arrival_date,
+            new_arrival_date
+        )
+
+        self.assertEqual(
+            batch.expiry_date,
+            new_expiry_date
+        )
+
+    def test_admin_can_discard_stock_batch(self):
+
+        batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=20,
+            quantity_remaining=15,
+            arrival_date=date.today(),
+            expiry_date=date.today() + timedelta(days=5)
+        )
+
+        response = self.client.post(
+            reverse(
+                "admin_stock_discard",
+                args=[batch.id]
+            )
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("admin_stock_list")
+        )
+
+        batch.refresh_from_db()
+
+        self.assertEqual(
+            batch.quantity_received,
+            20
+        )
+
+        self.assertEqual(
+            batch.quantity_remaining,
+            0
+        )
+
+        self.assertTrue(
+            StockBatch.objects.filter(
+                id=batch.id
             ).exists()
         )
