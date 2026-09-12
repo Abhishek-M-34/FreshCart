@@ -55,36 +55,105 @@
 
         <tbody>
 
-            {% for summary in product_summaries %}
+    {% for summary in product_summaries %}
 
-            <tr>
+    <tr>
+        <td>
+            <button
+                class="btn btn-link p-0 text-decoration-none"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#product-{{ summary.product.id }}"
+                aria-expanded="false"
+                aria-controls="product-{{ summary.product.id }}"
+            >
+                {{ summary.product.name }}
+            </button>
+        </td>
 
-                <td>
-                    {{ summary.product.name }}
-                </td>
+        <td>
+            {{ summary.total_received }}
+        </td>
 
-                <td>
-                    {{ summary.total_received }}
-                </td>
+        <td>
+            {{ summary.available_quantity }}
+        </td>
 
-                <td>
-                    {{ summary.available_quantity }}
-                </td>
+        <td>
+            {{ summary.expired_quantity }}
+        </td>
 
-                <td>
-                    {{ summary.expired_quantity }}
-                </td>
+        <td>
+            {{ summary.batch_count }}
+        </td>
+    </tr>
 
-                <td>
-                    {{ summary.batch_count }}
-                </td>
+    <tr>
+        <td colspan="5" class="p-0">
 
-            </tr>
+            <div
+                id="product-{{ summary.product.id }}"
+                class="collapse"
+            >
 
-            {% endfor %}
+                <div class="table-responsive">
+                    <table class="table mb-0">
 
-        </tbody>
+                        <thead>
+                            <tr>
+                                <th>Received</th>
+                                <th>Remaining</th>
+                                <th>Arrival Date</th>
+                                <th>Expiry Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
 
+                        <tbody>
+
+                            {% for item in summary.batches %}
+
+                            <tr>
+                                <td>
+                                    {{ item.batch.quantity_received }}
+                                </td>
+
+                                <td>
+                                    {{ item.batch.quantity_remaining }}
+                                </td>
+
+                                <td>
+                                    {{ item.batch.arrival_date }}
+                                </td>
+
+                                <td>
+                                    {% if item.batch.expiry_date %}
+                                        {{ item.batch.expiry_date }}
+                                    {% else %}
+                                        No expiry
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ item.status }}
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</tbody>
     </table>
 
 </div>

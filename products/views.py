@@ -257,7 +257,6 @@ def admin_stock_list(request):
         StockBatch.objects
         .select_related("product")
         .order_by(
-            "product__name",
             "expiry_date",
             "arrival_date",
             "id"
@@ -281,17 +280,31 @@ def admin_stock_list(request):
         expired_quantity = 0
         batch_count = 0
 
+        batches = []
+
         for batch in product_batches:
 
             total_received += batch.quantity_received
             batch_count += 1
 
-            if batch.expiry_date is not None:
-                if batch.expiry_date < today:
-                    expired_quantity += batch.quantity_remaining
-                    continue
+            if batch.quantity_remaining == 0:
+                status = "Depleted"
 
-            available_quantity += batch.quantity_remaining
+            elif (
+                batch.expiry_date is not None
+                and batch.expiry_date < today
+            ):
+                expired_quantity += batch.quantity_remaining
+                status = "Expired"
+
+            else:
+                available_quantity += batch.quantity_remaining
+                status = "Active"
+
+            batches.append({
+                "batch": batch,
+                "status": status,
+            })
 
         if batch_count > 0:
             product_summaries.append({
@@ -300,6 +313,7 @@ def admin_stock_list(request):
                 "available_quantity": available_quantity,
                 "expired_quantity": expired_quantity,
                 "batch_count": batch_count,
+                "batches": batches,
             })
 
     return render(
