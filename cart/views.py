@@ -14,6 +14,18 @@ def cart_view(request):
     )
 
     items = cart.items.select_related("product")
+    for item in items:
+        available_stock = item.product.get_available_stock()
+
+        if available_stock <= 0:
+            item.delete()
+            continue
+
+        if item.quantity > available_stock:
+            item.quantity = available_stock
+            item.save(update_fields=["quantity"])
+            
+    items = cart.items.select_related("product")
 
     for item in items:
         item.subtotal = item.product.price * item.quantity
