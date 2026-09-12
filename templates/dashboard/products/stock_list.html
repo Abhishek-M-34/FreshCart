@@ -37,86 +37,84 @@
 
         </div>
 
-        {% if stock_batches %}
+        {% if product_summaries %}
 
-        <div class="table-responsive">
+<div class="table-responsive">
 
-            <table class="table">
+    <table class="table">
 
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Received</th>
-                        <th>Remaining</th>
-                        <th>Arrival Date</th>
-                        <th>Expiry Date</th>
-                    </tr>
-                </thead>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Total Received</th>
+                <th>Available</th>
+                <th>Expired</th>
+                <th>Batches</th>
+            </tr>
+        </thead>
 
-                <tbody>
+        <tbody>
 
-                    {% for batch in stock_batches %}
+            {% for summary in product_summaries %}
 
-                    <tr>
-                        <td>
-                            {{ batch.product.name }}
-                        </td>
+            <tr>
 
-                        <td>
-                            {{ batch.quantity_received }}
-                        </td>
+                <td>
+                    {{ summary.product.name }}
+                </td>
 
-                        <td>
-                            {{ batch.quantity_remaining }}
-                        </td>
+                <td>
+                    {{ summary.total_received }}
+                </td>
 
-                        <td>
-                            {{ batch.arrival_date }}
-                        </td>
+                <td>
+                    {{ summary.available_quantity }}
+                </td>
 
-                        <td>
-                            {% if batch.expiry_date %}
-                                {{ batch.expiry_date }}
-                            {% else %}
-                                No expiry
-                            {% endif %}
-                        </td>
-                    </tr>
+                <td>
+                    {{ summary.expired_quantity }}
+                </td>
 
-                    {% endfor %}
+                <td>
+                    {{ summary.batch_count }}
+                </td>
 
-                </tbody>
+            </tr>
 
-            </table>
+            {% endfor %}
 
-        </div>
+        </tbody>
 
-        {% else %}
+    </table>
 
-        <div class="empty-products">
+</div>
 
-            <div class="empty-products-icon">
-                📦
-            </div>
+{% else %}
 
-            <h2>
-                No stock batches found
-            </h2>
+<div class="empty-products">
 
-            <p>
-                Add stock to start managing inventory.
-            </p>
+    <div class="empty-products-icon">
+        📦
+    </div>
 
-            <a
-                href="{% url 'admin_stock_add' %}"
-                class="admin-primary-btn"
-            >
-                + Add Stock
-            </a>
+    <h2>
+        No stock batches found
+    </h2>
 
-        </div>
+    <p>
+        Add stock to start managing inventory.
+    </p>
 
-        {% endif %}
+    <a
+        href="{% url 'admin_stock_add' %}"
+        class="admin-primary-btn"
+    >
+        + Add Stock
+    </a>
+
+</div>
+
+{% endif %}
 
     </div>
 

@@ -6,6 +6,7 @@ from cart.models import Cart
 from .forms import CategoryForm, ProductForm, StockBatchForm
 from .models import Category, Product, StockBatch
 from datetime import timedelta
+from django.utils import timezone
 
 
 def product_list(request):
@@ -263,11 +264,49 @@ def admin_stock_list(request):
         )
     )
 
+    today = timezone.localdate()
+
+    product_summaries = []
+
+    products = Product.objects.all().order_by("name")
+
+    for product in products:
+
+        product_batches = stock_batches.filter(
+            product=product
+        )
+
+        total_received = 0
+        available_quantity = 0
+        expired_quantity = 0
+        batch_count = 0
+
+        for batch in product_batches:
+
+            total_received += batch.quantity_received
+            batch_count += 1
+
+            if batch.expiry_date is not None:
+                if batch.expiry_date < today:
+                    expired_quantity += batch.quantity_remaining
+                    continue
+
+            available_quantity += batch.quantity_remaining
+
+        if batch_count > 0:
+            product_summaries.append({
+                "product": product,
+                "total_received": total_received,
+                "available_quantity": available_quantity,
+                "expired_quantity": expired_quantity,
+                "batch_count": batch_count,
+            })
+
     return render(
         request,
         "dashboard/products/stock_list.html",
         {
-            "stock_batches": stock_batches,
+            "product_summaries": product_summaries,
         }
     )
 
