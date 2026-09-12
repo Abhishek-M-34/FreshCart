@@ -216,16 +216,19 @@ def admin_stock_add(request):
 
             if stock_batch.product.expiry_days > 0:
                 stock_batch.expiry_date = (
-                stock_batch.arrival_date + timedelta(days=stock_batch.product.expiry_days)
+                    stock_batch.arrival_date 
+                    + timedelta(
+                        days=stock_batch.product.expiry_days
+                    )
                 )
             else:
                 stock_batch.expiry_date = None
 
-                stock_batch.save()
+            stock_batch.save()
 
-                return redirect(
+            return redirect(
                 "admin_product_list"
-                )
+            )
 
         else:
             form = StockBatchForm()
