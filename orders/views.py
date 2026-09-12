@@ -18,7 +18,6 @@ from django.utils import timezone
 
 @login_required
 def checkout(request):
-
     cart = get_object_or_404(
         Cart,
         user=request.user
@@ -28,13 +27,14 @@ def checkout(request):
 
     for item in items:
         item.subtotal = item.product.price * item.quantity
+
     if not items.exists():
         return redirect("cart")
 
     total = sum(
-    item.subtotal
-    for item in items
-)
+        item.subtotal
+        for item in items
+    )
 
     if request.method == "POST":
 
@@ -44,50 +44,75 @@ def checkout(request):
 
             with transaction.atomic():
 
-                # Check stock before creating the order
-                batches = (
-                    StockBatch.objects
-                    .select_for_update()
-                    .filter(
-                        product=product,
-                        quantity_remaining__gt=0
+                today = timezone.localdate()
+
+                # Check stock for every cart item
+                for item in items:
+
+                    product = Product.objects.select_for_update().get(
+                        id=item.product.id
                     )
-                    .order_by(
-                        "expiry_date",
-                        "arrival_date",
-                        "id"
+
+                    if not product.is_available:
+                        return render(
+                            request,
+                            "orders/checkout.html",
+                            {
+                                "form": form,
+                                "items": items,
+                                "total": total,
+                                "error": (
+                                    f"{product.name} is no longer "
+                                    "available."
+                                ),
+                            }
+                        )
+
+                    batches = (
+                        StockBatch.objects
+                        .select_for_update()
+                        .filter(
+                            product=product,
+                            quantity_remaining__gt=0
+                        )
+                        .order_by(
+                            "expiry_date",
+                            "arrival_date",
+                            "id"
+                        )
                     )
-                )
 
-                valid_batches = []
+                    valid_batches = []
 
-                for batch in batches:
+                    for batch in batches:
 
-                    if batch.expiry_date is None:
-                        valid_batches.append(batch)
+                        if batch.expiry_date is None:
+                            valid_batches.append(batch)
 
-                    elif batch.expiry_date >= today:
-                        valid_batches.append(batch)
+                        elif batch.expiry_date >= today:
+                            valid_batches.append(batch)
 
-                available_quantity = sum(
-                    batch.quantity_remaining
-                    for batch in valid_batches
-                )
-
-                if available_quantity < item.quantity:
-                    return render(
-                        request,
-                        "orders/checkout.html",
-                        {
-                            "form": form,
-                            "items": items,
-                            "total": total,
-                            "error": (
-                                f"{product.name} is no longer available "
-                                "in the requested quantity."
-                            ),
-                        }
+                    available_quantity = sum(
+                        batch.quantity_remaining
+                        for batch in valid_batches
                     )
+
+                    if available_quantity < item.quantity:
+                        return render(
+                            request,
+                            "orders/checkout.html",
+                            {
+                                "form": form,
+                                "items": items,
+                                "total": total,
+                                "error": (
+                                    f"{product.name} is no longer "
+                                    "available in the requested "
+                                    "quantity."
+                                ),
+                            }
+                        )
+
                 # Create order
                 order = Order.objects.create(
                     user=request.user,
@@ -98,7 +123,7 @@ def checkout(request):
                     status="pending",
                 )
 
-                # Create order items and reduce stock
+                # Create order items and consume stock using FEFO
                 for item in items:
 
                     product = Product.objects.select_for_update().get(
@@ -132,7 +157,7 @@ def checkout(request):
                     for batch in batches:
 
                         if batch.expiry_date is not None:
-                            if batch.expiry_date < timezone.localdate():
+                            if batch.expiry_date < today:
                                 continue
 
                         if remaining_to_consume <= 0:
@@ -143,12 +168,19 @@ def checkout(request):
                             remaining_to_consume
                         )
 
-                        batch.quantity_remaining -= quantity_from_batch
-                        batch.save(
-                            update_fields=["quantity_remaining"]
+                        batch.quantity_remaining -= (
+                            quantity_from_batch
                         )
 
-                        remaining_to_consume -= quantity_from_batch
+                        batch.save(
+                            update_fields=[
+                                "quantity_remaining"
+                            ]
+                        )
+
+                        remaining_to_consume -= (
+                            quantity_from_batch
+                        )
 
                 # Clear cart
                 cart.items.all().delete()
@@ -170,7 +202,6 @@ def checkout(request):
             "total": total,
         }
     )
-
 
 @login_required
 def order_success(request, order_id):
