@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import Category, Product, StockBatch
+from datetime import date, timedelta
 
 
 class ProductTests(TestCase):
@@ -39,6 +40,13 @@ class ProductTests(TestCase):
             stock=20,
             is_available=True
         )
+        StockBatch.objects.create(
+    product=self.product,
+    quantity_received=20,
+    quantity_remaining=20,
+    arrival_date=date.today(),
+    expiry_date=date.today() + timedelta(days=5)
+)
 
         self.unavailable_product = Product.objects.create(
             category=self.category,
@@ -57,6 +65,13 @@ class ProductTests(TestCase):
             stock=30,
             is_available=True
         )
+        StockBatch.objects.create(
+    product=self.other_product,
+    quantity_received=30,
+    quantity_remaining=30,
+    arrival_date=date.today(),
+    expiry_date=date.today() + timedelta(days=5)
+)
 
     def test_product_list(self):
         response = self.client.get(
@@ -155,6 +170,7 @@ class ProductTests(TestCase):
                 "description": "Fresh banana",
                 "price": "60.00",
                 "stock": 25,
+                "expiry_days": 5,
                 "is_available": "on",
             }
         )
@@ -187,6 +203,7 @@ class ProductTests(TestCase):
                 "description": "Updated apple",
                 "price": "120.00",
                 "stock": 15,
+                "expiry_days": 5,
                 "is_available": "on",
             }
         )
@@ -313,7 +330,6 @@ class ProductTests(TestCase):
             ).exists()
         )
 
-from datetime import date, timedelta
 
 
 class StockBatchTests(TestCase):
@@ -339,6 +355,13 @@ class StockBatchTests(TestCase):
             expiry_days=5,
             is_available=True
         )
+        StockBatch.objects.create(
+    product=self.product,
+    quantity_received=20,
+    quantity_remaining=20,
+    arrival_date=date.today(),
+    expiry_date=date.today() + timedelta(days=5)
+)
 
         self.client.login(
             username="stock_admin",
