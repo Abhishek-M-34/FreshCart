@@ -13,8 +13,7 @@ def product_list(request):
     category_id = request.GET.get("category")
 
     products = Product.objects.filter(
-        is_available=True,
-        stock__gt=0
+        is_available=True
     )
 
     categories = Category.objects.all()
@@ -23,7 +22,11 @@ def product_list(request):
         products = products.filter(
             category_id=category_id
         )
+    available_products = []
 
+    for product in products:
+        if product.get_available_stock() > 0:
+            available_products.append(product)
     cart_items = []
     cart_total_quantity = 0
 
@@ -45,7 +48,7 @@ def product_list(request):
             )
 
     context = {
-        "products": products,
+        "products": available_products,
         "categories": categories,
         "selected_category": category_id,
         "cart_items": cart_items,
