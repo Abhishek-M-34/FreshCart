@@ -355,13 +355,7 @@ class StockBatchTests(TestCase):
             expiry_days=5,
             is_available=True
         )
-        StockBatch.objects.create(
-    product=self.product,
-    quantity_received=20,
-    quantity_remaining=20,
-    arrival_date=date.today(),
-    expiry_date=date.today() + timedelta(days=5)
-)
+        
 
         self.client.login(
             username="stock_admin",
