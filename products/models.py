@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -28,6 +28,23 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_available_stock(self):
+        today = timezone.localdate()
+
+        batches = self.stock_batches.filter(
+            quantity_remaining__gt=0
+        )
+
+        total = 0
+
+        for batch in batches:
+            if batch.expiry_date is None:
+                total += batch.quantity_remaining
+            elif batch.expiry_date >= today:
+                total += batch.quantity_remaining
+
+        return total
 
 class StockBatch(models.Model):
     product = models.ForeignKey(
