@@ -740,3 +740,151 @@ class OrderTests(TestCase):
             order.status,
             "pending"
         )
+
+    def test_fefo_consumes_earlier_expiry_batch_first(self):
+        """Checkout should consume the batch that expires first."""
+        today = date.today()
+
+        early_batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=10,
+            quantity_remaining=10,
+            arrival_date=today,
+            expiry_date=today + timedelta(days=2),
+        )
+
+        late_batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=10,
+            quantity_remaining=10,
+            arrival_date=today,
+            expiry_date=today + timedelta(days=5),
+        )
+
+        cart_item = CartItem.objects.create(
+            cart=self.cart,
+            product=self.product,
+            quantity=6,
+        )
+
+        response = self.client.post(
+            reverse("checkout")
+        )
+
+        early_batch.refresh_from_db()
+        late_batch.refresh_from_db()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(early_batch.quantity_remaining, 4)
+        self.assertEqual(late_batch.quantity_remaining, 10)
+
+    def test_fefo_consumes_across_multiple_batches(self):
+        """Checkout should consume from the next batch when the first is insufficient."""
+        today = date.today()
+
+        first_batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=5,
+            quantity_remaining=5,
+            arrival_date=today,
+            expiry_date=today + timedelta(days=2),
+        )
+
+        second_batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=10,
+            quantity_remaining=10,
+            arrival_date=today,
+            expiry_date=today + timedelta(days=5),
+        )   
+
+        CartItem.objects.create(
+            cart=self.cart,
+            product=self.product,
+            quantity=8,
+        )
+
+        response = self.client.post(
+            reverse("checkout")
+        )
+
+        first_batch.refresh_from_db()
+        second_batch.refresh_from_db()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(first_batch.quantity_remaining, 0)
+        self.assertEqual(second_batch.quantity_remaining, 7)
+
+    def test_fefo_skips_expired_batch(self):
+        """Expired stock should never be consumed during checkout."""
+        today = date.today()
+
+        expired_batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=10,
+            quantity_remaining=10,
+            arrival_date=today - timedelta(days=5),
+            expiry_date=today - timedelta(days=1),
+        )
+
+        valid_batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=10,
+            quantity_remaining=10,
+            arrival_date=today,
+            expiry_date=today + timedelta(days=5),
+        )
+
+        CartItem.objects.create(
+            cart=self.cart,
+            product=self.product,
+            quantity=5,
+        )
+
+        response = self.client.post(
+            reverse("checkout")
+        )
+
+        expired_batch.refresh_from_db()
+        valid_batch.refresh_from_db()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(expired_batch.quantity_remaining, 10)
+        self.assertEqual(valid_batch.quantity_remaining, 5)
+
+    def test_fefo_consumes_non_expiring_batch_last(self):
+        """A non-expiring batch should be consumed after batches with expiry dates."""
+        today = date.today()
+
+        expiring_batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=5,
+            quantity_remaining=5,
+            arrival_date=today,
+            expiry_date=today + timedelta(days=5),
+        )
+
+        non_expiring_batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=10,
+            quantity_remaining=10,
+            arrival_date=today,
+            expiry_date=None,
+        )
+
+        CartItem.objects.create(
+            cart=self.cart,
+            product=self.product,
+            quantity=8,
+        )
+
+        response = self.client.post(
+            reverse("checkout")
+        )
+
+        expiring_batch.refresh_from_db()
+        non_expiring_batch.refresh_from_db()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(expiring_batch.quantity_remaining, 0)
+        self.assertEqual(non_expiring_batch.quantity_remaining, 7)
