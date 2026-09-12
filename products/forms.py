@@ -119,3 +119,44 @@ class StockBatchForm(forms.ModelForm):
                 }
             ),
         }
+
+class StockBatchEditForm(forms.ModelForm):
+
+    class Meta:
+        model = StockBatch
+        fields = [
+            "quantity_remaining",
+            "arrival_date",
+            "expiry_date",
+        ]
+
+        widgets = {
+            "quantity_remaining": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": "0"
+                }
+            ),
+            "arrival_date": forms.DateInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "date"
+                }
+            ),
+            "expiry_date": forms.DateInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "date"
+                }
+            ),
+        }
+
+    def clean_quantity_remaining(self):
+        quantity_remaining = self.cleaned_data["quantity_remaining"]
+
+        if quantity_remaining > self.instance.quantity_received:
+            raise forms.ValidationError(
+                "Remaining quantity cannot be greater than received quantity."
+            )
+
+        return quantity_remaining

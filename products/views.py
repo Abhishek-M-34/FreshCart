@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from cart.models import Cart
 
-from .forms import CategoryForm, ProductForm, StockBatchForm
+from .forms import CategoryForm, ProductForm, StockBatchForm, StockBatchEditForm
 from .models import Category, Product, StockBatch
 from datetime import timedelta
 from django.utils import timezone
@@ -321,6 +321,45 @@ def admin_stock_list(request):
         "dashboard/products/stock_list.html",
         {
             "product_summaries": product_summaries,
+        }
+    )
+
+@user_passes_test(is_admin)
+def admin_stock_edit(request, batch_id):
+
+    stock_batch = get_object_or_404(
+        StockBatch,
+        id=batch_id
+    )
+
+    if request.method == "POST":
+
+        form = StockBatchEditForm(
+            request.POST,
+            instance=stock_batch
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect(
+                "admin_stock_list"
+            )
+
+    else:
+
+        form = StockBatchEditForm(
+            instance=stock_batch
+        )
+
+    return render(
+        request,
+        "dashboard/products/stock_edit.html",
+        {
+            "form": form,
+            "stock_batch": stock_batch,
+            "title": "Edit Stock Batch",
         }
     )
 
