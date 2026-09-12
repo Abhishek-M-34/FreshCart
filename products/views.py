@@ -251,6 +251,20 @@ def admin_stock_add(request):
     )
 
 @user_passes_test(is_admin)
+def admin_stock_discard(request, batch_id):
+
+    stock_batch = get_object_or_404(
+        StockBatch,
+        id=batch_id
+    )
+
+    if request.method == "POST":
+        stock_batch.quantity_remaining = 0
+        stock_batch.save(update_fields=["quantity_remaining"])
+
+    return redirect("admin_stock_list")
+
+@user_passes_test(is_admin)
 def admin_stock_list(request):
 
     stock_batches = (

@@ -87,4 +87,9 @@ urlpatterns = [
         views.admin_stock_edit,
         name="admin_stock_edit"
     ),
+    path(
+        "admin-dashboard/products/stock/<int:batch_id>/discard/",
+        views.admin_stock_discard,
+        name="admin_stock_discard"
+    ),
 ]
