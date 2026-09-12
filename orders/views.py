@@ -8,10 +8,12 @@ from .forms import OrderStatusForm
 from .models import Order
 
 from cart.models import Cart
-from products.models import Product
+from products.models import Product, StockBatch
 
 from .forms import CheckoutForm
 from .models import Order, OrderItem
+
+from django.utils import timezone
 
 
 @login_required
@@ -43,30 +45,49 @@ def checkout(request):
             with transaction.atomic():
 
                 # Check stock before creating the order
-                for item in items:
-
-                    product = Product.objects.select_for_update().get(
-                        id=item.product.id
+                batches = (
+                    StockBatch.objects
+                    .select_for_update()
+                    .filter(
+                        product=product,
+                        quantity_remaining__gt=0
                     )
+                    .order_by(
+                        "expiry_date",
+                        "arrival_date",
+                        "id"
+                    )
+                )
 
-                    if (
-                        not product.is_available
-                        or product.stock < item.quantity
-                    ):
-                        return render(
-                            request,
-                            "orders/checkout.html",
-                            {
-                                "form": form,
-                                "items": items,
-                                "total": total,
-                                "error": (
-                                    f"{product.name} is no longer "
-                                    "available in the requested quantity."
-                                ),
-                            }
-                        )
+                valid_batches = []
 
+                for batch in batches:
+
+                    if batch.expiry_date is None:
+                        valid_batches.append(batch)
+
+                    elif batch.expiry_date >= today:
+                        valid_batches.append(batch)
+
+                available_quantity = sum(
+                    batch.quantity_remaining
+                    for batch in valid_batches
+                )
+
+                if available_quantity < item.quantity:
+                    return render(
+                        request,
+                        "orders/checkout.html",
+                        {
+                            "form": form,
+                            "items": items,
+                            "total": total,
+                            "error": (
+                                f"{product.name} is no longer available "
+                                "in the requested quantity."
+                            ),
+                        }
+                    )
                 # Create order
                 order = Order.objects.create(
                     user=request.user,
@@ -92,12 +113,42 @@ def checkout(request):
                         quantity=item.quantity,
                     )
 
-                    product.stock -= item.quantity
+                    remaining_to_consume = item.quantity
 
-                    if product.stock == 0:
-                        product.is_available = False
+                    batches = (
+                        StockBatch.objects
+                        .select_for_update()
+                        .filter(
+                            product=product,
+                            quantity_remaining__gt=0
+                        )
+                        .order_by(
+                            "expiry_date",
+                            "arrival_date",
+                            "id"
+                        )
+                    )
 
-                    product.save()
+                    for batch in batches:
+
+                        if batch.expiry_date is not None:
+                            if batch.expiry_date < timezone.localdate():
+                                continue
+
+                        if remaining_to_consume <= 0:
+                            break
+
+                        quantity_from_batch = min(
+                            batch.quantity_remaining,
+                            remaining_to_consume
+                        )
+
+                        batch.quantity_remaining -= quantity_from_batch
+                        batch.save(
+                            update_fields=["quantity_remaining"]
+                        )
+
+                        remaining_to_consume -= quantity_from_batch
 
                 # Clear cart
                 cart.items.all().delete()
