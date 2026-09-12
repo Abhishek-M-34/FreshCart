@@ -3,9 +3,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from cart.models import Cart
 
-from .forms import CategoryForm, ProductForm
-from .models import Category, Product
-
+from .forms import CategoryForm, ProductForm, StockBatchForm
+from .models import Category, Product, StockBatch
+from datetime import timedelta
 
 
 def product_list(request):
@@ -196,6 +196,46 @@ def admin_product_edit(request, product_id):
         {
             "form": form,
             "title": "Edit Product",
+        }
+    )
+
+@user_passes_test(is_admin)
+def admin_stock_add(request):
+
+    if request.method == "POST":
+
+        form = StockBatchForm(request.POST)
+
+        if form.is_valid():
+
+            stock_batch = form.save(commit=False)
+
+            stock_batch.quantity_remaining = (
+                stock_batch.quantity_received
+            )
+
+            stock_batch.expiry_date = (
+                stock_batch.arrival_date
+                + timedelta(
+                    days=stock_batch.product.expiry_days
+                )
+            )
+
+            stock_batch.save()
+
+            return redirect(
+                "admin_product_list"
+            )
+
+    else:
+        form = StockBatchForm()
+
+    return render(
+        request,
+        "dashboard/products/stock_form.html",
+        {
+            "form": form,
+            "title": "Add Stock",
         }
     )
 

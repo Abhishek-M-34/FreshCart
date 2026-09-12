@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Category, Product
+from .models import Category, Product, StockBatch
 
 
 class ProductForm(forms.ModelForm):
@@ -86,6 +86,36 @@ class CategoryForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "placeholder": "Category name"
+                }
+            ),
+        }
+
+class StockBatchForm(forms.ModelForm):
+
+    class Meta:
+        model = StockBatch
+        fields = [
+            "product",
+            "quantity_received",
+            "arrival_date",
+        ]
+
+        widgets = {
+            "product": forms.Select(
+                attrs={
+                    "class": "form-select"
+                }
+            ),
+            "quantity_received": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": "1"
+                }
+            ),
+            "arrival_date": forms.DateInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "date"
                 }
             ),
         }

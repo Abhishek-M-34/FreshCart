@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Add Stock - FreshCart
+{% endblock %}
+
+{% block content %}
+
+<section class="products-page">
+
+    <div class="container">
+
+        <h1>
+            Add Stock
+        </h1>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button
+                type="submit"
+                class="admin-primary-btn"
+            >
+                Add Stock
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

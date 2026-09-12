@@ -38,7 +38,10 @@ class StockBatch(models.Model):
     quantity_received = models.PositiveIntegerField()
     quantity_remaining = models.PositiveIntegerField()
     arrival_date = models.DateField()
-    expiry_date = models.DateField()
+    expiry_date = models.DateField(
+    null=True,
+    blank=True
+)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

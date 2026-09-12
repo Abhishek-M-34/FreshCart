@@ -72,4 +72,9 @@ urlpatterns = [
         views.admin_category_delete,
         name="admin_category_delete"
     ),
+    path(
+        "admin-dashboard/products/stock/add/",
+        views.admin_stock_add,
+        name="admin_stock_add"
+    ),
 ]
