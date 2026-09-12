@@ -214,30 +214,30 @@ def admin_stock_add(request):
                 stock_batch.quantity_received
             )
 
-            stock_batch.expiry_date = (
-                stock_batch.arrival_date
-                + timedelta(
-                    days=stock_batch.product.expiry_days
+            if stock_batch.product.expiry_days > 0:
+                stock_batch.expiry_date = (
+                stock_batch.arrival_date + timedelta(days=stock_batch.product.expiry_days)
                 )
-            )
+            else:
+                stock_batch.expiry_date = None
 
-            stock_batch.save()
+                stock_batch.save()
 
-            return redirect(
+                return redirect(
                 "admin_product_list"
+                )
+
+        else:
+            form = StockBatchForm()
+
+            return render(
+                request,
+                "dashboard/products/stock_form.html",
+                {
+                    "form": form,
+                    "title": "Add Stock",
+                }
             )
-
-    else:
-        form = StockBatchForm()
-
-    return render(
-        request,
-        "dashboard/products/stock_form.html",
-        {
-            "form": form,
-            "title": "Add Stock",
-        }
-    )
 
 @user_passes_test(is_admin)
 def admin_product_delete(request, product_id):
