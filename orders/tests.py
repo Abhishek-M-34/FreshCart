@@ -1,3 +1,4 @@
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
@@ -5,7 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from cart.models import Cart, CartItem
-from products.models import Category, Product
+from products.models import Category, Product, StockBatch
 
 from .models import Order, OrderItem
 
@@ -50,6 +51,21 @@ class OrderTests(TestCase):
             price=Decimal("50.00"),
             stock=10,
             is_available=True
+        )
+        StockBatch.objects.create(
+            product=self.product,
+            quantity_received=20,
+            quantity_remaining=20,
+            arrival_date=date.today(),
+            expiry_date=date.today() + timedelta(days=5)
+        )
+
+        StockBatch.objects.create(
+            product=self.second_product,
+            quantity_received=10,
+            quantity_remaining=10,
+            arrival_date=date.today(),
+            expiry_date=date.today() + timedelta(days=5)
         )
 
     def login_customer(self):
@@ -261,7 +277,7 @@ class OrderTests(TestCase):
             3
         )
 
-    def test_checkout_reduces_product_stock(self):
+    def test_checkout_reduces_batch_stock(self):
         self.create_cart_with_items()
 
         self.login_customer()
@@ -277,12 +293,12 @@ class OrderTests(TestCase):
         self.second_product.refresh_from_db()
 
         self.assertEqual(
-            self.product.stock,
+            self.product.get_available_stock(),
             18
         )
 
         self.assertEqual(
-            self.second_product.stock,
+            self.second_product.get_available_stock(),
             7
         )
 
@@ -325,6 +341,14 @@ class OrderTests(TestCase):
 
         self.login_customer()
 
+        StockBatch.objects.create(
+            product=product,
+            quantity_received=2,
+            quantity_remaining=2,
+            arrival_date=date.today(),
+            expiry_date=date.today() + timedelta(days=5)
+        )
+
         self.client.post(
             reverse("checkout"),
             {
@@ -335,12 +359,8 @@ class OrderTests(TestCase):
         product.refresh_from_db()
 
         self.assertEqual(
-            product.stock,
+            product.get_available_stock(),
             0
-        )
-
-        self.assertFalse(
-            product.is_available
         )
 
     def test_checkout_rejects_insufficient_stock(self):
@@ -388,7 +408,7 @@ class OrderTests(TestCase):
         self.product.refresh_from_db()
 
         self.assertEqual(
-            self.product.stock,
+            self.product.get_available_stock(),
             20
         )
 
