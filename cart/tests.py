@@ -4,8 +4,10 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from products.models import Category, Product
+from products.models import Category, Product, StockBatch
 from .models import Cart, CartItem
+
+from datetime import date, timedelta
 
 
 class CartTests(TestCase):
@@ -37,6 +39,24 @@ class CartTests(TestCase):
             price=Decimal("50.00"),
             stock=10,
             is_available=True
+        )
+
+        today = date.today()
+
+        StockBatch.objects.create(
+            product=self.product,
+            quantity_received=20,
+            quantity_remaining=20,
+            arrival_date=today,
+            expiry_date=today + timedelta(days=5),
+        )
+
+        StockBatch.objects.create(
+            product=self.second_product,
+            quantity_received=10,
+            quantity_remaining=10,
+            arrival_date=today,
+            expiry_date=today + timedelta(days=5),
         )
 
         self.unavailable_product = Product.objects.create(
@@ -176,9 +196,9 @@ class CartTests(TestCase):
         )
 
         self.assertEqual(
-            cart_item.quantity,
-            self.product.stock
-        )
+    cart_item.quantity,
+    self.product.get_available_stock()
+)
 
     def test_unavailable_product_returns_404(self):
         self.login_user()
