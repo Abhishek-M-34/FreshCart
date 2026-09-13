@@ -209,45 +209,35 @@ def admin_product_edit(request, product_id):
 
 @user_passes_test(is_admin)
 def admin_stock_add(request):
+    product_id = request.GET.get("product")
 
     if request.method == "POST":
-
         form = StockBatchForm(request.POST)
 
         if form.is_valid():
-
             stock_batch = form.save(commit=False)
-
-            stock_batch.quantity_remaining = (
-                stock_batch.quantity_received
-            )
+            stock_batch.quantity_remaining = stock_batch.quantity_received
 
             if stock_batch.product.expiry_days > 0:
                 stock_batch.expiry_date = (
                     stock_batch.arrival_date
-                    + timedelta(
-                        days=stock_batch.product.expiry_days
-                    )
+                    + timedelta(days=stock_batch.product.expiry_days)
                 )
             else:
                 stock_batch.expiry_date = None
 
             stock_batch.save()
-
-            return redirect(
-                "admin_product_list"
-            )
+            return redirect("admin_product_list")
 
     else:
-        form = StockBatchForm()
+        form = StockBatchForm(
+            initial={"product": product_id}
+        )
 
     return render(
         request,
         "dashboard/products/stock_form.html",
-        {
-            "form": form,
-            "title": "Add Stock",
-        }
+        {"form": form, "title": "Add Stock"}
     )
 
 @user_passes_test(is_admin)
