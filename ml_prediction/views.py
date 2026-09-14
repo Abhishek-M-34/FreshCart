@@ -451,7 +451,7 @@ def inventory_prediction(request):
 
         projected_stock = current_stock
         stockout_date = None
-
+        total_shortage = 0
         daily_projection = []
 
         for prediction in product_predictions:
@@ -486,6 +486,11 @@ def inventory_prediction(request):
                     batch["remaining"] -= consumed
                     remaining_demand -= consumed
 
+                # Demand that could not be fulfilled from
+                # currently available inventory.
+                if remaining_demand > 0:
+                    total_shortage += remaining_demand
+
                 projected_stock = sum(
                     batch["remaining"]
                     for batch in batches
@@ -502,11 +507,20 @@ def inventory_prediction(request):
 
             stock_after_forecast = projected_stock
 
+            # Keep a safety stock equal to 20% of predicted demand.
+            safety_stock = round(predicted_demand * 0.20)
+
+            # If the forecast creates a shortage, replace that shortage.
+            # Otherwise, only reorder enough to restore the safety stock.
             recommended_reorder = max(
                 0,
-                predicted_demand - current_stock
+                total_shortage
+                + max(0, safety_stock - stock_after_forecast)
             )
-
+            reorder_required = (
+    total_shortage > 0
+    or stock_after_forecast < safety_stock
+)
             if current_stock <= 0:
                 status = "Out of Stock"
             elif stockout_date is not None:
@@ -530,6 +544,9 @@ def inventory_prediction(request):
         ),
         "stockout_date": stockout_date,
         "daily_projection": daily_projection,
+        "total_shortage": round(total_shortage),
+        "safety_stock": safety_stock,
+        "reorder_required": reorder_required,
         "status": status,
     })
 
