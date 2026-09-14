@@ -525,10 +525,10 @@ def inventory_prediction(request):
             # Safety stock protects against forecast uncertainty.
             safety_stock = round(predicted_demand * 0.20)
 
-            recommended_reorder = max(
-                0,
-                total_shortage + safety_stock
-            )
+            recommended_reorder = (
+    total_shortage
+    + max(0, safety_stock - stock_after_forecast)
+)
             reorder_required = (
                 total_shortage > 0
                 or stock_after_forecast < safety_stock
