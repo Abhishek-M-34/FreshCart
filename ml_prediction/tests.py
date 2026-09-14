@@ -1,5 +1,5 @@
 from decimal import Decimal
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -8,6 +8,9 @@ from django.utils import timezone
 
 from orders.models import Order, OrderItem
 from products.models import Category, Product, StockBatch
+
+from unittest.mock import patch
+
 
 class MLPredictionTests(TestCase):
 
@@ -37,11 +40,11 @@ class MLPredictionTests(TestCase):
             is_available=True
         )
         StockBatch.objects.create(
-    product=self.product,
-    quantity_received=50,
-    quantity_remaining=50,
-    arrival_date=timezone.localdate(),
-)
+            product=self.product,
+            quantity_received=50,
+            quantity_remaining=50,
+            arrival_date=timezone.localdate(),
+        )
 
     def login_admin(self):
         self.client.login(
@@ -177,9 +180,27 @@ class MLPredictionTests(TestCase):
             200
         )
 
-    def test_reorder_date_uses_lead_time(self):
+    @patch("ml_prediction.views.generate_predictions")
+    def test_reorder_date_uses_lead_time(self, mock_generate_predictions):
         self.product.lead_time_days = 3
         self.product.save()
+
+        today = timezone.localdate()
+
+        mock_generate_predictions.return_value = [
+            {
+                "product": self.product.name,
+                "predicted_quantity": 20,
+                "date": timezone.make_aware(
+                    datetime.combine(
+                        today,
+                        datetime.min.time(),
+                    )
+                ),
+            },
+        ]
+
+        self.login_admin()
 
         response = self.client.get(
             reverse("inventory_prediction")
@@ -195,13 +216,16 @@ class MLPredictionTests(TestCase):
             if item["product"] == self.product.name
         )
 
-        if product_data["stockout_date"] is not None:
-            expected_date = (
-                product_data["stockout_date"]
-                - timedelta(days=3)
-            )
+        self.assertIsNotNone(
+            product_data["stockout_date"]
+        )
 
-            self.assertEqual(
-                product_data["reorder_date"],
-                expected_date,
-            )
+        expected_date = (
+            product_data["stockout_date"]
+            - timedelta(days=3)
+        )
+
+        self.assertEqual(
+            product_data["reorder_date"],
+            expected_date,
+        )       
