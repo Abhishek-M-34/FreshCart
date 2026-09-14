@@ -176,3 +176,32 @@ class MLPredictionTests(TestCase):
             response.status_code,
             200
         )
+
+    def test_reorder_date_uses_lead_time(self):
+        self.product.lead_time_days = 3
+        self.product.save()
+
+        response = self.client.get(
+            reverse("inventory_prediction")
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        inventory_data = response.context["inventory_data"]
+
+        product_data = next(
+            item
+            for item in inventory_data
+            if item["product"] == self.product.name
+        )
+
+        if product_data["stockout_date"] is not None:
+            expected_date = (
+                product_data["stockout_date"]
+                - timedelta(days=3)
+            )
+
+            self.assertEqual(
+                product_data["reorder_date"],
+                expected_date,
+            )

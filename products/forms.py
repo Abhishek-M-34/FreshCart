@@ -5,6 +5,18 @@ from .models import Category, Product, StockBatch
 
 class ProductForm(forms.ModelForm):
 
+    lead_time_days = forms.IntegerField(
+        required=False,
+        min_value=0,
+        initial=1,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "min": "0",
+            }
+        ),
+    )
+
     class Meta:
         model = Product
 

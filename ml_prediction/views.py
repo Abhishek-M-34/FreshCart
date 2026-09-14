@@ -12,6 +12,7 @@ from orders.models import OrderItem
 from products.models import Product
 
 from django.utils import timezone
+from datetime import timedelta
 
 
 def is_admin(user):
@@ -513,7 +514,13 @@ def inventory_prediction(request):
             # If the forecast creates a shortage, replace that shortage.
             # Otherwise, only reorder enough to restore the safety stock.
             # Reorder when the forecast shows a shortage.
-            reorder_date = stockout_date
+            reorder_date = None
+
+            if stockout_date is not None:
+                reorder_date = (
+                    stockout_date
+                    - timedelta(days=product.lead_time_days)
+                )
 
             # Safety stock protects against forecast uncertainty.
             safety_stock = round(predicted_demand * 0.20)
