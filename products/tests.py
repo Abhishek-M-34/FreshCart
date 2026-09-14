@@ -367,13 +367,12 @@ class StockBatchTests(TestCase):
         arrival_date = date.today()
 
         response = self.client.post(
-            reverse("admin_stock_add"),
-            {
-                "product": self.product.id,
-                "quantity_received": 20,
-                "arrival_date": arrival_date,
-            }
-        )
+    f"/admin-dashboard/products/stock/add/?product={self.product.id}",
+    {
+        "quantity_received": 20,
+        "arrival_date": "2026-09-14",
+    },
+)
 
         self.assertRedirects(
             response,
@@ -447,9 +446,11 @@ class StockBatchTests(TestCase):
         )
 
         self.assertEqual(
-            batch.expiry_date,
-            new_expiry_date
-        )
+    batch.expiry_date,
+    new_arrival_date + timedelta(
+        days=self.product.expiry_days
+    ),
+)
 
     def test_admin_can_discard_stock_batch(self):
 

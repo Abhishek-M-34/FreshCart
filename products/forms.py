@@ -91,30 +91,23 @@ class CategoryForm(forms.ModelForm):
         }
 
 class StockBatchForm(forms.ModelForm):
-
     class Meta:
         model = StockBatch
         fields = [
-            "quantity_remaining",
+            "quantity_received",
             "arrival_date",
         ]
-
         widgets = {
-            "product": forms.Select(
-                attrs={
-                    "class": "form-select"
-                }
-            ),
             "quantity_received": forms.NumberInput(
                 attrs={
                     "class": "form-control",
-                    "min": "1"
+                    "min": "1",
                 }
             ),
             "arrival_date": forms.DateInput(
                 attrs={
                     "class": "form-control",
-                    "type": "date"
+                    "type": "date",
                 }
             ),
         }
