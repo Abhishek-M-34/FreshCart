@@ -7,8 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from orders.models import Order, OrderItem
-from products.models import Category, Product
-
+from products.models import Category, Product, StockBatch
 
 class MLPredictionTests(TestCase):
 
@@ -37,6 +36,12 @@ class MLPredictionTests(TestCase):
             stock=50,
             is_available=True
         )
+        StockBatch.objects.create(
+    product=self.product,
+    quantity_received=50,
+    quantity_remaining=50,
+    arrival_date=timezone.localdate(),
+)
 
     def login_admin(self):
         self.client.login(

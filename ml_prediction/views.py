@@ -418,7 +418,7 @@ def inventory_prediction(request):
             0
         )
 
-        current_stock = product.stock
+        current_stock = product.get_available_stock()
 
         stock_after_forecast = (
             current_stock
