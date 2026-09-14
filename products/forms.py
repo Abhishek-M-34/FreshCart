@@ -15,6 +15,7 @@ class ProductForm(forms.ModelForm):
     "price",
     "stock",
     "expiry_days",
+    "lead_time_days",
     "image",
     "is_available",
 ]
@@ -70,7 +71,21 @@ class ProductForm(forms.ModelForm):
         "min": "0"
     }
 ),
+            "lead_time_days": forms.NumberInput(
+    attrs={
+        "class": "form-control",
+        "min": "0",
+    }
+),
         }
+
+        def clean_lead_time_days(self):
+            value = self.cleaned_data.get("lead_time_days")
+
+            if value is None:
+                return 1
+
+            return value
 
 class CategoryForm(forms.ModelForm):
 

@@ -463,7 +463,7 @@ def inventory_prediction(request):
 
             for batch in batches:
                 if (
-                    batch["expiry_date"] is not None                        and batch["expiry_date"] < prediction_date
+                    batch["expiry_date"] is not None and batch["expiry_date"] < prediction_date
                     ):
                         continue
 
@@ -512,18 +512,23 @@ def inventory_prediction(request):
 
             # If the forecast creates a shortage, replace that shortage.
             # Otherwise, only reorder enough to restore the safety stock.
+            # Reorder when the forecast shows a shortage.
+            reorder_date = stockout_date
+
+            # Safety stock protects against forecast uncertainty.
+            safety_stock = round(predicted_demand * 0.20)
+
             recommended_reorder = max(
                 0,
-                total_shortage
-                + max(0, safety_stock - stock_after_forecast)
+                total_shortage + safety_stock
             )
             reorder_required = (
-    total_shortage > 0
-    or stock_after_forecast < safety_stock
-)
+                total_shortage > 0
+                or stock_after_forecast < safety_stock
+            )
             if current_stock <= 0:
                 status = "Out of Stock"
-            elif stockout_date is not None:
+            elif reorder_required:
                 status = "Reorder Required"
             elif stock_after_forecast <= (
                 predicted_demand * 0.25
@@ -543,6 +548,7 @@ def inventory_prediction(request):
             recommended_reorder
         ),
         "stockout_date": stockout_date,
+        "reorder_date": reorder_date,
         "daily_projection": daily_projection,
         "total_shortage": round(total_shortage),
         "safety_stock": safety_stock,
