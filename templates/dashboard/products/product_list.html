@@ -304,19 +304,21 @@
                                 </div>
 
 
-                                <a
-                                    href="{% url 'admin_product_edit' product.id %}"
-                                    class="admin-edit-btn"
-                                >
-                                    Edit
-                                </a>
+                               <div class="admin-product-actions">
+    <a
+        href="{% url 'admin_product_edit' product.id %}"
+        class="admin-edit-btn"
+    >
+        Edit
+    </a>
 
-                                <a
-    href="{% url 'admin_stock_add' %}?product={{ product.id }}"
-    class="admin-edit-btn"
->
-    Add Stock
-</a>
+    <a
+        href="{% url 'admin_stock_add' %}?product={{ product.id }}"
+        class="admin-edit-btn"
+    >
+        Add Stock
+    </a>
+</div>
 
                             </div>
 
