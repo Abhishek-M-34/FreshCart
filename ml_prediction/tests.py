@@ -185,12 +185,16 @@ class MLPredictionTests(TestCase):
         self.product.lead_time_days = 3
         self.product.save()
 
+        batch = self.product.stock_batches.first()
+        batch.quantity_remaining = 20
+        batch.save()
+
         today = timezone.localdate()
 
         mock_generate_predictions.return_value = [
             {
                 "product": self.product.name,
-                "predicted_quantity": 20,
+                "predicted_quantity": 30,
                 "date": timezone.make_aware(
                     datetime.combine(
                         today,
@@ -228,4 +232,4 @@ class MLPredictionTests(TestCase):
         self.assertEqual(
             product_data["reorder_date"],
             expected_date,
-        )       
+        )
