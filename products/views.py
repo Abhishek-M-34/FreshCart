@@ -344,12 +344,19 @@ def admin_stock_edit(request, batch_id):
         )
 
         if form.is_valid():
+            stock_batch = form.save(commit=False)
 
-            form.save()
+            if stock_batch.product.expiry_days > 0:
+                stock_batch.expiry_date = (
+                    stock_batch.arrival_date
+                    + timedelta(days=stock_batch.product.expiry_days)
+                )
+            else:
+                stock_batch.expiry_date = None
 
-            return redirect(
-                "admin_stock_list"
-            )
+            stock_batch.save()
+
+            return redirect("admin_stock_list")
 
     else:
 

@@ -95,8 +95,7 @@ class StockBatchForm(forms.ModelForm):
     class Meta:
         model = StockBatch
         fields = [
-            "product",
-            "quantity_received",
+            "quantity_remaining",
             "arrival_date",
         ]
 
