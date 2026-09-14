@@ -11,6 +11,8 @@ from sklearn.ensemble import RandomForestRegressor
 from orders.models import OrderItem
 from products.models import Product
 
+from django.utils import timezone
+
 
 def is_admin(user):
     return user.is_authenticated and user.is_staff
@@ -412,64 +414,124 @@ def inventory_prediction(request):
     inventory_data = []
 
     for product in products:
+        product_predictions = [
+            prediction
+            for prediction in predictions
+            if prediction["product"] == product.name
+        ]
 
-        predicted_demand = demand.get(
-            product.name,
-            0
+        # Copy current usable batches into memory.
+        # We do not modify the database during prediction.
+        batches = []
+
+        today = timezone.localdate()
+
+        for batch in product.stock_batches.filter(
+            quantity_remaining__gt=0
+        ).order_by("expiry_date", "arrival_date", "id"):
+
+            # Ignore already-expired batches.
+            if batch.expiry_date is not None and batch.expiry_date < today:
+                continue
+
+            batches.append({
+                "remaining": batch.quantity_remaining,
+                "expiry_date": batch.expiry_date,
+            })
+
+        current_stock = sum(
+            batch["remaining"]
+            for batch in batches
         )
 
-        current_stock = product.get_available_stock()
-
-        stock_after_forecast = (
-            current_stock
-            - predicted_demand
+        predicted_demand = sum(
+            prediction["predicted_quantity"]
+            for prediction in product_predictions
         )
 
-        recommended_reorder = max(
-            0,
-            predicted_demand
-            - current_stock
-        )
+        projected_stock = current_stock
+        stockout_date = None
 
-        if current_stock <= 0:
+        daily_projection = []
 
-            status = "Out of Stock"
+        for prediction in product_predictions:
+            daily_demand = prediction["predicted_quantity"]
+            prediction_date = prediction["date"].date()
 
-        elif stock_after_forecast < 0:
+                # Remove batches that will have expired by this day.
+            usable_batches = []
 
-            status = "Reorder Required"
+            for batch in batches:
+                if (
+                    batch["expiry_date"] is not None                        and batch["expiry_date"] < prediction_date
+                    ):
+                        continue
 
-        elif stock_after_forecast <= (
-            predicted_demand * 0.25
-        ):
+                usable_batches.append(batch)
 
-            status = "Low Stock"
+                batches = usable_batches
 
-        else:
+                # Consume stock using FEFO.
+                remaining_demand = daily_demand
 
-            status = "Stock Sufficient"
+                for batch in batches:
+                    if remaining_demand <= 0:
+                        break
 
-        inventory_data.append(
-            {
-                "product": product.name,
+                    consumed = min(
+                        batch["remaining"],
+                        remaining_demand
+                    )
 
-                "current_stock": current_stock,
+                    batch["remaining"] -= consumed
+                    remaining_demand -= consumed
 
-                "predicted_demand": round(
-                    predicted_demand
-                ),
+                projected_stock = sum(
+                    batch["remaining"]
+                    for batch in batches
+                )
 
-                "stock_after_forecast": round(
-                    stock_after_forecast
-                ),
+                if projected_stock <= 0 and stockout_date is None:
+                    stockout_date = prediction_date
 
-                "recommended_reorder": round(
-                    recommended_reorder
-                ),
+                daily_projection.append({
+                    "date": prediction_date,
+                    "demand": daily_demand,
+                    "remaining_stock": projected_stock,
+                })
 
-                "status": status,
-            }
-        )
+            stock_after_forecast = projected_stock
+
+            recommended_reorder = max(
+                0,
+                predicted_demand - current_stock
+            )
+
+            if current_stock <= 0:
+                status = "Out of Stock"
+            elif stockout_date is not None:
+                status = "Reorder Required"
+            elif stock_after_forecast <= (
+                predicted_demand * 0.25
+            ):
+                status = "Low Stock"
+            else:
+                status = "Stock Sufficient"
+
+    inventory_data.append({
+        "product": product.name,
+        "current_stock": current_stock,
+        "predicted_demand": round(predicted_demand),
+        "stock_after_forecast": round(
+            stock_after_forecast
+        ),
+        "recommended_reorder": round(
+            recommended_reorder
+        ),
+        "stockout_date": stockout_date,
+        "daily_projection": daily_projection,
+        "status": status,
+    })
 
     return render(
         request,
