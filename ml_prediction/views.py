@@ -517,93 +517,92 @@ def inventory_prediction(request):
                 "remaining_stock": projected_stock,
             })
 
-            stock_after_forecast = projected_stock
+        stock_after_forecast = projected_stock
 
-            # Keep a safety stock equal to 20% of predicted demand.
-            safety_stock = round(predicted_demand * 0.20)
+        safety_stock = round(predicted_demand * 0.20)
 
-            # If the forecast creates a shortage, replace that shortage.
-            # Otherwise, only reorder enough to restore the safety stock.
-            # Reorder when the forecast shows a shortage.
-            reorder_date = None
+        reorder_date = None
 
-            if stockout_date is not None:
-                reorder_date = (
-                    stockout_date
-                    - timedelta(days=product.lead_time_days)
-                )
-
-            # Safety stock protects against forecast uncertainty.
-            safety_stock = round(predicted_demand * 0.20)
-
-            recommended_reorder = (
-    total_shortage
-    + max(0, safety_stock - stock_after_forecast)
-)
-            reorder_required = (
-                total_shortage > 0
-                or stock_after_forecast < safety_stock
+        if stockout_date is not None:
+            reorder_date = (
+                stockout_date
+                - timedelta(days=product.lead_time_days)
             )
-            if current_stock <= 0:
-                status = "Out of Stock"
-            elif reorder_required:
-                status = "Reorder Required"
-            elif stock_after_forecast <= (
-                predicted_demand * 0.25
-            ):
-                status = "Low Stock"
-            else:
-                status = "Stock Sufficient"
 
-            discount_batches = []
+        recommended_reorder = (
+            total_shortage
+            + max(0, safety_stock - stock_after_forecast)
+        )
 
-            for batch in product.stock_batches.filter(
-                quantity_remaining__gt=0
-            ).order_by("expiry_date", "arrival_date", "id"):
+        reorder_required = (
+            total_shortage > 0
+            or stock_after_forecast < safety_stock
+        )
 
-                if batch.expiry_date is None:
-                    continue
+        if current_stock <= 0:
+            status = "Out of Stock"
+        elif reorder_required:
+            status = "Reorder Required"
+        elif stock_after_forecast <= (
+            predicted_demand * 0.25
+        ):
+            status = "Low Stock"
+        else:
+            status = "Stock Sufficient"
 
-                expected_demand_before_expiry = sum(
-                    projection["demand"]
-                    for projection in daily_projection
-                    if projection["date"] <= batch.expiry_date
-                )
+        discount_batches = []
 
-                discount_percentage = batch.get_discount_percentage(
-                    expected_demand=expected_demand_before_expiry
-                )
+        for batch in product.stock_batches.filter(
+            quantity_remaining__gt=0
+        ).order_by("expiry_date", "arrival_date", "id"):
 
-                if discount_percentage > 0:
-                    discount_batches.append({
-                        "batch_id": batch.id,
-                        "expiry_date": batch.expiry_date,
-                        "remaining_stock": batch.quantity_remaining,
-                        "expected_demand_before_expiry": expected_demand_before_expiry,
-                        "discount_percentage": discount_percentage,
-                        "discounted_price": batch.get_discounted_price(
-                            expected_demand=expected_demand_before_expiry
-                        ),
-                    })
+            if batch.expiry_date is None:
+                continue
 
-    inventory_data.append({
-        "product": product.name,
-        "current_stock": current_stock,
-        "predicted_demand": round(predicted_demand),
-        "stock_after_forecast": round(
-            stock_after_forecast
-        ),
-        "recommended_reorder": round(
-            recommended_reorder
-        ),
-        "stockout_date": stockout_date,
-        "reorder_date": reorder_date,
-        "daily_projection": daily_projection,
-        "total_shortage": round(total_shortage),
-        "safety_stock": safety_stock,
-        "reorder_required": reorder_required,
-        "status": status,
-    })
+            if batch.expiry_date < today:
+                continue
+
+            expected_demand_before_expiry = sum(
+                projection["demand"]
+                for projection in daily_projection
+                if projection["date"] <= batch.expiry_date
+            )
+
+            discount_percentage = batch.get_discount_percentage(
+                expected_demand=expected_demand_before_expiry
+            )
+
+            if discount_percentage > 0:
+                discount_batches.append({
+                    "batch_id": batch.id,
+                    "expiry_date": batch.expiry_date,
+                    "remaining_stock": batch.quantity_remaining,
+                    "expected_demand_before_expiry": expected_demand_before_expiry,
+                    "discount_percentage": discount_percentage,
+                    "discounted_price": batch.get_discounted_price(
+                        expected_demand=expected_demand_before_expiry
+                    ),
+                })
+
+        inventory_data.append({
+            "product": product.name,
+            "current_stock": current_stock,
+            "predicted_demand": round(predicted_demand),
+            "stock_after_forecast": round(
+                stock_after_forecast
+            ),
+            "recommended_reorder": round(
+                recommended_reorder
+            ),
+            "stockout_date": stockout_date,
+            "reorder_date": reorder_date,
+            "daily_projection": daily_projection,
+            "total_shortage": round(total_shortage),
+            "safety_stock": safety_stock,
+            "reorder_required": reorder_required,
+            "status": status,
+            "discount_batches": discount_batches,
+        })
 
     return render(
         request,
