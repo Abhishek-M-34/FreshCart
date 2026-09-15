@@ -68,3 +68,48 @@ class StockBatch(models.Model):
             f"{self.product.name} - "
             f"{self.arrival_date}"
         )
+    def get_days_until_expiry(self):
+        if self.expiry_date is None:
+            return None
+
+        return (self.expiry_date - timezone.localdate()).days
+
+
+    def get_discount_percentage(self, expected_demand=0):
+        days_until_expiry = self.get_days_until_expiry()
+
+        # No expiry configured
+        if days_until_expiry is None:
+            return 0
+
+        # Do not sell expired stock
+        if days_until_expiry < 0:
+            return 0
+
+        # No excess stock
+        excess_stock = self.quantity_remaining - expected_demand
+
+        if excess_stock <= 0:
+            return 0
+
+        # Higher discount as expiry approaches
+        if days_until_expiry <= 1:
+            return 30
+
+        if days_until_expiry <= 2:
+            return 20
+
+        if days_until_expiry <= 3:
+            return 10
+
+        return 0
+
+
+    def get_discounted_price(self, expected_demand=0):
+        discount_percentage = self.get_discount_percentage(
+            expected_demand
+        )
+
+        return self.product.price * (
+            1 - discount_percentage / 100
+        )
