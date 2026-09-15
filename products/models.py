@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from decimal import Decimal
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -111,5 +112,6 @@ class StockBatch(models.Model):
         )
 
         return self.product.price * (
-            1 - discount_percentage / 100
-        )
+    Decimal("1")
+    - Decimal(discount_percentage) / Decimal("100")
+)

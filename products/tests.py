@@ -370,7 +370,7 @@ class StockBatchTests(TestCase):
     f"/admin-dashboard/products/stock/add/?product={self.product.id}",
     {
         "quantity_received": 20,
-        "arrival_date": "2026-09-14",
+        "arrival_date": arrival_date.strftime("%Y-%m-%d"),
     },
 )
 
@@ -397,6 +397,69 @@ class StockBatchTests(TestCase):
             batch.expiry_date,
             arrival_date + timedelta(days=5)
         )
+
+    def test_batch_discount_for_expiry(self):
+        today = date.today()
+
+        test_cases = [
+            (today + timedelta(days=5), 0),
+            (today + timedelta(days=3), 10),
+            (today + timedelta(days=2), 20),
+            (today + timedelta(days=1), 30),
+            (today, 30),
+            (today - timedelta(days=1), 0),
+        ]
+
+        for expiry_date, expected_discount in test_cases:
+            batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=20,
+            quantity_remaining=20,
+            arrival_date=today,
+            expiry_date=expiry_date,
+        )
+
+            self.assertEqual(
+            batch.get_discount_percentage(),
+            expected_discount,
+        )
+
+            batch.delete()
+
+
+    def test_batch_discount_respects_expected_demand(self):
+        batch = StockBatch.objects.create(
+        product=self.product,
+        quantity_received=20,
+        quantity_remaining=10,
+        arrival_date=date.today(),
+        expiry_date=date.today() + timedelta(days=1),
+    )
+
+        self.assertEqual(
+        batch.get_discount_percentage(expected_demand=10),
+        0,
+    )
+
+        self.assertEqual(
+        batch.get_discount_percentage(expected_demand=5),
+        30,
+    )
+
+
+    def test_batch_discounted_price(self):
+        batch = StockBatch.objects.create(
+        product=self.product,
+        quantity_received=20,
+        quantity_remaining=20,
+        arrival_date=date.today(),
+        expiry_date=date.today() + timedelta(days=1),
+    )
+
+        self.assertEqual(
+        batch.get_discounted_price(),
+        Decimal("21.00"),
+    )
 
     def test_admin_can_edit_stock_batch(self):
 
