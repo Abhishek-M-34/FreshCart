@@ -741,6 +741,46 @@ class OrderTests(TestCase):
             "pending"
         )
 
+    def test_checkout_applies_expiry_discount_to_order_total(self):
+        """Checkout should use the effective discounted batch price."""
+        today = date.today()
+        StockBatch.objects.filter(
+            product=self.product
+        ).delete()
+
+        StockBatch.objects.create(
+            product=self.product,
+            quantity_received=5,
+            quantity_remaining=5,
+            arrival_date=today,
+            expiry_date=today + timedelta(days=1),
+        )
+
+        cart = Cart.objects.create(
+            user=self.user
+        )
+        CartItem.objects.create(
+            cart=cart,
+            product=self.product,
+            quantity=3,
+        )
+
+        self.login_customer()
+        response = self.client.post(
+            reverse("checkout"),
+            {
+                "shipping_address": "Test Address"
+            }
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        order = Order.objects.get(user=self.user)
+        order_item = order.items.get(product=self.product)
+
+        self.assertEqual(order.total_amount, Decimal("210.00"))
+        self.assertEqual(order_item.price, Decimal("70.00"))
+
     def test_fefo_consumes_earlier_expiry_batch_first(self):
         """Checkout should consume the batch that expires first."""
         today = date.today()

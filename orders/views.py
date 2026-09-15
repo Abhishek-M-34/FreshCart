@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
@@ -16,6 +18,69 @@ from .models import Order, OrderItem
 from django.utils import timezone
 from django.db.models import F
 
+
+def get_effective_pricing_for_quantity(product, quantity):
+    if quantity <= 0:
+        return Decimal("0"), Decimal("0")
+
+    today = timezone.localdate()
+
+    valid_batches = []
+
+    for batch in (
+        StockBatch.objects
+        .filter(
+            product=product,
+            quantity_remaining__gt=0,
+        )
+        .order_by(
+            F("expiry_date").asc(nulls_last=True),
+            "arrival_date",
+            "id",
+        )
+    ):
+        if batch.expiry_date is None:
+            valid_batches.append(batch)
+        elif batch.expiry_date >= today:
+            valid_batches.append(batch)
+
+    remaining_quantity = quantity
+    subtotal = Decimal("0")
+
+    for batch in valid_batches:
+        if remaining_quantity <= 0:
+            break
+
+        quantity_from_batch = min(
+            batch.quantity_remaining,
+            remaining_quantity,
+        )
+
+        discount_percentage = batch.get_discount_percentage(
+            expected_demand=0
+        )
+
+        unit_price = (
+            batch.get_discounted_price(expected_demand=0)
+            if discount_percentage > 0
+            else product.price
+        )
+
+        subtotal += (
+            Decimal(quantity_from_batch) * unit_price
+        )
+        remaining_quantity -= quantity_from_batch
+
+    if remaining_quantity > 0:
+        subtotal += Decimal(remaining_quantity) * product.price
+
+    effective_unit_price = (
+        subtotal / Decimal(quantity)
+        if quantity > 0 else Decimal("0")
+    )
+
+    return subtotal, effective_unit_price
+
 @login_required
 def checkout(request):
     cart = get_object_or_404(
@@ -26,7 +91,11 @@ def checkout(request):
     items = cart.items.select_related("product")
 
     for item in items:
-        item.subtotal = item.product.price * item.quantity
+        _, item.subtotal = get_effective_pricing_for_quantity(
+            item.product,
+            item.quantity,
+        )
+        item.subtotal *= item.quantity
 
     if not items.exists():
         return redirect("cart")
@@ -113,10 +182,31 @@ def checkout(request):
                             }
                         )
 
+                order_total = Decimal("0")
+                order_item_prices = []
+
+                for item in items:
+                    product = Product.objects.select_for_update().get(
+                        id=item.product.id
+                    )
+
+                    line_total, effective_unit_price = (
+                        get_effective_pricing_for_quantity(
+                            product,
+                            item.quantity,
+                        )
+                    )
+                    order_total += line_total
+                    order_item_prices.append({
+                        "item": item,
+                        "product": product,
+                        "unit_price": effective_unit_price,
+                    })
+
                 # Create order
                 order = Order.objects.create(
                     user=request.user,
-                    total_amount=total,
+                    total_amount=order_total,
                     shipping_address=form.cleaned_data[
                         "shipping_address"
                     ],
@@ -124,17 +214,16 @@ def checkout(request):
                 )
 
                 # Create order items and consume stock using FEFO
-                for item in items:
+                for item_data in order_item_prices:
 
-                    product = Product.objects.select_for_update().get(
-                        id=item.product.id
-                    )
+                    product = item_data["product"]
+                    item = item_data["item"]
 
                     OrderItem.objects.create(
                         order=order,
                         product=product,
                         product_name=product.name,
-                        price=product.price,
+                        price=item_data["unit_price"],
                         quantity=item.quantity,
                     )
 
