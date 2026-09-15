@@ -451,60 +451,71 @@ def inventory_prediction(request):
         )
 
         projected_stock = current_stock
+
         stockout_date = None
         total_shortage = 0
+
         daily_projection = []
 
+        # Track how much demand is expected to be
+        # fulfilled from each batch before it expires.
         for prediction in product_predictions:
+
             daily_demand = prediction["predicted_quantity"]
             prediction_date = prediction["date"].date()
 
-                # Remove batches that will have expired by this day.
+            # Remove batches that have already expired
+            # by this prediction date.
             usable_batches = []
 
             for batch in batches:
                 if (
-                    batch["expiry_date"] is not None and batch["expiry_date"] < prediction_date
-                    ):
-                        continue
+                    batch["expiry_date"] is not None
+                    and batch["expiry_date"] < prediction_date
+                ):
+                    continue
 
                 usable_batches.append(batch)
 
-                batches = usable_batches
+            batches = usable_batches
 
-                # Consume stock using FEFO.
-                remaining_demand = daily_demand
+            # Consume stock using FEFO.
+            remaining_demand = daily_demand
 
-                for batch in batches:
-                    if remaining_demand <= 0:
-                        break
+            for batch in batches:
 
-                    consumed = min(
-                        batch["remaining"],
-                        remaining_demand
-                    )
+                if remaining_demand <= 0:
+                    break
 
-                    batch["remaining"] -= consumed
-                    remaining_demand -= consumed
-
-                # Demand that could not be fulfilled from
-                # currently available inventory.
-                if remaining_demand > 0:
-                    total_shortage += remaining_demand
-
-                projected_stock = sum(
-                    batch["remaining"]
-                    for batch in batches
+                consumed = min(
+                    batch["remaining"],
+                    remaining_demand
                 )
 
-                if projected_stock <= 0 and stockout_date is None:
-                    stockout_date = prediction_date
+                batch["remaining"] -= consumed
+                remaining_demand -= consumed
 
-                daily_projection.append({
-                    "date": prediction_date,
-                    "demand": daily_demand,
-                    "remaining_stock": projected_stock,
-                })
+            # Demand that could not be fulfilled from
+            # currently available inventory.
+            if remaining_demand > 0:
+                total_shortage += remaining_demand
+
+            projected_stock = sum(
+                batch["remaining"]
+                for batch in batches
+            )
+
+            if (
+                projected_stock <= 0
+                and stockout_date is None
+            ):
+                stockout_date = prediction_date
+
+            daily_projection.append({
+                "date": prediction_date,
+                "demand": daily_demand,
+                "remaining_stock": projected_stock,
+            })
 
             stock_after_forecast = projected_stock
 
@@ -544,6 +555,37 @@ def inventory_prediction(request):
             else:
                 status = "Stock Sufficient"
 
+            discount_batches = []
+
+            for batch in product.stock_batches.filter(
+                quantity_remaining__gt=0
+            ).order_by("expiry_date", "arrival_date", "id"):
+
+                if batch.expiry_date is None:
+                    continue
+
+                expected_demand_before_expiry = sum(
+                    projection["demand"]
+                    for projection in daily_projection
+                    if projection["date"] <= batch.expiry_date
+                )
+
+                discount_percentage = batch.get_discount_percentage(
+                    expected_demand=expected_demand_before_expiry
+                )
+
+                if discount_percentage > 0:
+                    discount_batches.append({
+                        "batch_id": batch.id,
+                        "expiry_date": batch.expiry_date,
+                        "remaining_stock": batch.quantity_remaining,
+                        "expected_demand_before_expiry": expected_demand_before_expiry,
+                        "discount_percentage": discount_percentage,
+                        "discounted_price": batch.get_discounted_price(
+                            expected_demand=expected_demand_before_expiry
+                        ),
+                    })
+
     inventory_data.append({
         "product": product.name,
         "current_stock": current_stock,
@@ -568,5 +610,6 @@ def inventory_prediction(request):
         "dashboard/inventory_prediction.html",
         {
             "inventory_data": inventory_data,
+            "discount_batches": discount_batches,
         }
     )
