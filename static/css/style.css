@@ -5462,6 +5462,38 @@ textarea {
 }
 
 
+.admin-form-selected-product {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 22px;
+
+    padding: 13px 15px;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-sm);
+
+    background: var(--background);
+}
+
+
+.admin-form-selected-product .admin-form-label {
+    margin-bottom: 0;
+}
+
+
+.admin-form-selected-product strong {
+    color: var(--primary-dark);
+
+    font-size: 0.82rem;
+}
+
+
 .admin-form-fields {
     display: grid;
 

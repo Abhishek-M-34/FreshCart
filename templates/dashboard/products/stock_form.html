@@ -6,28 +6,135 @@
 
 {% block content %}
 
-<section class="products-page">
+<section class="admin-product-form-page">
 
     <div class="container">
 
-        <h1>
-            Add Stock
-        </h1>
+        <div class="admin-form-page-header">
 
-        <form method="post">
-
-            {% csrf_token %}
-
-            {{ form.as_p }}
-
-            <button
-                type="submit"
-                class="admin-primary-btn"
+            <a
+                href="{% url 'admin_stock_list' %}"
+                class="admin-form-back"
             >
-                Add Stock
-            </button>
+                ← Back to Stock Management
+            </a>
 
-        </form>
+            <span class="section-label">
+                INVENTORY MANAGEMENT
+            </span>
+
+            <h1>
+                Add Stock
+            </h1>
+
+            <p>
+                Add a new inventory batch for an existing product.
+            </p>
+
+        </div>
+
+
+        <div class="admin-form-card">
+
+            <div class="admin-form-card-header">
+
+                <div class="admin-form-icon">
+                    📦
+                </div>
+
+                <div>
+
+                    <h2>
+                        Stock Batch Details
+                    </h2>
+
+                    <p>
+                        Set the received quantity and arrival date for this batch.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-form-divider"></div>
+
+
+            <div class="admin-form-selected-product">
+
+                <span class="admin-form-label">
+                    Product
+                </span>
+
+                <strong>
+                    {{ product.name }}
+                </strong>
+
+            </div>
+
+
+            {% if form.non_field_errors %}
+
+                <div class="admin-form-error">
+                    {{ form.non_field_errors }}
+                </div>
+
+            {% endif %}
+
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="admin-form-fields">
+
+                    {% for field in form %}
+
+                        <div class="admin-form-field">
+
+                            <label
+                                for="{{ field.id_for_label }}"
+                                class="admin-form-label"
+                            >
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.errors %}
+                                <div class="admin-field-error">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="admin-form-actions">
+
+                    <a
+                        href="{% url 'admin_stock_list' %}"
+                        class="admin-secondary-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="admin-primary-btn"
+                    >
+                        Add Stock
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 

@@ -43,11 +43,18 @@ def dashboard(request):
         .order_by("-created_at")[:5]
     )
 
-    low_stock_products = (
-        Product.objects
-        .filter(stock__lte=10)
-        .order_by("stock")[:5]
+    low_stock_products = []
+
+    for product in Product.objects.all():
+        product.available_stock = product.get_available_stock()
+
+        if product.available_stock <= 10:
+            low_stock_products.append(product)
+
+    low_stock_products.sort(
+        key=lambda product: product.available_stock
     )
+    low_stock_products = low_stock_products[:5]
 
     context = {
         "total_products": total_products,

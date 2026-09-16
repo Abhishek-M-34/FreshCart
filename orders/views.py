@@ -19,9 +19,13 @@ from django.utils import timezone
 from django.db.models import F
 
 
-def get_effective_pricing_for_quantity(product, quantity):
+def get_effective_pricing_details(product, quantity):
     if quantity <= 0:
-        return Decimal("0"), Decimal("0")
+        return {
+            "subtotal": Decimal("0"),
+            "effective_unit_price": Decimal("0"),
+            "discount_percentage": 0,
+        }
 
     today = timezone.localdate()
 
@@ -46,6 +50,7 @@ def get_effective_pricing_for_quantity(product, quantity):
 
     remaining_quantity = quantity
     subtotal = Decimal("0")
+    pricing_segments = []
 
     for batch in valid_batches:
         if remaining_quantity <= 0:
@@ -69,17 +74,40 @@ def get_effective_pricing_for_quantity(product, quantity):
         subtotal += (
             Decimal(quantity_from_batch) * unit_price
         )
+        pricing_segments.append(
+            (quantity_from_batch, discount_percentage)
+        )
         remaining_quantity -= quantity_from_batch
 
     if remaining_quantity > 0:
         subtotal += Decimal(remaining_quantity) * product.price
+        pricing_segments.append((remaining_quantity, 0))
 
     effective_unit_price = (
         subtotal / Decimal(quantity)
         if quantity > 0 else Decimal("0")
     )
 
-    return subtotal, effective_unit_price
+    discounts = {
+        discount_percentage
+        for segment_quantity, discount_percentage in pricing_segments
+        if segment_quantity > 0
+    }
+
+    return {
+        "subtotal": subtotal,
+        "effective_unit_price": effective_unit_price,
+        "discount_percentage": (
+            discounts.pop()
+            if len(discounts) == 1
+            else 0
+        ),
+    }
+
+
+def get_effective_pricing_for_quantity(product, quantity):
+    pricing = get_effective_pricing_details(product, quantity)
+    return pricing["subtotal"], pricing["effective_unit_price"]
 
 @login_required
 def checkout(request):
@@ -91,10 +119,13 @@ def checkout(request):
     items = cart.items.select_related("product")
 
     for item in items:
-        _, item.subtotal = get_effective_pricing_for_quantity(
+        pricing = get_effective_pricing_details(
             item.product,
             item.quantity,
         )
+        item.effective_unit_price = pricing["effective_unit_price"]
+        item.discount_percentage = pricing["discount_percentage"]
+        item.subtotal = pricing["effective_unit_price"]
         item.subtotal *= item.quantity
 
     if not items.exists():

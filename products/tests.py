@@ -89,6 +89,78 @@ class ProductTests(TestCase):
 
         self.assertNotContains(response, "Mango")
 
+    def test_manage_products_uses_valid_batch_stock(self):
+        StockBatch.objects.filter(product=self.product).delete()
+        StockBatch.objects.create(
+            product=self.product,
+            quantity_received=10,
+            quantity_remaining=10,
+            arrival_date=date.today() - timedelta(days=5),
+            expiry_date=date.today() - timedelta(days=1),
+        )
+        StockBatch.objects.create(
+            product=self.product,
+            quantity_received=10,
+            quantity_remaining=10,
+            arrival_date=date.today(),
+            expiry_date=date.today() + timedelta(days=5),
+        )
+        StockBatch.objects.create(
+            product=self.product,
+            quantity_received=5,
+            quantity_remaining=5,
+            arrival_date=date.today(),
+            expiry_date=date.today() + timedelta(days=6),
+        )
+        self.product.stock = 0
+        self.product.save(update_fields=["stock"])
+
+        self.client.login(
+            username="admin",
+            password="AdminPassword123"
+        )
+        response = self.client.get(reverse("admin_product_list"))
+
+        self.assertContains(response, "15 in stock")
+        products = [
+            product
+            for section in response.context["category_sections"]
+            for product in section["products"]
+        ]
+        self.assertEqual(
+            next(product for product in products if product.id == self.product.id).available_stock,
+            15,
+        )
+
+    def test_customer_availability_uses_valid_batch_stock(self):
+        self.product.stock = 0
+        self.product.save(update_fields=["stock"])
+
+        response = self.client.get(
+            reverse("product_detail", args=[self.product.id])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "In stock")
+        self.assertContains(response, 'max="20"')
+
+    def test_product_without_discount_shows_only_original_price(self):
+        response = self.client.get(reverse("product_detail", args=[self.product.id]))
+
+        self.assertContains(response, "₹100.00")
+        self.assertNotContains(response, "0% OFF")
+
+    def test_product_with_discount_shows_original_price_and_discount(self):
+        StockBatch.objects.filter(product=self.product).update(
+            expiry_date=date.today() + timedelta(days=1)
+        )
+
+        response = self.client.get(reverse("product_detail", args=[self.product.id]))
+
+        self.assertContains(response, "₹100.00")
+        self.assertContains(response, "₹70.00")
+        self.assertContains(response, "30% OFF")
+
     def test_product_list_category_filter(self):
         response = self.client.get(
             reverse("product_list"),
@@ -155,6 +227,64 @@ class ProductTests(TestCase):
         )
 
         self.assertContains(response, "Apple")
+
+    def test_admin_product_list_links_to_stock_management(self):
+        self.client.login(
+            username="admin",
+            password="AdminPassword123"
+        )
+
+        response = self.client.get(reverse("admin_product_list"))
+
+        self.assertContains(
+            response,
+            reverse("admin_stock_list")
+        )
+
+    def test_stock_management_shows_grouped_batch_table(self):
+        batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=15,
+            quantity_remaining=10,
+            arrival_date=date.today(),
+            expiry_date=date.today() + timedelta(days=5),
+        )
+        self.client.login(
+            username="admin",
+            password="AdminPassword123"
+        )
+
+        response = self.client.get(reverse("admin_stock_list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response,
+            "dashboard/products/stock_list.html"
+        )
+        self.assertContains(response, "Inventory by Batch")
+        self.assertContains(response, "Apple")
+        self.assertContains(response, "Batch 1")
+        self.assertContains(response, "15")
+        self.assertContains(response, "10")
+        self.assertContains(response, "Available")
+        self.assertContains(
+            response,
+            reverse("admin_stock_edit", args=[batch.id])
+        )
+
+    def test_account_links_to_stock_management(self):
+        self.client.login(
+            username="admin",
+            password="AdminPassword123"
+        )
+
+        response = self.client.get(reverse("account"))
+
+        self.assertContains(response, "Stock Management")
+        self.assertContains(
+            response,
+            reverse("admin_stock_list")
+        )
 
     def test_admin_can_add_product(self):
         self.client.login(
@@ -397,6 +527,43 @@ class StockBatchTests(TestCase):
             batch.expiry_date,
             arrival_date + timedelta(days=5)
         )
+
+    def test_add_stock_page_shows_selected_product(self):
+        response = self.client.get(
+            reverse("admin_stock_add") + f"?product={self.product.id}"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response,
+            "dashboard/products/stock_form.html"
+        )
+        self.assertContains(response, "Add Stock")
+        self.assertContains(response, self.product.name)
+        self.assertContains(response, "Cancel")
+
+    def test_edit_stock_page_shows_batch_context(self):
+        batch = StockBatch.objects.create(
+            product=self.product,
+            quantity_received=20,
+            quantity_remaining=12,
+            arrival_date=date.today(),
+            expiry_date=date.today() + timedelta(days=5),
+        )
+
+        response = self.client.get(
+            reverse("admin_stock_edit", args=[batch.id])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response,
+            "dashboard/products/stock_edit.html"
+        )
+        self.assertContains(response, "Edit Stock Batch")
+        self.assertContains(response, self.product.name)
+        self.assertContains(response, "Save Changes")
+        self.assertContains(response, "Cancel")
 
     def test_batch_discount_for_expiry(self):
         today = date.today()

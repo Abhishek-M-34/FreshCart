@@ -6,13 +6,14 @@
 
 {% block content %}
 
-<section class="products-page">
+<section class="admin-products-page">
 
     <div class="container">
 
-        <div class="products-header">
+        <div class="admin-page-header">
 
             <div>
+
                 <span class="section-label">
                     INVENTORY MANAGEMENT
                 </span>
@@ -22,203 +23,246 @@
                 </h1>
 
                 <p>
-                    View stock batches, arrival dates and expiry dates.
+                    Review current inventory, batch dates and stock status.
                 </p>
+
             </div>
 
             <div class="admin-page-header-actions">
+
                 <a
-                    href="{% url 'admin_stock_add' %}"
-                    class="admin-primary-btn"
+                    href="{% url 'admin_product_list' %}"
+                    class="admin-secondary-btn"
                 >
-                    + Add Stock
+                    ← Products
                 </a>
+
             </div>
 
         </div>
 
+
         {% if product_summaries %}
 
-<div class="table-responsive">
+            <div class="admin-table-card">
 
-    <table class="table">
+                <div class="admin-table-header">
 
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Total Received</th>
-                <th>Available</th>
-                <th>Expired</th>
-                <th>Batches</th>
-            </tr>
-        </thead>
+                    <h2>
+                        Inventory by Batch
+                    </h2>
 
-        <tbody>
+                    <p>
+                        Current stock is calculated from usable batch quantities.
+                    </p>
 
-    {% for summary in product_summaries %}
+                </div>
 
-    <tr>
-        <td>
-            <button
-                class="btn btn-link p-0 text-decoration-none"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#product-{{ summary.product.id }}"
-                aria-expanded="false"
-                aria-controls="product-{{ summary.product.id }}"
-            >
-                {{ summary.product.name }}
-            </button>
-        </td>
 
-        <td>
-            {{ summary.total_received }}
-        </td>
+                <div class="admin-table-wrapper">
 
-        <td>
-            {{ summary.available_quantity }}
-        </td>
-
-        <td>
-            {{ summary.expired_quantity }}
-        </td>
-
-        <td>
-            {{ summary.batch_count }}
-        </td>
-    </tr>
-
-    <tr>
-        <td colspan="6" class="p-0">
-
-            <div
-                id="product-{{ summary.product.id }}"
-                class="collapse"
-            >
-
-                <div class="table-responsive">
-                    <table class="table mb-0">
+                    <table class="admin-product-table">
 
                         <thead>
+
                             <tr>
+                                <th>Product</th>
+                                <th>Current Stock</th>
+                                <th>Batch</th>
                                 <th>Received</th>
                                 <th>Remaining</th>
                                 <th>Arrival Date</th>
                                 <th>Expiry Date</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                                <th>Actions</th>
                             </tr>
+
                         </thead>
+
 
                         <tbody>
 
-                            {% for item in summary.batches %}
+                            {% for summary in product_summaries %}
 
-                            <tr>
-                                <td>
-                                    {{ item.batch.quantity_received }}
-                                </td>
+                                {% for item in summary.batches %}
 
-                                <td>
-                                    {{ item.batch.quantity_remaining }}
-                                </td>
+                                    <tr>
 
-                                <td>
-                                    {{ item.batch.arrival_date }}
-                                </td>
+                                        {% if forloop.first %}
 
-                                <td>
-                                    {% if item.batch.expiry_date %}
-                                        {{ item.batch.expiry_date }}
-                                    {% else %}
-                                        No expiry
-                                    {% endif %}
-                                </td>
+                                            <td rowspan="{{ summary.batch_count }}">
 
-                                <td>
-    {% if item.status == "Active" %}
-        <span class="badge bg-success">Active</span>
+                                                <div class="admin-product-name">
 
-    {% elif item.status == "Expired" %}
-        <span class="badge bg-danger">Expired</span>
+                                                    <div class="admin-product-avatar">
+                                                        📦
+                                                    </div>
 
-    {% elif item.status == "Depleted" %}
-        <span class="badge bg-secondary">Depleted</span>
-    {% endif %}
-</td>
-                                <td>
-    <a
-        href="{% url 'admin_stock_edit' item.batch.id %}"
-        class="btn btn-sm btn-outline-primary"
-    >
-        Edit
-    </a>
+                                                    <div>
 
-    {% if item.batch.quantity_remaining > 0 %}
-        <form
-            method="post"
-            action="{% url 'admin_stock_discard' item.batch.id %}"
-            style="display: inline;"
-            onsubmit="return confirm('Are you sure you want to discard the remaining stock from this batch?');"
-        >
-            {% csrf_token %}
+                                                        <strong>
+                                                            {{ summary.product.name }}
+                                                        </strong>
 
-            <button
-                type="submit"
-                class="btn btn-sm btn-outline-danger"
-            >
-                Discard
-            </button>
-        </form>
-    {% endif %}
-</td>
-                            </tr>
+                                                        <span class="admin-category-text">
+                                                            {{ summary.batch_count }} batch{{ summary.batch_count|pluralize }}
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </td>
+
+                                            <td rowspan="{{ summary.batch_count }}">
+
+                                                <span class="admin-stock-badge">
+                                                    {{ summary.available_quantity }}
+                                                </span>
+
+                                            </td>
+
+                                        {% endif %}
+
+                                        <td>
+                                            Batch {{ forloop.counter }}
+                                        </td>
+
+                                        <td>
+                                            {{ item.batch.quantity_received }}
+                                        </td>
+
+                                        <td>
+                                            {{ item.batch.quantity_remaining }}
+                                        </td>
+
+                                        <td>
+                                            {{ item.batch.arrival_date|date:"d M Y" }}
+                                        </td>
+
+                                        <td>
+
+                                            {% if item.batch.expiry_date %}
+                                                {{ item.batch.expiry_date|date:"d M Y" }}
+                                            {% else %}
+                                                No expiry
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td>
+
+                                            {% if item.status == "Active" %}
+
+                                                <span class="admin-status-badge admin-status-active">
+                                                    <span></span>
+                                                    Available
+                                                </span>
+
+                                            {% elif item.status == "Expired" %}
+
+                                                <span class="badge bg-danger">
+                                                    Expired
+                                                </span>
+
+                                            {% elif item.status == "Depleted" %}
+
+                                                <span class="badge bg-secondary">
+                                                    Depleted
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td>
+
+                                            <div class="admin-product-actions">
+
+                                                {% if forloop.first %}
+
+                                                    <a
+                                                        href="{% url 'admin_stock_add' %}?product={{ summary.product.id }}"
+                                                        class="admin-edit-btn"
+                                                    >
+                                                        Add Stock
+                                                    </a>
+
+                                                {% endif %}
+
+                                                <a
+                                                    href="{% url 'admin_stock_edit' item.batch.id %}"
+                                                    class="admin-view-btn"
+                                                >
+                                                    Edit
+                                                </a>
+
+                                                {% if item.batch.quantity_remaining > 0 %}
+
+                                                    <form
+                                                        method="post"
+                                                        action="{% url 'admin_stock_discard' item.batch.id %}"
+                                                        onsubmit="return confirm('Are you sure you want to discard the remaining stock from this batch?');"
+                                                    >
+
+                                                        {% csrf_token %}
+
+                                                        <button
+                                                            type="submit"
+                                                            class="admin-delete-btn"
+                                                            title="Discard {{ summary.product.name }} batch"
+                                                        >
+                                                            Discard
+                                                        </button>
+
+                                                    </form>
+
+                                                {% endif %}
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
 
                             {% endfor %}
 
                         </tbody>
 
                     </table>
+
                 </div>
 
             </div>
 
-        </td>
-    </tr>
+        {% else %}
 
-    {% endfor %}
+            <div class="empty-products">
 
-</tbody>
-    </table>
+                <div class="empty-products-icon">
+                    📦
+                </div>
 
-</div>
+                <h2>
+                    No stock batches found
+                </h2>
 
-{% else %}
+                <p>
+                    Add stock to start managing inventory.
+                </p>
 
-<div class="empty-products">
+                <a
+                    href="{% url 'admin_product_list' %}"
+                    class="admin-primary-btn"
+                >
+                    Manage Products
+                </a>
 
-    <div class="empty-products-icon">
-        📦
-    </div>
+            </div>
 
-    <h2>
-        No stock batches found
-    </h2>
-
-    <p>
-        Add stock to start managing inventory.
-    </p>
-
-    <a
-        href="{% url 'admin_stock_add' %}"
-        class="admin-primary-btn"
-    >
-        + Add Stock
-    </a>
-
-</div>
-
-{% endif %}
+        {% endif %}
 
     </div>
 

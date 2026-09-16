@@ -243,6 +243,34 @@
 
 
     <a
+        href="{% url 'admin_stock_list' %}"
+        class="account-action"
+    >
+
+        <div class="account-action-icon">
+            📊
+        </div>
+
+        <div class="account-action-content">
+
+            <strong>
+                Stock Management
+            </strong>
+
+            <span>
+                View and manage inventory batches
+            </span>
+
+        </div>
+
+        <span class="account-action-arrow">
+            →
+        </span>
+
+    </a>
+
+
+    <a
         href="{% url 'logout' %}"
         class="account-action account-action-logout"
     >

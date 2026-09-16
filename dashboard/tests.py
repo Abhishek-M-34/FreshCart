@@ -5,7 +5,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from orders.models import Order
-from products.models import Category, Product
+from products.models import Category, Product, StockBatch
+from datetime import date, timedelta
 
 
 class DashboardTests(TestCase):
@@ -95,6 +96,25 @@ class DashboardTests(TestCase):
         self.assertTemplateUsed(
             response,
             "dashboard/dashboard.html"
+        )
+
+    def test_dashboard_low_stock_uses_batch_stock(self):
+        StockBatch.objects.create(
+            product=self.product,
+            quantity_received=15,
+            quantity_remaining=15,
+            arrival_date=date.today(),
+            expiry_date=date.today() + timedelta(days=5),
+        )
+        self.product.stock = 0
+        self.product.save(update_fields=["stock"])
+
+        self.login_admin()
+        response = self.client.get(reverse("admin_dashboard"))
+
+        self.assertNotIn(
+            self.product,
+            response.context["low_stock_products"],
         )
 
     def test_dashboard_contains_statistics(self):

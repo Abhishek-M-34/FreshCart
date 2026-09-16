@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from products.models import Product
+from orders.views import get_effective_pricing_details
 
 from .models import Cart, CartItem
 
@@ -28,7 +29,14 @@ def cart_view(request):
     items = cart.items.select_related("product")
 
     for item in items:
-        item.subtotal = item.product.price * item.quantity
+        item.available_stock = item.product.get_available_stock()
+        pricing = get_effective_pricing_details(
+            item.product,
+            item.quantity,
+        )
+        item.effective_unit_price = pricing["effective_unit_price"]
+        item.discount_percentage = pricing["discount_percentage"]
+        item.subtotal = pricing["subtotal"]
 
     total = sum(
         item.subtotal

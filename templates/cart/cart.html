@@ -80,7 +80,20 @@
                                 {% endif %}
 
                                 <p>
-                                    ₹{{ item.product.price }} × {{ item.quantity }}
+                                    {% if item.discount_percentage > 0 %}
+                                        <span class="text-decoration-line-through">
+                                            ₹{{ item.product.price }}
+                                        </span>
+                                        <strong>
+                                            ₹{{ item.effective_unit_price }}
+                                        </strong>
+                                        <span>
+                                            {{ item.discount_percentage }}% OFF
+                                        </span>
+                                    {% else %}
+                                        ₹{{ item.product.price }}
+                                    {% endif %}
+                                    × {{ item.quantity }}
                                 </p>
 
                                 <strong>
@@ -114,7 +127,7 @@
                                             name="quantity"
                                             value="{{ item.quantity }}"
                                             min="1"
-                                            max="{{ item.product.stock }}"
+                                            max="{{ item.available_stock }}"
                                         >
 
                                         <button

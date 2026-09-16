@@ -411,3 +411,23 @@ class CartTests(TestCase):
             item.subtotal,
             expected_subtotal
         )
+
+    def test_cart_shows_effective_discounted_price(self):
+        StockBatch.objects.filter(product=self.product).update(
+            expiry_date=date.today() + timedelta(days=1)
+        )
+
+        self.login_user()
+        cart = Cart.objects.create(user=self.user)
+        CartItem.objects.create(
+            cart=cart,
+            product=self.product,
+            quantity=2,
+        )
+
+        response = self.client.get(reverse("cart"))
+
+        self.assertContains(response, "₹100.00")
+        self.assertContains(response, "₹70.00")
+        self.assertContains(response, "30% OFF")
+        self.assertEqual(response.context["items"][0].subtotal, Decimal("140.00"))

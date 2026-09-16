@@ -103,11 +103,23 @@
 
                         <div>
 
-                            <span class="product-price">
-                                ₹{{ product.price }}
-                            </span>
+                            <div class="product-price">
+                                {% if product.discount_percentage > 0 %}
+                                    <span class="text-decoration-line-through">
+                                        ₹{{ product.price }}
+                                    </span>
+                                    <strong>
+                                        ₹{{ product.effective_unit_price }}
+                                    </strong>
+                                    <span>
+                                        {{ product.discount_percentage }}% OFF
+                                    </span>
+                                {% else %}
+                                    ₹{{ product.price }}
+                                {% endif %}
+                            </div>
 
-                            {% if product.stock > 0 %}
+                            {% if product.available_stock > 0 %}
                                 <span class="stock-status in-stock">
                                     In stock
                                 </span>
@@ -120,7 +132,7 @@
                         </div>
 
 
-                        {% if product.stock > 0 %}
+                        {% if product.available_stock > 0 %}
 
                         <form method="post"
       action="{% url 'add_to_cart' product.id %}"

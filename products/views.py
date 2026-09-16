@@ -7,6 +7,7 @@ from .forms import CategoryForm, ProductForm, StockBatchForm, StockBatchEditForm
 from .models import Category, Product, StockBatch
 from datetime import timedelta
 from django.utils import timezone
+from orders.views import get_effective_pricing_details
 
 
 def product_list(request):
@@ -26,7 +27,12 @@ def product_list(request):
     available_products = []
 
     for product in products:
-        if product.get_available_stock() > 0:
+        product.available_stock = product.get_available_stock()
+
+        if product.available_stock > 0:
+            pricing = get_effective_pricing_details(product, 1)
+            product.effective_unit_price = pricing["effective_unit_price"]
+            product.discount_percentage = pricing["discount_percentage"]
             available_products.append(product)
     cart_items = []
     cart_total_quantity = 0
@@ -73,6 +79,11 @@ def product_detail(request, product_id):
     if product.get_available_stock() <= 0:
         return redirect("product_list")
 
+    product.available_stock = product.get_available_stock()
+    pricing = get_effective_pricing_details(product, 1)
+    product.effective_unit_price = pricing["effective_unit_price"]
+    product.discount_percentage = pricing["discount_percentage"]
+
     return render(
         request,
         "products/product_detail.html",
@@ -113,11 +124,14 @@ def admin_product_list(request):
 
     for category in categories:
 
-        category_products = products.filter(
-            category=category
+        category_products = list(
+            products.filter(category=category)
         )
 
-        if category_products.exists():
+        for product in category_products:
+            product.available_stock = product.get_available_stock()
+
+        if category_products:
 
             category_sections.append({
                 "category": category,
@@ -323,6 +337,9 @@ def admin_stock_list(request):
             })
 
         if batch_count > 0:
+            available_quantity = product.get_available_stock()
+            product.available_stock = available_quantity
+
             product_summaries.append({
                 "product": product,
                 "total_received": total_received,

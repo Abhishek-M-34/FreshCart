@@ -36,6 +36,13 @@
             <div class="admin-page-header-actions">
 
                 <a
+                    href="{% url 'admin_stock_list' %}"
+                    class="admin-secondary-btn"
+                >
+                    Stock Management
+                </a>
+
+                <a
                     href="{% url 'admin_product_add' %}"
                     class="admin-primary-btn"
                 >
@@ -287,10 +294,10 @@
                                     </span>
 
 
-                                    {% if product.stock > 0 %}
+                                    {% if product.available_stock > 0 %}
 
                                         <span class="stock-status in-stock">
-                                            {{ product.stock }} in stock
+                                            {{ product.available_stock }} in stock
                                         </span>
 
                                     {% else %}

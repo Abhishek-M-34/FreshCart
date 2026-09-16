@@ -189,9 +189,26 @@
                             </div>
 
 
-                            <strong class="checkout-item-price">
-                                ₹{{ item.subtotal }}
-                            </strong>
+                            <div class="checkout-item-price">
+                                {% if item.discount_percentage > 0 %}
+                                    <span class="text-decoration-line-through">
+                                        ₹{{ item.product.price }}
+                                    </span>
+                                    <strong>
+                                        ₹{{ item.effective_unit_price }}
+                                    </strong>
+                                    <span>
+                                        {{ item.discount_percentage }}% OFF
+                                    </span>
+                                {% else %}
+                                    <strong>
+                                        ₹{{ item.product.price }}
+                                    </strong>
+                                {% endif %}
+                                <span>
+                                    × {{ item.quantity }} = ₹{{ item.subtotal }}
+                                </span>
+                            </div>
 
                         </div>
 

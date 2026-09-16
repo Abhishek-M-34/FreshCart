@@ -51,7 +51,19 @@
 
 
                 <div class="product-detail-price">
-                    ₹{{ product.price }}
+                    {% if product.discount_percentage > 0 %}
+                        <span class="text-decoration-line-through">
+                            ₹{{ product.price }}
+                        </span>
+                        <strong>
+                            ₹{{ product.effective_unit_price }}
+                        </strong>
+                        <span>
+                            {{ product.discount_percentage }}% OFF
+                        </span>
+                    {% else %}
+                        ₹{{ product.price }}
+                    {% endif %}
                 </div>
 
 
@@ -66,14 +78,14 @@
 
                 <div class="product-detail-stock">
 
-                    {% if product.stock > 0 %}
+                    {% if product.available_stock > 0 %}
 
                         <span class="stock-dot available"></span>
 
                         <span>
                             In stock
-                            {% if product.stock <= 10 %}
-                                · Only {{ product.stock }} left
+                            {% if product.available_stock <= 10 %}
+                                · Only {{ product.available_stock }} left
                             {% endif %}
                         </span>
 
@@ -90,7 +102,7 @@
                 </div>
 
 
-                {% if product.stock > 0 %}
+                {% if product.available_stock > 0 %}
 
                     <form
                         method="post"
@@ -112,7 +124,7 @@
                                 name="quantity"
                                 value="1"
                                 min="1"
-                                max="{{ product.stock }}"
+                                max="{{ product.available_stock }}"
                             >
 
                         </div>
