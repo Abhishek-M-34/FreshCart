@@ -25,7 +25,6 @@ class ProductForm(forms.ModelForm):
     "category",
     "description",
     "price",
-    "stock",
     "expiry_days",
     "lead_time_days",
     "image",
@@ -56,13 +55,6 @@ class ProductForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "step": "0.01"
-                }
-            ),
-
-            "stock": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "0"
                 }
             ),
 
@@ -118,6 +110,16 @@ class CategoryForm(forms.ModelForm):
         }
 
 class StockBatchForm(forms.ModelForm):
+    quantity_received = forms.IntegerField(
+        min_value=1,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "min": "1",
+            }
+        ),
+    )
+
     class Meta:
         model = StockBatch
         fields = [

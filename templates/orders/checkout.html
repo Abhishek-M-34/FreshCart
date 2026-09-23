@@ -189,24 +189,24 @@
                             </div>
 
 
-                            <div class="checkout-item-price">
+                            <div class="checkout-item-price customer-price">
                                 {% if item.discount_percentage > 0 %}
-                                    <span class="text-decoration-line-through">
-                                        ₹{{ item.product.price }}
-                                    </span>
-                                    <strong>
-                                        ₹{{ item.effective_unit_price }}
+                                    <strong class="price-current">
+                                        ₹{{ item.effective_unit_price|floatformat:"2" }}
                                     </strong>
-                                    <span>
+                                    <span class="price-original">
+                                        ₹{{ item.product.price|floatformat:"2" }}
+                                    </span>
+                                    <span class="price-discount">
                                         {{ item.discount_percentage }}% OFF
                                     </span>
                                 {% else %}
-                                    <strong>
-                                        ₹{{ item.product.price }}
-                                    </strong>
+                                    <span class="price-current">
+                                        ₹{{ item.product.price|floatformat:"2" }}
+                                    </span>
                                 {% endif %}
                                 <span>
-                                    × {{ item.quantity }} = ₹{{ item.subtotal }}
+                                    × {{ item.quantity }} = ₹{{ item.subtotal|floatformat:"2" }}
                                 </span>
                             </div>
 

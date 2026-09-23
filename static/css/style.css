@@ -1180,6 +1180,48 @@ textarea {
 }
 
 
+.customer-price {
+    display: inline-flex;
+
+    align-items: baseline;
+
+    flex-wrap: wrap;
+
+    gap: 5px 9px;
+}
+
+
+.customer-price .price-current {
+    color: var(--primary);
+
+    font-size: 1.08em;
+
+    font-weight: 800;
+}
+
+
+.customer-price .price-original {
+    color: #9ca3af;
+
+    font-size: 0.78em;
+
+    font-weight: 500;
+
+    text-decoration: line-through;
+}
+
+
+.customer-price .price-discount {
+    color: var(--success);
+
+    font-size: 0.72em;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
 .stock-status {
     display: block;
 
@@ -1622,8 +1664,6 @@ textarea {
 
 .product-detail-price {
     margin-bottom: 25px;
-
-    color: var(--primary);
 
     font-size: 1.8rem;
 
@@ -2824,6 +2864,8 @@ textarea {
     color: var(--text-dark);
 
     font-size: 0.85rem;
+
+    justify-content: flex-end;
 }
 
 
@@ -5491,6 +5533,43 @@ textarea {
     color: var(--primary-dark);
 
     font-size: 0.82rem;
+}
+
+
+.admin-prediction-note {
+    margin-bottom: 22px;
+
+    padding: 14px 16px;
+
+    border: 1px solid var(--primary-light);
+
+    border-radius: var(--radius-sm);
+
+    background: var(--primary-light);
+}
+
+
+.admin-prediction-note strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--primary-dark);
+
+    font-size: 0.78rem;
+}
+
+
+.admin-prediction-note p,
+.admin-prediction-note span {
+    color: var(--text-muted);
+
+    font-size: 0.72rem;
+}
+
+
+.admin-prediction-note p {
+    margin-bottom: 4px;
 }
 
 

@@ -8,6 +8,7 @@ from .models import Category, Product, StockBatch
 from datetime import timedelta
 from django.utils import timezone
 from orders.views import get_effective_pricing_details
+from ml_prediction.views import get_product_demand_prediction
 
 
 def product_list(request):
@@ -217,6 +218,7 @@ def admin_product_edit(request, product_id):
         "dashboard/products/product_form.html",
         {
             "form": form,
+            "product": product,
             "title": "Edit Product",
         }
     )
@@ -256,6 +258,12 @@ def admin_stock_add(request):
     else:
         form = StockBatchForm()
 
+    prediction_horizon = product.expiry_days or 7
+    predicted_demand = get_product_demand_prediction(
+        product,
+        prediction_horizon,
+    )
+
     return render(
         request,
         "dashboard/products/stock_form.html",
@@ -263,6 +271,8 @@ def admin_stock_add(request):
             "form": form,
             "title": "Add Stock",
             "product": product,
+            "prediction_horizon": prediction_horizon,
+            "predicted_demand": predicted_demand,
         },
     )
 

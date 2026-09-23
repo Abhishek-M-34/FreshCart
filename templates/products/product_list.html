@@ -103,19 +103,21 @@
 
                         <div>
 
-                            <div class="product-price">
+                            <div class="product-price customer-price">
                                 {% if product.discount_percentage > 0 %}
-                                    <span class="text-decoration-line-through">
-                                        ₹{{ product.price }}
-                                    </span>
-                                    <strong>
-                                        ₹{{ product.effective_unit_price }}
+                                    <strong class="price-current">
+                                        ₹{{ product.effective_unit_price|floatformat:"2" }}
                                     </strong>
-                                    <span>
+                                    <span class="price-original">
+                                        ₹{{ product.price|floatformat:"2" }}
+                                    </span>
+                                    <span class="price-discount">
                                         {{ product.discount_percentage }}% OFF
                                     </span>
                                 {% else %}
-                                    ₹{{ product.price }}
+                                    <span class="price-current">
+                                        ₹{{ product.price|floatformat:"2" }}
+                                    </span>
                                 {% endif %}
                             </div>
 

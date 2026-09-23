@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from .models import Category, Product, StockBatch
 from datetime import date, timedelta
+from unittest.mock import patch
 
 
 class ProductTests(TestCase):
@@ -85,6 +86,7 @@ class ProductTests(TestCase):
         )
 
         self.assertContains(response, "Apple")
+        self.assertContains(response, "data-add-stock-link")
         self.assertContains(response, "Potato")
 
         self.assertNotContains(response, "Mango")
@@ -332,7 +334,6 @@ class ProductTests(TestCase):
                 "category": self.category.id,
                 "description": "Updated apple",
                 "price": "120.00",
-                "stock": 15,
                 "expiry_days": 5,
                 "is_available": "on",
             }
@@ -357,8 +358,26 @@ class ProductTests(TestCase):
 
         self.assertEqual(
             self.product.stock,
-            15
+            20
         )
+
+    def test_product_edit_hides_legacy_stock_input(self):
+        self.client.login(
+            username="admin",
+            password="AdminPassword123"
+        )
+
+        response = self.client.get(
+            reverse(
+                "admin_product_edit",
+                args=[self.product.id]
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Current Stock")
+        self.assertContains(response, "Stock Management")
+        self.assertNotContains(response, 'name="stock"')
 
     def test_admin_can_delete_product(self):
         self.client.login(
@@ -541,6 +560,94 @@ class StockBatchTests(TestCase):
         self.assertContains(response, "Add Stock")
         self.assertContains(response, self.product.name)
         self.assertContains(response, "Cancel")
+
+    @patch("products.views.get_product_demand_prediction")
+    def test_add_stock_prediction_uses_product_expiry_horizon(
+        self,
+        mock_prediction,
+    ):
+        self.product.expiry_days = 5
+        self.product.save(update_fields=["expiry_days"])
+        mock_prediction.return_value = 18
+
+        response = self.client.get(
+            reverse("admin_stock_add") + f"?product={self.product.id}"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        mock_prediction.assert_called_once_with(self.product, 5)
+        self.assertEqual(response.context["prediction_horizon"], 5)
+        self.assertEqual(response.context["predicted_demand"], 18)
+        self.assertContains(response, "next 5 days")
+        self.assertContains(response, "18 units")
+
+    @patch("products.views.get_product_demand_prediction")
+    def test_add_stock_prediction_unavailable_is_not_faked(
+        self,
+        mock_prediction,
+    ):
+        mock_prediction.return_value = None
+
+        response = self.client.get(
+            reverse("admin_stock_add") + f"?product={self.product.id}"
+        )
+
+        self.assertContains(
+            response,
+            "Prediction unavailable - insufficient sales history.",
+        )
+        self.assertIsNone(response.context["predicted_demand"])
+
+    def test_add_stock_rejects_zero_quantity(self):
+        response = self.client.post(
+            reverse("admin_stock_add") + f"?product={self.product.id}",
+            {
+                "quantity_received": 0,
+                "arrival_date": date.today(),
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Ensure this value is greater than or equal to 1")
+        self.assertFalse(
+            StockBatch.objects.filter(product=self.product).exists()
+        )
+
+    def test_add_stock_rejects_negative_quantity(self):
+        response = self.client.post(
+            reverse("admin_stock_add") + f"?product={self.product.id}",
+            {
+                "quantity_received": -1,
+                "arrival_date": date.today(),
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Ensure this value is greater than or equal to 1")
+        self.assertFalse(
+            StockBatch.objects.filter(product=self.product).exists()
+        )
+
+    def test_add_stock_accepts_quantity_one(self):
+        response = self.client.post(
+            reverse("admin_stock_add") + f"?product={self.product.id}",
+            {
+                "quantity_received": 1,
+                "arrival_date": date.today(),
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("admin_product_list")
+        )
+        self.assertTrue(
+            StockBatch.objects.filter(
+                product=self.product,
+                quantity_received=1,
+                quantity_remaining=1,
+            ).exists()
+        )
 
     def test_edit_stock_page_shows_batch_context(self):
         batch = StockBatch.objects.create(

@@ -73,6 +73,34 @@
             </div>
 
 
+            <div class="admin-prediction-note">
+
+                <strong>
+                    Inventory prediction
+                </strong>
+
+                {% if predicted_demand is not None %}
+
+                    <p>
+                        Approximately {{ predicted_demand }} units may be needed
+                        over the next {{ prediction_horizon }} day{{ prediction_horizon|pluralize }}.
+                    </p>
+
+                    <span>
+                        Advisory estimate based on current sales trends.
+                    </span>
+
+                {% else %}
+
+                    <p>
+                        Prediction unavailable - insufficient sales history.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
             {% if form.non_field_errors %}
 
                 <div class="admin-form-error">

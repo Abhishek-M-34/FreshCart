@@ -89,6 +89,29 @@
 
                 <div class="admin-form-fields">
 
+                    {% if product %}
+
+                        <div class="admin-form-field">
+
+                            <span class="admin-form-label">
+                                Current Stock
+                            </span>
+
+                            <strong>
+                                {{ product.get_available_stock }}
+                            </strong>
+
+                            <p>
+                                Stock is managed through
+                                <a href="{% url 'admin_stock_list' %}">
+                                    Stock Management
+                                </a>.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
                     {% for field in form %}
 
                         <div class="admin-form-field">

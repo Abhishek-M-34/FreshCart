@@ -250,6 +250,35 @@ def generate_predictions():
     return all_predictions
 
 
+def get_product_demand_prediction(product, horizon_days=None):
+    """Return the existing forecast total for one product and horizon."""
+    default_horizon = 7
+    horizon = product.expiry_days or default_horizon
+
+    if horizon_days is not None:
+        horizon = horizon_days or default_horizon
+
+    predictions = [
+        prediction
+        for prediction in generate_predictions()
+        if prediction["product"] == product.name
+    ]
+
+    if not predictions:
+        return None
+
+    available_days = min(horizon, len(predictions))
+    predicted_demand = sum(
+        prediction["predicted_quantity"]
+        for prediction in predictions[:available_days]
+    )
+
+    if horizon > len(predictions):
+        predicted_demand *= horizon / len(predictions)
+
+    return round(predicted_demand)
+
+
 @user_passes_test(is_admin)
 def sales_prediction(request):
 
