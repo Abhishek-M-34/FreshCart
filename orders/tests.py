@@ -8,7 +8,7 @@ from django.urls import reverse
 from cart.models import Cart, CartItem
 from products.models import Category, Product, StockBatch
 
-from .models import Order, OrderItem
+from .models import DemoPaymentSession, Order, OrderItem
 
 
 class OrderTests(TestCase):
@@ -99,6 +99,22 @@ class OrderTests(TestCase):
 
         return cart
 
+    def structured_checkout_data(self, payment_method="COD", key="checkout-1"):
+        return {
+            "recipient_name": "Asha Thomas",
+            "building": "12A",
+            "street": "Marine Drive",
+            "city": "Kochi",
+            "district": "Ernakulam",
+            "state": "Kerala",
+            "pin_code": "682011",
+            "phone": "9876543210",
+            "latitude": "9.981600",
+            "longitude": "76.299900",
+            "payment_method": payment_method,
+            "checkout_key": key,
+        }
+
     def test_checkout_requires_login(self):
         response = self.client.get(
             reverse("checkout")
@@ -175,6 +191,123 @@ class OrderTests(TestCase):
             response.context["total"],
             Decimal("350.00")
         )
+
+        self.assertContains(response, "Full name")
+        self.assertContains(response, "deliveryMap")
+        self.assertContains(response, "Cash on Delivery")
+        self.assertContains(response, "Online Payment")
+
+    def test_structured_address_fields_are_required(self):
+        self.create_cart_with_items()
+        self.login_customer()
+
+        response = self.client.post(
+            reverse("checkout"),
+            {
+                "recipient_name": "",
+                "payment_method": "COD",
+                "checkout_key": "required-fields",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "orders/checkout.html")
+        self.assertEqual(Order.objects.filter(user=self.user).count(), 0)
+
+    def test_cod_persists_address_location_and_payment(self):
+        self.create_cart_with_items()
+        self.login_customer()
+
+        response = self.client.post(
+            reverse("checkout"),
+            self.structured_checkout_data(),
+        )
+
+        order = Order.objects.get(user=self.user)
+        self.assertRedirects(
+            response,
+            reverse("order_success", args=[order.id]),
+        )
+        self.assertEqual(order.payment_method, "COD")
+        self.assertEqual(order.payment_status, "PENDING")
+        self.assertEqual(order.city, "Kochi")
+        self.assertEqual(order.state, "Kerala")
+        self.assertEqual(order.latitude, Decimal("9.981600"))
+        self.assertEqual(order.longitude, Decimal("76.299900"))
+
+    def test_online_payment_creates_demo_session_without_order(self):
+        self.create_cart_with_items()
+        self.login_customer()
+
+        response = self.client.post(
+            reverse("checkout"),
+            self.structured_checkout_data("ONLINE", "online-session"),
+        )
+
+        payment_session = DemoPaymentSession.objects.get(
+            user=self.user
+        )
+        self.assertRedirects(
+            response,
+            reverse("demo_payment", args=[payment_session.session_key]),
+        )
+        self.assertEqual(Order.objects.filter(user=self.user).count(), 0)
+        self.assertEqual(payment_session.status, "waiting")
+
+    def test_demo_payment_success_is_idempotent_and_consumes_once(self):
+        self.create_cart_with_items()
+        self.login_customer()
+
+        self.client.post(
+            reverse("checkout"),
+            self.structured_checkout_data("ONLINE", "duplicate-safe"),
+        )
+        payment_session = DemoPaymentSession.objects.get(user=self.user)
+        payment_url = reverse(
+            "demo_payment",
+            args=[payment_session.session_key],
+        )
+
+        first_response = self.client.post(payment_url)
+        order = Order.objects.get(user=self.user)
+        self.assertRedirects(
+            first_response,
+            reverse("order_success", args=[order.id]),
+        )
+        self.product.refresh_from_db()
+        first_stock = self.product.get_available_stock()
+
+        second_response = self.client.post(payment_url)
+        self.assertRedirects(
+            second_response,
+            reverse("order_success", args=[order.id]),
+        )
+        self.product.refresh_from_db()
+        self.assertEqual(Order.objects.filter(user=self.user).count(), 1)
+        self.assertEqual(self.product.get_available_stock(), first_stock)
+        self.assertEqual(order.payment_status, "PAID_DEMO")
+        self.assertTrue(order.transaction_id.startswith("FC-DEMO-"))
+
+    def test_qr_confirmation_completes_demo_payment(self):
+        self.create_cart_with_items()
+        self.login_customer()
+        self.client.post(
+            reverse("checkout"),
+            self.structured_checkout_data("ONLINE", "qr-session"),
+        )
+        payment_session = DemoPaymentSession.objects.get(user=self.user)
+
+        response = self.client.get(
+            reverse(
+                "demo_payment_confirm",
+                args=[payment_session.session_key],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payment_session.refresh_from_db()
+        self.assertEqual(payment_session.status, "success")
+        self.assertEqual(Order.objects.filter(user=self.user).count(), 1)
 
     def test_successful_checkout_creates_order(self):
         cart = self.create_cart_with_items()

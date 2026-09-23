@@ -133,6 +133,15 @@
 
                     </div>
 
+                    <div class="admin-order-status-box">
+                        <span>
+                            Payment: {{ order.get_payment_status_display }}
+                        </span>
+                        {% if order.transaction_id %}
+                            <span>{{ order.transaction_id }}</span>
+                        {% endif %}
+                    </div>
+
                 </div>
 
             </div>

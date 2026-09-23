@@ -37,6 +37,20 @@ Order Successful - FreshCart
                     <strong>#{{ order.id }}</strong>
                 </div>
 
+                <div class="success-order-info">
+                    <div>
+                        <span>Payment</span>
+                        <strong>{{ order.get_payment_status_display }}</strong>
+                    </div>
+
+                    {% if order.transaction_id %}
+                        <div>
+                            <span>Demo Transaction</span>
+                            <strong>{{ order.transaction_id }}</strong>
+                        </div>
+                    {% endif %}
+                </div>
+
                 <div>
                     <span>Total Amount</span>
                     <strong>₹{{ order.total_amount }}</strong>

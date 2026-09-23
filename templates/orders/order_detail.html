@@ -76,6 +76,16 @@
 
                     <div class="order-detail-divider"></div>
 
+                    <div class="order-address">
+                        <strong>Delivery Address</strong>
+                        <p>{{ order.recipient_name }}</p>
+                        <p>{{ order.shipping_address }}</p>
+                        {% if order.phone %}<p>Phone: {{ order.phone }}</p>{% endif %}
+                        {% if order.latitude and order.longitude %}
+                            <p>Location: {{ order.latitude }}, {{ order.longitude }}</p>
+                        {% endif %}
+                    </div>
+
 
                     <div class="order-detail-items">
 
@@ -127,6 +137,11 @@
                             ₹{{ order.total_amount }}
                         </strong>
 
+                    </div>
+
+                    <div class="order-detail-total">
+                        <span>Payment</span>
+                        <strong>{{ order.get_payment_status_display }}</strong>
                     </div>
 
                 </div>

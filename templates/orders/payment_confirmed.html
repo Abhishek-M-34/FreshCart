@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}FreshCart Demo Payment{% endblock %}
+
+{% block content %}
+<section class="order-success-page">
+    <div class="container">
+        <div class="order-success-card">
+            {% if error %}
+                <span class="section-label">DEMO PAYMENT</span>
+                <h1>Payment could not be completed</h1>
+                <p class="success-message">{{ error }}</p>
+            {% else %}
+                <div class="success-icon">✓</div>
+                <span class="section-label">FRESHCART DEMO PAY</span>
+                <h1>Payment Successful</h1>
+                <p class="success-message">This was a simulated payment. No real money was transferred.</p>
+                <p>Return to the checkout window to continue.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

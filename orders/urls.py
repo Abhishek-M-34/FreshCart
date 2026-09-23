@@ -17,6 +17,24 @@ urlpatterns = [
     ),
 
     path(
+        "payment/demo/<uuid:session_key>/",
+        views.demo_payment,
+        name="demo_payment"
+    ),
+
+    path(
+        "payment/demo/<uuid:session_key>/confirm/",
+        views.demo_payment_confirm,
+        name="demo_payment_confirm"
+    ),
+
+    path(
+        "payment/demo/<uuid:session_key>/status/",
+        views.demo_payment_status,
+        name="demo_payment_status"
+    ),
+
+    path(
         "orders/",
         views.order_history,
         name="order_history"

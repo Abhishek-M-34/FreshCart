@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}FreshCart Demo Pay{% endblock %}
+
+{% block extra_css %}
+<style>
+.demo-payment-card { max-width: 520px; margin: 50px auto 90px; padding: 32px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); text-align: center; }
+.demo-payment-card h1 { margin: 8px 0; }
+.demo-payment-amount { margin: 20px 0; color: var(--primary); font-size: 2rem; font-weight: 800; }
+.demo-qr { width: 230px; min-height: 230px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+.demo-payment-note { margin: 18px 0; padding: 13px; border-radius: var(--radius-sm); background: var(--primary-light); color: var(--text-muted); font-size: .78rem; }
+.demo-payment-status { margin: 18px 0; color: var(--text-muted); font-size: .85rem; }
+.demo-payment-success { color: var(--success); font-weight: 800; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="checkout-page">
+    <div class="container">
+        <div class="demo-payment-card" id="paymentCard">
+            <span class="section-label">FRESHCART DEMO PAY</span>
+            <h1>Secure Online Payment</h1>
+            <p>Scan this QR code with your phone to complete the demo payment.</p>
+            <div class="demo-payment-amount">₹{{ payment_session.amount|floatformat:"2" }}</div>
+            <div id="demoQr" class="demo-qr"></div>
+            <div id="paymentStatus" class="demo-payment-status">Waiting for payment...</div>
+            <div class="demo-payment-note">Demo payment only. No real money is transferred.</div>
+            {% if error %}<div class="checkout-field-error">{{ error }}</div>{% endif %}
+            <form method="post" id="demoConfirmForm">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Simulate Demo Payment</button>
+                <a href="{% url 'checkout' %}" class="checkout-back">← Return to checkout</a>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sessionKey = "{{ payment_session.session_key }}";
+    const qrPayload = "{{ qr_payload }}";
+    const qr = document.getElementById("demoQr");
+    const status = document.getElementById("paymentStatus");
+    const form = document.getElementById("demoConfirmForm");
+
+    if (window.QRCode) {
+        new QRCode(qr, {text: qrPayload, width: 220, height: 220});
+    }
+
+    function checkPayment() {
+        fetch("{% url 'demo_payment_status' payment_session.session_key %}")
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success" && data.order_id) {
+                    status.className = "demo-payment-status demo-payment-success";
+                    status.textContent = "✓ Payment Successful - Demo transaction confirmed.";
+                    qr.style.display = "none";
+                    form.style.display = "none";
+                    window.location.href = "{% url 'order_success' 0 %}".replace("/0/", "/" + data.order_id + "/");
+                }
+            });
+    }
+
+    window.setInterval(checkPayment, 1800);
+});
+</script>
+{% endblock %}

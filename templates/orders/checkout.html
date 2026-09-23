@@ -4,253 +4,192 @@
     Checkout - FreshCart
 {% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+
 {% block content %}
-
 <section class="checkout-page">
-
     <div class="container">
-
-        <!-- Checkout Header -->
-
         <div class="checkout-header">
-
-            <span class="section-label">
-                FRESHCART CHECKOUT
-            </span>
-
-            <h1>
-                Complete Your Order
-            </h1>
-
-            <p>
-                Enter your delivery details and review your order before placing it.
-            </p>
-
+            <span class="section-label">FRESHCART CHECKOUT</span>
+            <h1>Complete Your Order</h1>
+            <p>Enter your delivery details, location and payment preference.</p>
         </div>
-
 
         {% if error %}
-
             <div class="checkout-error">
                 <span class="checkout-error-icon">!</span>
-
                 <div>
-                    <strong>
-                        Unable to place your order
-                    </strong>
-
-                    <p>
-                        {{ error }}
-                    </p>
+                    <strong>Unable to place your order</strong>
+                    <p>{{ error }}</p>
                 </div>
             </div>
-
         {% endif %}
 
-
         <div class="checkout-layout">
-
-            <!-- Delivery Information -->
-
             <div class="checkout-form-card">
-
                 <div class="checkout-card-header">
-
-                    <div class="checkout-step">
-                        1
-                    </div>
-
+                    <div class="checkout-step">1</div>
                     <div>
-                        <h2>
-                            Delivery Address
-                        </h2>
-
-                        <p>
-                            Where should we deliver your order?
-                        </p>
+                        <h2>Delivery Address</h2>
+                        <p>Where should we deliver your order?</p>
                     </div>
-
                 </div>
-
 
                 <div class="checkout-card-divider"></div>
 
-
-                <form method="POST" class="checkout-form">
-
+                <form method="POST" class="checkout-form" id="checkoutForm">
                     {% csrf_token %}
+                    {{ form.checkout_key }}
+                    {{ form.shipping_address.as_hidden }}
 
+                    {% if form.non_field_errors %}
+                        <div class="checkout-field-error">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="checkout-address-grid">
+                        {% for field in form %}
+                            {% if field.name != "checkout_key" and field.name != "shipping_address" and field.name != "latitude" and field.name != "longitude" and field.name != "payment_method" %}
+                                <div class="checkout-field">
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="checkout-field-error">{{ field.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
 
                     <div class="checkout-field">
-
-                        <label for="{{ form.shipping_address.id_for_label }}">
-                            Delivery Address
-                        </label>
-
-                        {{ form.shipping_address }}
-
-                        {% if form.shipping_address.errors %}
-
-                            <div class="checkout-field-error">
-
-                                {{ form.shipping_address.errors }}
-
-                            </div>
-
-                        {% endif %}
-
+                        <label>Delivery Location</label>
+                        <p class="checkout-map-help">Click or drag the marker to select the delivery location.</p>
+                        <div id="deliveryMap" class="checkout-map"></div>
+                        {{ form.latitude.as_hidden }}
+                        {{ form.longitude.as_hidden }}
+                        <div id="selectedLocation" class="checkout-location-status">
+                            Location selected near Kochi, Kerala.
+                        </div>
                     </div>
 
+                    <div class="checkout-payment-section">
+                        <div class="checkout-section-title">Payment Method</div>
+                        <div class="checkout-payment-options">
+                            {% for radio in form.payment_method %}
+                                <label class="checkout-payment-option">
+                                    {{ radio.tag }}
+                                    <span>
+                                        <strong>{{ radio.choice_label }}</strong>
+                                        {% if radio.data.value == "ONLINE" %}
+                                            <small>FreshCart Demo Pay, no real money.</small>
+                                        {% else %}
+                                            <small>Pay when your order is delivered.</small>
+                                        {% endif %}
+                                    </span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        {% if form.payment_method.errors %}
+                            <div class="checkout-field-error">{{ form.payment_method.errors }}</div>
+                        {% endif %}
+                    </div>
 
-                    <button
-                        type="submit"
-                        class="btn btn-primary checkout-place-order"
-                    >
-                        Place Order
+                    <button type="submit" class="btn btn-primary checkout-place-order">
+                        Continue to Payment / Place Order
                     </button>
-
-
-                    <a
-                        href="{% url 'cart' %}"
-                        class="checkout-back"
-                    >
-                        ← Back to Cart
-                    </a>
-
+                    <a href="{% url 'cart' %}" class="checkout-back">← Back to Cart</a>
                 </form>
-
             </div>
 
-
-            <!-- Order Summary -->
-
             <aside class="checkout-summary">
-
                 <div class="checkout-card-header">
-
-                    <div class="checkout-step">
-                        2
-                    </div>
-
+                    <div class="checkout-step">2</div>
                     <div>
-                        <h2>
-                            Order Summary
-                        </h2>
-
-                        <p>
-                            Review your items
-                        </p>
+                        <h2>Order Summary</h2>
+                        <p>Review your items</p>
                     </div>
-
                 </div>
-
-
                 <div class="checkout-card-divider"></div>
 
-
                 <div class="checkout-summary-items">
-
                     {% for item in items %}
-
                         <div class="checkout-summary-item">
-
                             <div class="checkout-summary-product">
-
                                 <div class="checkout-summary-image">
-
                                     {% if item.product.image %}
-
-                                        <img
-                                            src="{{ item.product.image.url }}"
-                                            alt="{{ item.product.name }}"
-                                        >
-
+                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
                                     {% else %}
-
                                         <span>🛒</span>
-
                                     {% endif %}
-
                                 </div>
-
-
                                 <div class="checkout-summary-info">
-
-                                    <strong>
-                                        {{ item.product.name }}
-                                    </strong>
-
-                                    <span>
-                                        Qty: {{ item.quantity }}
-                                    </span>
-
+                                    <strong>{{ item.product.name }}</strong>
+                                    <span>Qty: {{ item.quantity }}</span>
                                 </div>
-
                             </div>
-
-
                             <div class="checkout-item-price customer-price">
                                 {% if item.discount_percentage > 0 %}
-                                    <strong class="price-current">
-                                        ₹{{ item.effective_unit_price|floatformat:"2" }}
-                                    </strong>
-                                    <span class="price-original">
-                                        ₹{{ item.product.price|floatformat:"2" }}
-                                    </span>
-                                    <span class="price-discount">
-                                        {{ item.discount_percentage }}% OFF
-                                    </span>
+                                    <strong class="price-current">₹{{ item.effective_unit_price|floatformat:"2" }}</strong>
+                                    <span class="price-original">₹{{ item.product.price|floatformat:"2" }}</span>
+                                    <span class="price-discount">{{ item.discount_percentage }}% OFF</span>
                                 {% else %}
-                                    <span class="price-current">
-                                        ₹{{ item.product.price|floatformat:"2" }}
-                                    </span>
+                                    <span class="price-current">₹{{ item.product.price|floatformat:"2" }}</span>
                                 {% endif %}
-                                <span>
-                                    × {{ item.quantity }} = ₹{{ item.subtotal|floatformat:"2" }}
-                                </span>
+                                <span>× {{ item.quantity }} = ₹{{ item.subtotal|floatformat:"2" }}</span>
                             </div>
-
                         </div>
-
                     {% endfor %}
-
                 </div>
-
 
                 <div class="checkout-summary-divider"></div>
-
-
                 <div class="checkout-total">
-
-                    <span>
-                        Total
-                    </span>
-
-                    <strong>
-                        ₹{{ total }}
-                    </strong>
-
+                    <span>Final Total</span>
+                    <strong>₹{{ total|floatformat:"2" }}</strong>
                 </div>
-
-
                 <div class="checkout-secure-note">
-
-                    <span>
-                        🔒
-                    </span>
-
-                    <p>
-                        Your order details are securely processed.
-                    </p>
-
+                    <span>🔒</span>
+                    <p>Demo payments are simulated and never transfer real money.</p>
                 </div>
-
             </aside>
-
         </div>
-
     </div>
-
 </section>
+{% endblock %}
 
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const map = L.map("deliveryMap").setView([9.9816, 76.2999], 11);
+    const latitudeInput = document.getElementById("id_latitude");
+    const longitudeInput = document.getElementById("id_longitude");
+    const selectedLocation = document.getElementById("selectedLocation");
+    const initialPosition = [9.9816, 76.2999];
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "© OpenStreetMap contributors",
+    }).addTo(map);
+
+    const marker = L.marker(initialPosition, {draggable: true}).addTo(map);
+
+    function updateLocation(position) {
+        const latitude = position.lat.toFixed(6);
+        const longitude = position.lng.toFixed(6);
+        latitudeInput.value = latitude;
+        longitudeInput.value = longitude;
+        selectedLocation.textContent = `Selected location: ${latitude}, ${longitude}`;
+    }
+
+    updateLocation(marker.getLatLng());
+    map.on("click", function (event) {
+        marker.setLatLng(event.latlng);
+        updateLocation(event.latlng);
+    });
+    marker.on("dragend", function () {
+        updateLocation(marker.getLatLng());
+    });
+});
+</script>
 {% endblock %}
