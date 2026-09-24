@@ -4,6 +4,17 @@ from .models import Order
 
 
 class CheckoutForm(forms.Form):
+    DELIVERY_METHOD_CHOICES = [
+        ("manual", "Enter Address"),
+        ("map", "Select on Map"),
+    ]
+
+    delivery_method = forms.ChoiceField(
+        choices=DELIVERY_METHOD_CHOICES,
+        required=False,
+        initial="manual",
+        widget=forms.RadioSelect,
+    )
     recipient_name = forms.CharField(
         required=False,
         max_length=200,
@@ -54,6 +65,7 @@ class CheckoutForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         legacy_address = cleaned_data.get("shipping_address", "").strip()
+        delivery_method = cleaned_data.get("delivery_method")
         structured_fields = [
             "recipient_name",
             "building",
@@ -65,24 +77,42 @@ class CheckoutForm(forms.Form):
             "phone",
         ]
 
-        if legacy_address and not any(cleaned_data.get(field) for field in structured_fields):
+        if legacy_address and not delivery_method:
+            delivery_method = "manual"
+            cleaned_data["delivery_method"] = delivery_method
+
+        if not delivery_method and any(
+            cleaned_data.get(field)
+            for field in structured_fields
+        ):
+            delivery_method = "manual"
+            cleaned_data["delivery_method"] = delivery_method
+
+        if delivery_method == "manual" and legacy_address and not any(
+            cleaned_data.get(field) for field in structured_fields
+        ):
             cleaned_data["payment_method"] = cleaned_data.get("payment_method") or "COD"
             return cleaned_data
 
         cleaned_data["payment_method"] = cleaned_data.get("payment_method") or "COD"
 
-        for field in structured_fields:
-            if not cleaned_data.get(field):
-                self.add_error(field, "This field is required.")
+        if delivery_method == "manual":
+            for field in structured_fields:
+                if not cleaned_data.get(field):
+                    self.add_error(field, "This field is required.")
 
-        if cleaned_data.get("latitude") is None or cleaned_data.get("longitude") is None:
-            raise forms.ValidationError("Select a delivery location on the map.")
+        elif delivery_method == "map":
+            if cleaned_data.get("latitude") is None or cleaned_data.get("longitude") is None:
+                raise forms.ValidationError("Select a delivery location on the map.")
 
-        if not -90 <= cleaned_data["latitude"] <= 90:
-            self.add_error("latitude", "Select a valid latitude.")
+            if not -90 <= cleaned_data["latitude"] <= 90:
+                self.add_error("latitude", "Select a valid latitude.")
 
-        if not -180 <= cleaned_data["longitude"] <= 180:
-            self.add_error("longitude", "Select a valid longitude.")
+            if not -180 <= cleaned_data["longitude"] <= 180:
+                self.add_error("longitude", "Select a valid longitude.")
+
+        else:
+            raise forms.ValidationError("Select a delivery location method.")
 
         if not cleaned_data.get("checkout_key"):
             self.add_error("checkout_key", "Checkout session is missing.")

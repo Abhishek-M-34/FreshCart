@@ -124,6 +124,12 @@ def _format_shipping_address(data):
     if data.get("shipping_address"):
         return data["shipping_address"]
 
+    if data.get("delivery_method") == "map":
+        return (
+            f"Map location: {data.get('latitude')}, "
+            f"{data.get('longitude')}"
+        )
+
     return ", ".join(
         part
         for part in [

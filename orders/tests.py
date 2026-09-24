@@ -115,6 +115,15 @@ class OrderTests(TestCase):
             "checkout_key": key,
         }
 
+    def map_checkout_data(self, payment_method="COD", key="map-checkout"):
+        return {
+            "delivery_method": "map",
+            "latitude": "9.981600",
+            "longitude": "76.299900",
+            "payment_method": payment_method,
+            "checkout_key": key,
+        }
+
     def test_checkout_requires_login(self):
         response = self.client.get(
             reverse("checkout")
@@ -196,6 +205,74 @@ class OrderTests(TestCase):
         self.assertContains(response, "deliveryMap")
         self.assertContains(response, "Cash on Delivery")
         self.assertContains(response, "Online Payment")
+        self.assertContains(response, "disabled")
+        self.assertContains(
+            response,
+            "Select or enter your delivery location to continue.",
+        )
+
+    def test_manual_address_can_checkout_without_coordinates(self):
+        data = self.structured_checkout_data()
+        data.pop("latitude")
+        data.pop("longitude")
+        data["delivery_method"] = "manual"
+        self.create_cart_with_items()
+        self.login_customer()
+
+        response = self.client.post(reverse("checkout"), data)
+
+        self.assertEqual(response.status_code, 302)
+        order = Order.objects.get(user=self.user)
+        self.assertIsNone(order.latitude)
+        self.assertIsNone(order.longitude)
+
+    def test_map_location_can_checkout_without_manual_address(self):
+        self.create_cart_with_items()
+        self.login_customer()
+
+        response = self.client.post(
+            reverse("checkout"),
+            self.map_checkout_data(),
+        )
+
+        self.assertEqual(response.status_code, 302)
+        order = Order.objects.get(user=self.user)
+        self.assertEqual(order.recipient_name, "")
+        self.assertEqual(order.latitude, Decimal("9.981600"))
+        self.assertEqual(order.longitude, Decimal("76.299900"))
+
+    def test_checkout_rejects_missing_delivery_location(self):
+        self.create_cart_with_items()
+        self.login_customer()
+
+        response = self.client.post(
+            reverse("checkout"),
+            {
+                "payment_method": "COD",
+                "checkout_key": "missing-location",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Select a delivery location method.")
+        self.assertEqual(Order.objects.filter(user=self.user).count(), 0)
+
+    def test_map_method_rejects_missing_coordinates(self):
+        self.create_cart_with_items()
+        self.login_customer()
+
+        response = self.client.post(
+            reverse("checkout"),
+            {
+                "delivery_method": "map",
+                "payment_method": "COD",
+                "checkout_key": "missing-coordinates",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Select a delivery location on the map.")
+        self.assertEqual(Order.objects.filter(user=self.user).count(), 0)
 
     def test_structured_address_fields_are_required(self):
         self.create_cart_with_items()

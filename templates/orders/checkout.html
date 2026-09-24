@@ -48,9 +48,25 @@
                         <div class="checkout-field-error">{{ form.non_field_errors }}</div>
                     {% endif %}
 
-                    <div class="checkout-address-grid">
+                    <div class="checkout-delivery-method">
+                        <div class="checkout-section-title">Delivery Location</div>
+                        <div class="checkout-delivery-options">
+                            {% for choice in form.delivery_method %}
+                                <label class="checkout-delivery-option">
+                                    {{ choice.tag }}
+                                    <span>{{ choice.choice_label }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        {% if form.delivery_method.errors %}
+                            <div class="checkout-field-error">{{ form.delivery_method.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="checkout-delivery-panel" id="manualAddressPanel">
+                        <div class="checkout-address-grid">
                         {% for field in form %}
-                            {% if field.name != "checkout_key" and field.name != "shipping_address" and field.name != "latitude" and field.name != "longitude" and field.name != "payment_method" %}
+                            {% if field.name != "delivery_method" and field.name != "checkout_key" and field.name != "shipping_address" and field.name != "latitude" and field.name != "longitude" and field.name != "payment_method" %}
                                 <div class="checkout-field">
                                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                                     {{ field }}
@@ -60,25 +76,28 @@
                                 </div>
                             {% endif %}
                         {% endfor %}
+                        </div>
                     </div>
 
-                    <div class="checkout-field">
-                        <label>Delivery Location</label>
-                        <p class="checkout-map-help">Click or drag the marker to select the delivery location.</p>
+                    <div class="checkout-delivery-panel" id="mapLocationPanel" hidden>
+                        <p class="checkout-map-help">Click the map or drag the marker to select the delivery location.</p>
                         <div id="deliveryMap" class="checkout-map"></div>
                         {{ form.latitude.as_hidden }}
                         {{ form.longitude.as_hidden }}
                         <div id="selectedLocation" class="checkout-location-status">
-                            Location selected near Kochi, Kerala.
+                            Select a location on the map to continue.
                         </div>
                     </div>
 
-                    <div class="checkout-payment-section">
+                    <div class="checkout-payment-section" id="paymentSection" aria-disabled="true">
                         <div class="checkout-section-title">Payment Method</div>
+                        <p id="paymentLockMessage" class="checkout-payment-lock">
+                            Select or enter your delivery location to continue.
+                        </p>
                         <div class="checkout-payment-options">
                             {% for radio in form.payment_method %}
                                 <label class="checkout-payment-option">
-                                    {{ radio.tag }}
+                                    <input type="radio" name="payment_method" value="{{ radio.data.value }}"{% if radio.data.selected %} checked{% endif %} disabled>
                                     <span>
                                         <strong>{{ radio.choice_label }}</strong>
                                         {% if radio.data.value == "ONLINE" %}
@@ -95,7 +114,7 @@
                         {% endif %}
                     </div>
 
-                    <button type="submit" class="btn btn-primary checkout-place-order">
+                    <button type="submit" class="btn btn-primary checkout-place-order" id="checkoutSubmit" disabled>
                         Continue to Payment / Place Order
                     </button>
                     <a href="{% url 'cart' %}" class="checkout-back">← Back to Cart</a>
@@ -161,26 +180,24 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const map = L.map("deliveryMap").setView([9.9816, 76.2999], 11);
+    const form = document.getElementById("checkoutForm");
+    const mapPanel = document.getElementById("mapLocationPanel");
+    const manualPanel = document.getElementById("manualAddressPanel");
+    const paymentSection = document.getElementById("paymentSection");
+    const paymentLockMessage = document.getElementById("paymentLockMessage");
+    const submitButton = document.getElementById("checkoutSubmit");
+    const deliveryMethods = document.querySelectorAll("input[name=delivery_method]");
+    const paymentMethods = document.querySelectorAll("input[name=payment_method]");
     const latitudeInput = document.getElementById("id_latitude");
     const longitudeInput = document.getElementById("id_longitude");
     const selectedLocation = document.getElementById("selectedLocation");
     const initialPosition = [9.9816, 76.2999];
-
-    const tileLayer = L.tileLayer(
-        "https://tile.openstreetmap.de/{z}/{x}/{y}.png",
-        {
-        maxZoom: 19,
-        attribution: "© OpenStreetMap contributors",
-        }
-    ).addTo(map);
-
-    tileLayer.on("tileerror", function () {
-        selectedLocation.textContent =
-            "Map tiles are temporarily unavailable. You can still select a location when the map is available.";
-    });
-
-    const marker = L.marker(initialPosition, {draggable: true}).addTo(map);
+    let map = null;
+    let marker = null;
+    const manualFieldNames = [
+        "recipient_name", "building", "street", "city",
+        "district", "state", "pin_code", "phone",
+    ];
 
     function updateLocation(position) {
         const latitude = position.lat.toFixed(6);
@@ -190,14 +207,130 @@ document.addEventListener("DOMContentLoaded", function () {
         selectedLocation.textContent = `Selected location: ${latitude}, ${longitude}`;
     }
 
-    updateLocation(marker.getLatLng());
-    map.on("click", function (event) {
-        marker.setLatLng(event.latlng);
-        updateLocation(event.latlng);
+    function initializeMap() {
+        if (map) {
+            window.setTimeout(function () {
+                map.invalidateSize();
+            }, 0);
+            return;
+        }
+
+        map = L.map("deliveryMap").setView(initialPosition, 11);
+
+        const tileLayer = L.tileLayer(
+            "https://tile.openstreetmap.de/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                attribution: "© OpenStreetMap contributors",
+            }
+        ).addTo(map);
+
+        tileLayer.on("tileerror", function () {
+            selectedLocation.textContent =
+                "Map tiles are temporarily unavailable. You can still select a location when the map is available.";
+        });
+
+        marker = L.marker(initialPosition, {draggable: true}).addTo(map);
+        marker.on("dragend", function () {
+            updateLocation(marker.getLatLng());
+            const active = document.querySelector("input[name=delivery_method]:checked");
+            if (active && active.value === "map") {
+                updatePaymentState(true);
+            }
+        });
+
+        map.on("click", function (event) {
+            marker.setLatLng(event.latlng);
+            updateLocation(event.latlng);
+            const active = document.querySelector("input[name=delivery_method]:checked");
+            if (active && active.value === "map") {
+                updatePaymentState(true);
+            }
+        });
+
+        window.setTimeout(function () {
+            map.invalidateSize();
+        }, 0);
+    }
+
+    function manualAddressIsValid() {
+        return manualFieldNames.every(function (name) {
+            const field = document.getElementById(`id_${name}`);
+            return field && field.value.trim() !== "";
+        });
+    }
+
+    function mapLocationIsValid() {
+        return latitudeInput.value.trim() !== "" && longitudeInput.value.trim() !== "";
+    }
+
+    function updatePaymentState(isValid) {
+        paymentMethods.forEach(function (input) {
+            input.disabled = !isValid;
+        });
+        submitButton.disabled = !isValid;
+        paymentSection.setAttribute("aria-disabled", String(!isValid));
+        paymentLockMessage.hidden = isValid;
+    }
+
+    function setActiveDeliveryMethod(method) {
+        const isManual = method === "manual";
+        manualPanel.hidden = !isManual;
+        mapPanel.hidden = isManual;
+
+        manualFieldNames.forEach(function (name) {
+            const field = document.getElementById(`id_${name}`);
+            if (field) {
+                field.required = isManual;
+            }
+        });
+
+        if (!isManual) {
+            initializeMap();
+            window.setTimeout(function () {
+                map.invalidateSize();
+            }, 0);
+        }
+
+        updatePaymentState(isManual ? manualAddressIsValid() : mapLocationIsValid());
+    }
+
+    deliveryMethods.forEach(function (input) {
+        input.addEventListener("change", function () {
+            setActiveDeliveryMethod(this.value);
+        });
     });
-    marker.on("dragend", function () {
-        updateLocation(marker.getLatLng());
+
+    manualFieldNames.forEach(function (name) {
+        const field = document.getElementById(`id_${name}`);
+        if (field) {
+            field.addEventListener("input", function () {
+                const active = document.querySelector("input[name=delivery_method]:checked");
+                if (active && active.value === "manual") {
+                    updatePaymentState(manualAddressIsValid());
+                }
+            });
+        }
     });
+
+    form.addEventListener("submit", function (event) {
+        const active = document.querySelector("input[name=delivery_method]:checked");
+        const isValid = active && (
+            active.value === "manual"
+                ? manualAddressIsValid()
+                : mapLocationIsValid()
+        );
+
+        if (!isValid) {
+            event.preventDefault();
+            paymentLockMessage.hidden = false;
+            paymentLockMessage.textContent =
+                "Select or enter your delivery location to continue.";
+        }
+    });
+
+    const initialMethod = document.querySelector("input[name=delivery_method]:checked");
+    setActiveDeliveryMethod(initialMethod ? initialMethod.value : "manual");
 });
 </script>
 {% endblock %}
