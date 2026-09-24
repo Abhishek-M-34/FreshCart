@@ -77,7 +77,11 @@ def add_to_cart(request, product_id):
             return JsonResponse(
                 {
                     "success": False,
-                    "message": "This product is out of stock."
+                    "message": "This product is out of stock.",
+                    "product_id": product.id,
+                    "available_stock": 0,
+                    "cart_quantity": 0,
+                    "remaining_stock": 0,
                 },
                 status=400
             )
@@ -128,6 +132,13 @@ def add_to_cart(request, product_id):
         "success": True,
         "cart_total_quantity": cart_total_quantity,
         "added_product_name": product.name,
+        "product_id": product.id,
+        "available_stock": available_stock,
+        "cart_quantity": cart_item.quantity,
+        "remaining_stock": max(
+            available_stock - cart_item.quantity,
+            0,
+        ),
         "items": items,
     }
 )

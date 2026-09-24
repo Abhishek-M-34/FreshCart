@@ -175,6 +175,37 @@ class CartTests(TestCase):
             2
         )
 
+    def test_ajax_add_returns_remaining_stock_for_product_card(self):
+        self.login_user()
+
+        response = self.client.post(
+            reverse("add_to_cart", args=[self.product.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["product_id"], self.product.id)
+        self.assertEqual(response.json()["cart_quantity"], 1)
+        self.assertEqual(response.json()["remaining_stock"], 19)
+
+    def test_ajax_add_reports_zero_remaining_at_stock_limit(self):
+        self.login_user()
+        cart = Cart.objects.create(user=self.user)
+        CartItem.objects.create(
+            cart=cart,
+            product=self.product,
+            quantity=19,
+        )
+
+        response = self.client.post(
+            reverse("add_to_cart", args=[self.product.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["cart_quantity"], 20)
+        self.assertEqual(response.json()["remaining_stock"], 0)
+
     def test_add_product_does_not_exceed_stock(self):
         self.login_user()
 

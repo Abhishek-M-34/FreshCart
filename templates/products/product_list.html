@@ -121,12 +121,18 @@
                                 {% endif %}
                             </div>
 
-                            {% if product.available_stock > 0 %}
-                                <span class="stock-status in-stock">
+                            {% if product.remaining_stock > 0 %}
+                                <span
+                                    class="stock-status in-stock"
+                                    data-stock-status="{{ product.id }}"
+                                >
                                     In stock
                                 </span>
                             {% else %}
-                                <span class="stock-status out-stock">
+                                <span
+                                    class="stock-status out-stock"
+                                    data-stock-status="{{ product.id }}"
+                                >
                                     Out of stock
                                 </span>
                             {% endif %}
@@ -143,8 +149,10 @@
     {% csrf_token %}
 
     <button type="submit"
-            class="add-cart-btn"
-            aria-label="Add {{ product.name }} to cart">
+            class="add-cart-btn{% if product.remaining_stock <= 0 %} add-cart-btn-out-of-stock{% endif %}"
+            aria-label="Add {{ product.name }} to cart"
+            data-add-cart-button="{{ product.id }}"
+            {% if product.remaining_stock <= 0 %}disabled{% endif %}>
         +
     </button>
 
@@ -331,6 +339,40 @@ function showCartNotification(productName) {
     );
 }
 
+        function updateProductStockState(data) {
+
+            const status = document.querySelector(
+                '[data-stock-status="' + data.product_id + '"]'
+            );
+
+            const button = document.querySelector(
+                '[data-add-cart-button="' + data.product_id + '"]'
+            );
+
+            if (!status || !button) {
+                return;
+            }
+
+            const outOfStock = data.remaining_stock <= 0;
+
+            status.textContent = outOfStock
+                ? "Out of stock"
+                : "In stock";
+            status.classList.toggle("in-stock", !outOfStock);
+            status.classList.toggle("out-stock", outOfStock);
+            button.disabled = outOfStock;
+            button.classList.toggle(
+                "add-cart-btn-out-of-stock",
+                outOfStock
+            );
+            button.setAttribute(
+                "aria-label",
+                outOfStock
+                    ? "Out of stock"
+                    : "Add product to cart"
+            );
+        }
+
         if (cart) {
 
     cart.addEventListener(
@@ -406,6 +448,10 @@ function showCartNotification(productName) {
                             if (!response.ok ||
                                 !data.success) {
 
+                                if (data.product_id !== undefined) {
+                                    updateProductStockState(data);
+                                }
+
                                 throw new Error(
                                     data.message ||
                                     "Unable to add item to cart."
@@ -414,6 +460,8 @@ function showCartNotification(productName) {
 
 
                             /* Update quantity badge */
+
+                            updateProductStockState(data);
 
                             cartCount.textContent =
                                 data.cart_total_quantity;
@@ -493,7 +541,10 @@ function showCartNotification(productName) {
 
                         } finally {
 
-                            button.disabled = false;
+                            button.disabled =
+                                button.classList.contains(
+                                    "add-cart-btn-out-of-stock"
+                                );
 
                             button.textContent =
                                 originalText;

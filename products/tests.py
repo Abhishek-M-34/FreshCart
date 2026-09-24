@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
+from cart.models import Cart, CartItem
 from .models import Category, Product, StockBatch
 from datetime import date, timedelta
 from unittest.mock import patch
@@ -90,6 +91,56 @@ class ProductTests(TestCase):
         self.assertContains(response, "Potato")
 
         self.assertNotContains(response, "Mango")
+
+    def test_product_list_marks_card_out_of_stock_at_cart_limit(self):
+        self.client.login(
+            username="customer",
+            password="TestPassword123"
+        )
+        cart = Cart.objects.create(
+            user=self.user
+        )
+        CartItem.objects.create(
+            cart=cart,
+            product=self.product,
+            quantity=20,
+        )
+
+        response = self.client.get(reverse("product_list"))
+
+        self.assertContains(response, "Out of stock")
+        product = next(
+            product
+            for product in response.context["products"]
+            if product.id == self.product.id
+        )
+        self.assertEqual(product.remaining_stock, 0)
+
+    def test_product_list_reenables_stock_after_cart_item_removed(self):
+        self.client.login(
+            username="customer",
+            password="TestPassword123"
+        )
+        cart = Cart.objects.create(user=self.user)
+        cart_item = CartItem.objects.create(
+            cart=cart,
+            product=self.product,
+            quantity=20,
+        )
+
+        self.client.post(
+            reverse("remove_from_cart", args=[cart_item.id])
+        )
+
+        response = self.client.get(reverse("product_list"))
+        product = next(
+            product
+            for product in response.context["products"]
+            if product.id == self.product.id
+        )
+
+        self.assertEqual(product.remaining_stock, 20)
+        self.assertContains(response, "In stock")
 
     def test_manage_products_uses_valid_batch_stock(self):
         StockBatch.objects.filter(product=self.product).delete()

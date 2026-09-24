@@ -1273,6 +1273,24 @@ textarea {
     transform: scale(1.08);
 }
 
+
+.add-cart-btn:disabled,
+.add-cart-btn-out-of-stock {
+    background: var(--danger);
+
+    cursor: not-allowed;
+
+    opacity: 1;
+}
+
+
+.add-cart-btn:disabled:hover,
+.add-cart-btn-out-of-stock:hover {
+    background: var(--danger);
+
+    transform: none;
+}
+
 /* =========================================
    FLOATING CART
 ========================================= */

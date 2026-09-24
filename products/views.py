@@ -55,6 +55,18 @@ def product_list(request):
                 for item in cart_items
             )
 
+    cart_quantities = {
+        item.product_id: item.quantity
+        for item in cart_items
+    }
+
+    for product in available_products:
+        product.cart_quantity = cart_quantities.get(product.id, 0)
+        product.remaining_stock = max(
+            product.available_stock - product.cart_quantity,
+            0,
+        )
+
     context = {
         "products": available_products,
         "categories": categories,
