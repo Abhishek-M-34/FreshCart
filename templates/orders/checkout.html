@@ -167,10 +167,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectedLocation = document.getElementById("selectedLocation");
     const initialPosition = [9.9816, 76.2999];
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    const tileLayer = L.tileLayer(
+        "https://tile.openstreetmap.de/{z}/{x}/{y}.png",
+        {
         maxZoom: 19,
         attribution: "© OpenStreetMap contributors",
-    }).addTo(map);
+        }
+    ).addTo(map);
+
+    tileLayer.on("tileerror", function () {
+        selectedLocation.textContent =
+            "Map tiles are temporarily unavailable. You can still select a location when the map is available.";
+    });
 
     const marker = L.marker(initialPosition, {draggable: true}).addTo(map);
 
