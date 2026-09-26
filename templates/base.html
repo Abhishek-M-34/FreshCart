@@ -184,6 +184,66 @@
 
 <script>
 
+(function () {
+
+    const scrollStorageKey = "freshCartPendingScroll";
+    const currentUrl = window.location.href;
+
+    function restoreScrollPosition() {
+
+        const savedScroll =
+            sessionStorage.getItem(scrollStorageKey);
+
+        if (!savedScroll) {
+            return;
+        }
+
+        sessionStorage.removeItem(scrollStorageKey);
+
+        try {
+            const savedData = JSON.parse(savedScroll);
+
+            if (savedData.url !== currentUrl) {
+                return;
+            }
+
+            window.scrollTo(
+                0,
+                Number(savedData.scrollY) || 0
+            );
+        } catch (error) {
+            sessionStorage.removeItem(scrollStorageKey);
+        }
+    }
+
+    function saveScrollPosition() {
+
+        sessionStorage.setItem(
+            scrollStorageKey,
+            JSON.stringify({
+                url: currentUrl,
+                scrollY: window.scrollY,
+            })
+        );
+    }
+
+    window.addEventListener(
+        "beforeunload",
+        saveScrollPosition
+    );
+
+    if (document.readyState === "loading") {
+        document.addEventListener(
+            "DOMContentLoaded",
+            restoreScrollPosition,
+            {once: true}
+        );
+    } else {
+        restoreScrollPosition();
+    }
+
+})();
+
 document.addEventListener(
     "DOMContentLoaded",
     function () {
