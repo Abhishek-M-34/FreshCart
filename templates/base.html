@@ -182,68 +182,66 @@
 
     {% block extra_js %}{% endblock %}
 
+
+
 <script>
-
-(function () {
-
+    (function () {
     const scrollStorageKey = "freshCartPendingScroll";
     const currentUrl = window.location.href;
 
-    function restoreScrollPosition() {
+    function saveScrollPosition() {
+        sessionStorage.setItem(
+            scrollStorageKey,
+            JSON.stringify({
+                url: currentUrl,
+                scrollY: window.scrollY
+            })
+        );
+    }
 
-        const savedScroll =
-            sessionStorage.getItem(scrollStorageKey);
+    function restoreScrollPosition() {
+        const savedScroll = sessionStorage.getItem(scrollStorageKey);
 
         if (!savedScroll) {
             return;
         }
 
-        sessionStorage.removeItem(scrollStorageKey);
-
         try {
             const savedData = JSON.parse(savedScroll);
 
             if (savedData.url !== currentUrl) {
+                sessionStorage.removeItem(scrollStorageKey);
                 return;
             }
 
-            window.scrollTo(
-                0,
-                Number(savedData.scrollY) || 0
+            if ("scrollRestoration" in history) {
+                history.scrollRestoration = "manual";
+            }
+
+            const scrollY = Number(savedData.scrollY) || 0;
+
+            window.addEventListener(
+                "load",
+                function () {
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            window.scrollTo(0, scrollY);
+                            sessionStorage.removeItem(scrollStorageKey);
+                        });
+                    });
+                },
+                { once: true }
             );
+
         } catch (error) {
             sessionStorage.removeItem(scrollStorageKey);
         }
     }
 
-    function saveScrollPosition() {
+    window.addEventListener("pagehide", saveScrollPosition);
 
-        sessionStorage.setItem(
-            scrollStorageKey,
-            JSON.stringify({
-                url: currentUrl,
-                scrollY: window.scrollY,
-            })
-        );
-    }
-
-    window.addEventListener(
-        "beforeunload",
-        saveScrollPosition
-    );
-
-    if (document.readyState === "loading") {
-        document.addEventListener(
-            "DOMContentLoaded",
-            restoreScrollPosition,
-            {once: true}
-        );
-    } else {
-        restoreScrollPosition();
-    }
-
+    restoreScrollPosition();
 })();
-
 document.addEventListener(
     "DOMContentLoaded",
     function () {
