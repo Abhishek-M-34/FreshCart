@@ -99,7 +99,7 @@ class Command(BaseCommand):
         today = timezone.now().date()
 
         start_date = (
-            today - timedelta(days=30)
+            today - timedelta(days=180)
         )
 
         total_orders = 0
@@ -110,7 +110,7 @@ class Command(BaseCommand):
         # Generate daily sales
         # --------------------------------
 
-        for day_number in range(31):
+        for day_number in range(181):
 
             sale_date = (
                 start_date
